@@ -347,7 +347,7 @@ body:has(.ecms-basicdetail-page) {
 
 .ecms-upload-column .box,
 .ecms-upload-column .box_sig {
-    width: 165px !important;
+    width: 176px !important;
     margin: 7px auto !important;
     border: 2px solid rgba(255, 151, 36, .86) !important;
     border-radius: 12px !important;
@@ -1725,5 +1725,653 @@ body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign {
 
     .ecms-summary-card .form-group {
         margin-bottom: .5rem !important;
+    }
+}
+
+
+/* =====================================================
+   BASIC DETAIL - SMALL SCREEN: FORM SCROLL ONLY
+   -----------------------------------------------------
+   Final responsive behaviour:
+   - Header / navigation / footer do not scroll.
+   - ECMS page shell stays inside the available viewport.
+   - Requisition summary stays visible.
+   - "Initiate Request" section header stays visible.
+   - ONLY the actual Initiate Request form body scrolls.
+   - No document/body scrollbar.
+   ===================================================== */
+
+
+/* Short-height desktops / laptops */
+@media (min-width: 992px) and (max-height: 799.98px) {
+
+    html:has(.ecms-basicdetail-page),
+    body.ecms-basicdetail-body,
+    body:has(.ecms-basicdetail-page) {
+        width: 100% !important;
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+        max-height: 100dvh !important;
+        overflow: hidden !important;
+        padding-bottom: 0 !important;
+    }
+
+        body:has(.ecms-basicdetail-page) .wrapper,
+        body:has(.ecms-basicdetail-page) .content-wrapper,
+        body:has(.ecms-basicdetail-page) .main-panel,
+        body:has(.ecms-basicdetail-page) .main-content,
+        body:has(.ecms-basicdetail-page) main {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: hidden !important;
+        }
+
+    .ecms-basicdetail-shell {
+        position: fixed !important;
+        top: calc( var(--ecms-header-height, 158px) + var(--ecms-nav-strip-height, var(--ecms-nav-height, 39px)) + .45rem ) !important;
+        right: .45rem !important;
+        bottom: calc( var(--ecms-footer-height, 32px) + .45rem ) !important;
+        left: .45rem !important;
+        width: auto !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: .45rem !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-basicdetail-form,
+    .ecms-basicdetail-page,
+    .ecms-basicdetail-page > .row,
+    .ecms-form-wrap {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        overflow: hidden !important;
+    }
+
+        .ecms-basicdetail-page > .row {
+            display: grid !important;
+            grid-template-rows: auto minmax(0, 1fr) !important;
+            gap: .4rem !important;
+        }
+
+    /* Requisition details stays fixed at the top of the page card. */
+    .ecms-summary-card {
+        flex: 0 0 auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: hidden !important;
+    }
+
+    /* Initiate Request card consumes remaining height. */
+    .ecms-initiate-card {
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }
+
+        /* Keep the blue Initiate Request title visible. */
+        .ecms-initiate-card > .seven,
+        .ecms-initiate-card > .seven h1 {
+            flex: 0 0 auto !important;
+        }
+
+        /* ONLY THIS AREA SCROLLS */
+        .ecms-initiate-card > .mt-2.ml-4 {
+            flex: 1 1 auto !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            padding: .65rem !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            overscroll-behavior: contain !important;
+            scrollbar-gutter: stable !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+            /* Restore natural content height inside the scroll region. */
+            .ecms-initiate-card > .mt-2.ml-4 > .row {
+                height: auto !important;
+                min-height: max-content !important;
+                max-height: none !important;
+                grid-template-columns: 12.25rem minmax(24rem, 1fr) minmax(24rem, 1fr) !important;
+                grid-template-rows: auto auto auto !important;
+                overflow: visible !important;
+            }
+
+    .ecms-upload-column,
+    .ecms-left-fields,
+    .ecms-right-fields {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    /* Keep readable font sizes. */
+    .ecms-basicdetail-page .col-form-label,
+    .ecms-basicdetail-page .form-label,
+    .ecms-basicdetail-page .font-weight-bold,
+    .ecms-basicdetail-page .labelprofile {
+        font-size: .82rem !important;
+        line-height: 1.22 !important;
+    }
+
+    .ecms-basicdetail-page .form-control,
+    .ecms-basicdetail-page .form-select,
+    .ecms-basicdetail-page select,
+    .ecms-basicdetail-page textarea,
+    .ecms-basicdetail-page .select2-container--default .select2-selection--single {
+        min-height: 2.15rem !important;
+        font-size: .82rem !important;
+    }
+
+    /* Make the form scrollbar neat and page-specific. */
+    .ecms-initiate-card > .mt-2.ml-4 {
+        scrollbar-width: thin;
+    }
+
+        .ecms-initiate-card > .mt-2.ml-4::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .ecms-initiate-card > .mt-2.ml-4::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .ecms-initiate-card > .mt-2.ml-4::-webkit-scrollbar-thumb {
+            background: rgba(70, 112, 191, .45);
+            border-radius: 999px;
+        }
+}
+
+
+/* Tablet / narrow browser window:
+   shell remains fixed; only form body scrolls vertically. */
+@media (max-width: 991.98px) {
+
+    html:has(.ecms-basicdetail-page),
+    body.ecms-basicdetail-body,
+    body:has(.ecms-basicdetail-page) {
+        width: 100% !important;
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+        max-height: 100dvh !important;
+        overflow: hidden !important;
+        padding-bottom: 0 !important;
+    }
+
+        body:has(.ecms-basicdetail-page) .wrapper,
+        body:has(.ecms-basicdetail-page) .content-wrapper,
+        body:has(.ecms-basicdetail-page) .main-panel,
+        body:has(.ecms-basicdetail-page) .main-content,
+        body:has(.ecms-basicdetail-page) main {
+            overflow: hidden !important;
+        }
+
+    .ecms-basicdetail-shell {
+        position: fixed !important;
+        top: calc( var(--ecms-header-height, 158px) + var(--ecms-nav-strip-height, var(--ecms-nav-height, 39px)) + .35rem ) !important;
+        right: .35rem !important;
+        bottom: calc( var(--ecms-footer-height, 32px) + .35rem ) !important;
+        left: .35rem !important;
+        width: auto !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: .35rem !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-basicdetail-form,
+    .ecms-basicdetail-page,
+    .ecms-basicdetail-page > .row,
+    .ecms-form-wrap {
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        overflow: hidden !important;
+    }
+
+        .ecms-basicdetail-page > .row {
+            display: grid !important;
+            grid-template-rows: auto minmax(0, 1fr) !important;
+            gap: .35rem !important;
+        }
+
+    .ecms-summary-card {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-initiate-card {
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }
+
+        .ecms-initiate-card > .seven {
+            flex: 0 0 auto !important;
+        }
+
+        /* The form body is the only scroll container. */
+        .ecms-initiate-card > .mt-2.ml-4 {
+            flex: 1 1 auto !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            padding: .65rem !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            overscroll-behavior: contain !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+            .ecms-initiate-card > .mt-2.ml-4 > .row {
+                height: auto !important;
+                min-height: max-content !important;
+                max-height: none !important;
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                grid-template-rows: auto !important;
+                gap: .75rem !important;
+                overflow: visible !important;
+            }
+
+        .ecms-upload-column,
+        .ecms-left-fields,
+        .ecms-right-fields,
+        .ecms-initiate-card .col-xl-12 {
+            grid-column: 1 !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+
+    /* At this width, media can sit side by side when possible. */
+    .ecms-media-stack {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: .65rem !important;
+        height: auto !important;
+    }
+
+    /* Summary remains compact so more room is available for the form. */
+    .ecms-summary-card > .mt-2.ml-4 > .row {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: .4rem !important;
+    }
+}
+
+
+/* Phone / very narrow window */
+@media (max-width: 575.98px) {
+
+    .ecms-summary-card > .mt-2.ml-4 > .row {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-media-stack {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-initiate-card > .mt-2.ml-4 {
+        padding: .55rem !important;
+    }
+}
+
+
+/* =====================================================
+   BASIC DETAIL - FINAL LAYOUT CORRECTION
+   Fixes:
+   - Photograph card no longer consumes excessive height.
+   - Signature card remains fully visible above declaration.
+   - Declaration / Save & Next never overlap media cards.
+   - Normal desktop still has no form scrollbar.
+   - Small/short screens still scroll ONLY the Initiate Request body.
+   ===================================================== */
+
+
+/* -----------------------------------------------------
+   NORMAL DESKTOP / LARGE SCREEN
+   Explicit grid placement removes overlap between the media column
+   and declaration row.
+   ----------------------------------------------------- */
+@media (min-width: 1200px) and (min-height: 800px) {
+
+    .ecms-initiate-card > .mt-2.ml-4 > .row {
+        display: grid !important;
+        grid-template-columns: 11.5rem minmax(0, 1fr) minmax(0, 1fr) !important;
+        /* Main form + declaration/actions */
+        grid-template-rows: minmax(0, 1fr) auto !important;
+        column-gap: 1rem !important;
+        row-gap: .4rem !important;
+        align-items: stretch !important;
+        align-content: stretch !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    /* Explicitly keep all three form columns in the first grid row. */
+    .ecms-upload-column {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-left-fields {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-right-fields {
+        grid-column: 3 !important;
+        grid-row: 1 !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    /* Declaration and Save & Next get their own row BELOW all 3 columns. */
+    .ecms-initiate-card .col-xl-12 {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        position: relative !important;
+        z-index: 3 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        background: transparent !important;
+    }
+
+
+    /* -------------------------------------------------
+       PHOTO + SIGNATURE STACK
+       Both cards must fit inside the first form row.
+       ------------------------------------------------- */
+    .ecms-media-stack {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        /* Photograph gets more room, but signature is guaranteed space. */
+        grid-template-rows: minmax(0, 1.2fr) minmax(0, .82fr) !important;
+        gap: .45rem !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-media-card {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        padding: .38rem !important;
+        gap: .22rem !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-photo-card,
+    .ecms-signature-card {
+        min-height: 0 !important;
+        max-height: 100% !important;
+    }
+
+    .ecms-media-card-head {
+        min-height: 1.65rem !important;
+    }
+
+    .ecms-media-card-icon {
+        flex: 0 0 1.55rem !important;
+        width: 1.55rem !important;
+        height: 1.55rem !important;
+    }
+
+    .ecms-media-card-head strong {
+        font-size: .73rem !important;
+    }
+
+    .ecms-media-card-head small {
+        font-size: .56rem !important;
+    }
+
+    /* Critical: remove previous preview min-heights that were pushing
+       the Signature card into the declaration area. */
+    .ecms-photo-preview,
+    .ecms-signature-preview {
+        flex: 1 1 auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: hidden !important;
+    }
+
+        .ecms-photo-preview img,
+        .ecms-signature-preview img,
+        .ecms-media-preview img {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 0 !important;
+            max-height: 100% !important;
+            object-fit: contain !important;
+            object-position: center !important;
+        }
+
+    .ecms-media-upload-btn {
+        flex: 0 0 auto !important;
+        min-height: 1.8rem !important;
+        padding: .22rem .3rem !important;
+        font-size: .66rem !important;
+    }
+
+    .ecms-media-feedback {
+        flex: 0 0 auto !important;
+        min-height: .7rem !important;
+        max-height: 1.35rem !important;
+        overflow: hidden !important;
+    }
+
+        .ecms-media-limit,
+        .ecms-media-feedback .text-danger,
+        .ecms-media-feedback .text-red {
+            font-size: .56rem !important;
+            line-height: 1.05 !important;
+        }
+
+
+    /* -------------------------------------------------
+       DECLARATION + SAVE
+       Remove old sticky positioning completely.
+       ------------------------------------------------- */
+    .ecms-declaration-check {
+        position: relative !important;
+        z-index: 4 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: .38rem .55rem !important;
+        background: rgba(239, 246, 255, .98) !important;
+    }
+
+    .ecms-save-row {
+        position: static !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        z-index: auto !important;
+        width: 100% !important;
+        min-height: 2.3rem !important;
+        margin: .25rem 0 0 0 !important;
+        padding: .15rem 0 0 0 !important;
+        background: transparent !important;
+    }
+}
+
+
+/* -----------------------------------------------------
+   SHORT HEIGHT DESKTOP
+   ONLY the form body scrolls; media is natural-height and does not
+   overlap declaration/actions.
+   ----------------------------------------------------- */
+@media (min-width: 992px) and (max-height: 799.98px) {
+
+    .ecms-initiate-card > .mt-2.ml-4 > .row {
+        align-items: start !important;
+    }
+
+    .ecms-upload-column,
+    .ecms-left-fields,
+    .ecms-right-fields {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-media-stack {
+        width: 100% !important;
+        height: auto !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto auto !important;
+        gap: .6rem !important;
+        overflow: visible !important;
+    }
+
+    .ecms-media-card {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-photo-preview {
+        height: 9rem !important;
+        min-height: 9rem !important;
+        max-height: 9rem !important;
+    }
+
+    .ecms-signature-preview {
+        height: 4.5rem !important;
+        min-height: 4.5rem !important;
+        max-height: 4.5rem !important;
+    }
+
+    .ecms-initiate-card .col-xl-12 {
+        position: static !important;
+        z-index: auto !important;
+    }
+
+    .ecms-save-row {
+        position: static !important;
+        bottom: auto !important;
+        margin: .45rem 0 0 0 !important;
+        padding: .25rem 0 !important;
+        background: transparent !important;
+    }
+}
+
+
+/* -----------------------------------------------------
+   TABLET / NARROW WINDOW
+   Header/navigation/footer remain fixed by the previous rules;
+   only Initiate Request body scrolls.
+   Keep photo/signature at the top of that scrolling body.
+   ----------------------------------------------------- */
+@media (max-width: 991.98px) {
+
+    .ecms-initiate-card > .mt-2.ml-4 > .row {
+        align-items: start !important;
+    }
+
+    .ecms-media-stack {
+        height: auto !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-template-rows: auto !important;
+        gap: .55rem !important;
+        overflow: visible !important;
+    }
+
+    .ecms-media-card {
+        height: auto !important;
+        max-height: none !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-photo-preview {
+        height: 8.5rem !important;
+        min-height: 8.5rem !important;
+        max-height: 8.5rem !important;
+    }
+
+    .ecms-signature-preview {
+        height: 5rem !important;
+        min-height: 5rem !important;
+        max-height: 5rem !important;
+    }
+
+    .ecms-save-row {
+        position: static !important;
+        bottom: auto !important;
+        margin: .5rem 0 0 0 !important;
+        padding: .25rem 0 !important;
+        background: transparent !important;
+    }
+}
+
+
+@media (max-width: 575.98px) {
+
+    /* On a phone place Photo and Signature one after another inside
+       the scrollable form body. */
+    .ecms-media-stack {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Keep summary compact so the user gets more usable form height. */
+    .ecms-summary-card > .mt-2.ml-4 > .row {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: .3rem !important;
+    }
+
+    .ecms-summary-card .form-group {
+        min-height: 3.8rem !important;
+        padding: .4rem .5rem !important;
+    }
+
+    .ecms-summary-card .labelprofile,
+    .ecms-summary-card label[id] {
+        font-size: .72rem !important;
+        line-height: 1.2 !important;
     }
 }
