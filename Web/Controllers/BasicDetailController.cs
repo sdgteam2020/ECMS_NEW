@@ -8015,5 +8015,49 @@ namespace Web.Controllers
             }
         }
         #endregion
+
+        #region Complete / Closed / Running details 
+        [HttpPost]
+        public async Task<IActionResult> GetHistoryForPopup(string Request)
+        {
+            // Initialize the generic response object
+            DTOGenericResponse<DTOGetHistoryForPopupResponse> response = new DTOGenericResponse<DTOGetHistoryForPopupResponse>();
+            response.Result = false;
+            response.Value = new DTOGetHistoryForPopupResponse();
+
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
+            {
+                ViewBag.Message = "Session data is unavailable or has expired.";
+                return Json(response);
+            }
+
+            string ServiceNo = await AESEncrytDecry.DecryptAESWithDTO<string>(Request, sessionData.Salt);
+
+            if (ServiceNo == null)
+            {
+                ViewBag.Message = "Invalid input.";
+                return Json(response);
+            }
+
+            try
+            {
+                // Retrieve the basic detail record for the given RequestId
+                DTOGetHistoryForPopupResponse responseAll = await basicDetailBL.GetHistoryForPopup(ServiceNo);
+                response.Result = true;
+                response.Value = responseAll;
+                response.Message = "Success";
+            }
+            catch (Exception ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetHistoryForPopup");
+                response.Message = "Internal Error.";
+
+            }
+            return Json(response);
+        }
+        #endregion
     }
 }

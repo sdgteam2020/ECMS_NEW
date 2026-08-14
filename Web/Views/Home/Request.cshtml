@@ -102,6 +102,10 @@
                 <div class="col-12 mt-4 ApplyCard d-none" id="armyNoSection">
                     <div class="army-form-card">
                         <div class="army-form-header">
+                            <input type="radio" id="Proceed" name="Status_check" value="Proceed" checked>
+                            <label for="Proceed">Proceed</label><br>
+                            <input type="radio" id="Previous" name="Status_check" value="Search Previous">
+                            <label for="Previous">Search Previous ICard Appl Running / Completed / Closed</label><br>
                             <h5>Enter Army Number</h5>
                             <p>Provide Army Number with prefix and suffix, if applicable.</p>
                         </div>
@@ -159,7 +163,128 @@
         </div>
     </div>
 </div>
+<div class="modal fade"
+     id="HistoryPopupModal"
+     tabindex="-1"
+     aria-labelledby="HistoryPopupModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content history-modal">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="HistoryPopupModalLabel">
+                    I-Card Application History
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- Under Progress -->
+                <div class="history-section history-under-process">
+                    <div class="history-section-header">
+                        <span>Under Progress</span>
+                        <span id="UnderProcessCount"
+                              class="history-count">
+                            0
+                        </span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover history-table">
+                            <thead>
+                                <tr>
+                                    <th class="history-sno">S.No</th>
+                                    <th>Application No</th>
+                                    <th>Date</th>
+                                    <th class="history-action">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="UnderProgressHistoryBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <!-- Total Complete -->
+                <div class="history-section history-complete">
+                    <div class="history-section-header">
+                        <span>Total Complete</span>
+                        <span id="CompleteCount"
+                              class="history-count">
+                            0
+                        </span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover history-table">
+                            <thead>
+                                <tr>
+                                    <th class="history-sno">S.No</th>
+                                    <th>Application No</th>
+                                    <th>Date</th>
+                                    <th class="history-action">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="CompleteHistoryBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <!-- Total Closed -->
+                <div class="history-section history-closed">
+                    <div class="history-section-header">
+                        <span>Total Closed</span>
+                        <span id="ClosedCount"
+                              class="history-count">
+                            0
+                        </span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover history-table">
+                            <thead>
+                                <tr>
+                                    <th class="history-sno">S.No</th>
+                                    <th>Application No</th>
+                                    <th>Date</th>
+                                    <th class="history-action">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="ClosedHistoryBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 @section Scripts {
     <script asp-src-include="~/developerjs/Request.js"></script>
     <script asp-src-include="~/developerjs/Token.js"></script>
+    <script asp-src-include="~/developerjs/helper_CompletedHistory.js"></script>
+    <script asp-src-include="~/developerjs/helper_ClosedHistoryDetails.js"></script>
 }

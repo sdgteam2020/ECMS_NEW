@@ -181,16 +181,22 @@ $(document).ready(function () {
                             (NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA')
                         ) {
                             toastr.error("Please Select Offrs tab.");
-                        } else {
+                        }
+                        else
+                        {
                             CheckArmyNOExist();
                         }
                     }
 
-                } else {
+                }
+                else
+                {
                     toastr.error("Minimum eight and Maximum nine length of Old Army No.");
                 }
 
-            } else {
+            }
+            else
+            {
 
                 if (parseInt(OffType) != 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0) {
 
@@ -250,7 +256,14 @@ $(document).ready(function () {
                     }
 
                     if (IsValid == 1) {
-                        CheckArmyNOExist();
+                        const selectedRadio = document.querySelector('input[name="Status_check"]:checked');
+                        if (selectedRadio.value == 'Proceed') {
+                            CheckArmyNOExist();
+                        }
+                        else {
+                            GetHistoryForPopup(fullArmyNo)
+                        }
+                        
                     } else if (Message != "") {
                         toastr.error(Message);
                     }
@@ -260,10 +273,64 @@ $(document).ready(function () {
                 }
             }
 
-        } else {
+        }
+        else
+        {
             toastr.error("Minimum eight and Maximum nine length of Army No.");
         }
     });
+
+    $(document).on("click", ".btn-under-process", function () {
+
+        const RequestId = $(this).data("request-id");
+
+        UnderProcessDetail(RequestId);
+    });
+    $(document).on("click", ".btn-complete", function () {
+
+        const RequestId = $(this).data("request-id");
+
+        GetCompletedHistoryByRequestId(RequestId);
+        SetCompletedHistoryHeader(RequestId);
+    });
+    $(document).on("click", ".btn-closed", function () {
+
+        const RequestId = $(this).data("request-id");
+
+        GetClosedHistoryByRequestId(RequestId);
+        SetClosedHistoryHeader(RequestId);
+    });
+    $("#BasicDetailCompletedHistory")
+        .off("click", ".cls-btndownloadpdf")
+        .on("click", ".cls-btndownloadpdf", function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const requestId = parseInt($(this).attr("data-request-id"));
+
+            if (!isNaN(requestId) && requestId > 0) {
+                GetCompletedHistoryPdf(requestId);
+            } else {
+                alert("Invalid request.");
+            }
+        });
+
+    $("#BasicDetailClosedHistory")
+        .off("click", ".cls-btndownloadclosedhistorypdf")
+        .on("click", ".cls-btndownloadclosedhistorypdf", function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const requestId = parseInt($(this).attr("data-request-id"));
+
+            if (!isNaN(requestId) && requestId > 0) {
+                GenerateClosedHistoryPDF(requestId);
+            } else {
+                alert("Invalid request.");
+            }
+        });
 });
 
 function GetAllRegistrationApplyFor(Id) {
@@ -810,4 +877,184 @@ function applyArmyNoToControl(fullArmyNo, ddlSelector, txtSelector, disablePrefi
     $(ddlSelector).prop("disabled", !!disablePrefix);
 
     toggleNextButton();
+}
+function GetHistoryForPopup(Request) {
+    var userdata = {
+        "Request": encryptPayloadData(Request),
+    };
+    $.ajax({
+        url: "/BasicDetail/GetHistoryForPopup",
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        type: "POST",
+        success: function (response) {
+
+            if (response.Result === true) {
+
+                BindHistoryPopup(response.Value);
+
+                const modalElement =
+                    document.getElementById("HistoryPopupModal");
+
+                const modal =
+                    bootstrap.Modal.getOrCreateInstance(modalElement);
+
+                modal.show();
+            }
+            else {
+                toastr.error(response.Message || "Unable to get history.");
+            }
+        },
+        error: function () {
+            toastr.error("Internal Error.");
+        }
+    });
+}
+function BindHistoryPopup(data) {
+
+    $("#UnderProgressHistoryBody").empty();
+    $("#CompleteHistoryBody").empty();
+    $("#ClosedHistoryBody").empty();
+
+    $("#UnderProcessCount").text("0");
+    $("#CompleteCount").text("0");
+    $("#ClosedCount").text("0");
+
+    if (!data) {
+        return;
+    }
+
+    // ==============================
+    // Under Process
+    // ==============================
+    if (data.UnderProcess) {
+
+        $("#UnderProcessCount").text("1");
+
+        let row = `
+            <tr>
+                <td>1</td>
+                <td>${data.UnderProcess.RequestId}</td>
+                <td>${FormatHistoryDate(data.UnderProcess.ActionDate)}</td>
+                <td>
+                    <button type="button"
+                            class="btn btn-sm btn-primary btn-under-process"
+                            data-request-id="${data.UnderProcess.RequestId}">
+                        <i class="fa fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+        `;
+
+        $("#UnderProgressHistoryBody").html(row);
+    }
+    else {
+        $("#UnderProgressHistoryBody").html(
+            CreateEmptyRow("No application under progress")
+        );
+    }
+
+
+    // ==============================
+    // Completed
+    // ==============================
+    if (Array.isArray(data.CardComplete) &&
+        data.CardComplete.length > 0) {
+
+        let rows = "";
+
+        $.each(data.CardComplete, function (index, item) {
+
+            rows += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.RequestId}</td>
+                    <td>${FormatHistoryDate(item.ActionDate)}</td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-sm btn-primary btn-complete"
+                                data-request-id="${item.RequestId}">
+                            <i class="fa fa-eye"></i> View
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        $("#CompleteHistoryBody").html(rows);
+        $("#CompleteCount").text(data.CardComplete.length);
+    }
+    else {
+        $("#CompleteHistoryBody").html(
+            CreateEmptyRow("No completed application found")
+        );
+    }
+
+
+    // ==============================
+    // Closed
+    // ==============================
+    if (Array.isArray(data.CardClosed) &&
+        data.CardClosed.length > 0) {
+
+        let rows = "";
+
+        $.each(data.CardClosed, function (index, item) {
+
+            rows += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.RequestId}</td>
+                    <td>${FormatHistoryDate(item.ActionDate)}</td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-sm btn-primary btn-closed"
+                                data-request-id="${item.RequestId}">
+                            <i class="fa fa-eye"></i> View
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        $("#ClosedHistoryBody").html(rows);
+        $("#ClosedCount").text(data.CardClosed.length);
+    }
+    else {
+        $("#ClosedHistoryBody").html(
+            CreateEmptyRow("No closed application found")
+        );
+    }
+}
+function CreateEmptyRow(message) {
+
+    return `
+        <tr>
+            <td colspan="4" class="history-empty">
+                ${message}
+            </td>
+        </tr>
+    `;
+}
+function FormatHistoryDate(dateValue) {
+
+    if (!dateValue) {
+        return "";
+    }
+
+    const date = new Date(dateValue);
+
+    if (isNaN(date.getTime())) {
+        return "";
+    }
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
 }

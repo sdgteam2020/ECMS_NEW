@@ -757,6 +757,86 @@
         </div>
     </div>
 
+    <div class="modal fade ecms-completedhistory-modal" id="BasicDetailCompletedHistory" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-xl modal-dialog-centered ecms-completedhistory-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title w-100 text-center" id="exampleModalLabel_BasicDetailCompletedHistory">I Card History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card ecms-completedhistory-modal-grid">
+                        <div class="row">
+                            <div class="col-sm-4 mb-3">
+                                <div id="CompletedHistory_BasicDetail_Data">
+                                </div>
+                            </div>
+                            <div class="col-sm-4 mb-3 overflow-auto">
+                                <div id="CompletedHistory_Fwd_Details">
+                                </div>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <div id="CompletedHistory_Dispatch_Details">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary d-print-none" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade ecms-closedhistory-modal" id="BasicDetailClosedHistory" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-xl modal-dialog-centered ecms-closedhistory-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title w-100 text-center"
+                        id="exampleModalLabel_BasicDetailClosedHistory">
+                        I Card History
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="card ecms-closedhistory-modal-grid">
+                        <div class="row">
+
+                            <div class="col-sm-4 mb-3">
+                                <div id="ClosedHistory_BasicDetail_Data"></div>
+                            </div>
+
+                            <div class="col-sm-4 mb-3">
+                                <div id="ClosedHistory_Fwd_Details"></div>
+                            </div>
+
+                            <div class="col-sm-4 mb-3">
+                                <div id="ClosedHistory_Dispatch_Details"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary d-print-none"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
     <!-- Global modal host/stack manager: UI-only, no page business logic. -->
     <script asp-src-include="~/developerjs/ecms-global-modals.js" asp-append-version="true"></script>
 </body>

@@ -5772,6 +5772,45 @@ namespace DataAccessLayer
             }
             return cardStatus;
         }
-     
+
+        public async Task<DTOGetHistoryForPopupResponse> GetHistoryForPopup(string ServiceNo)
+        {
+            DTOGetHistoryForPopupResponse cardHistoryResponseAll = new DTOGetHistoryForPopupResponse();
+
+            string query = @"SELECT TOP 1 
+                            icardreq.RequestId,bd.UpdatedOn as ActionDate from BasicDetails bd
+                            INNER JOIN TrnICardRequest icardreq on icardreq.BasicDetailId = bd.BasicDetailId
+                            where bd.ServiceNo = @ServiceNo  AND icardreq.StatusId = 1 
+                            ORDER BY bd.UpdatedOn DESC;
+
+                            Select compl.RequestId, compl.UpdatedOn as ActionDate from CompletedICardRequests compl
+                            WHERE compl.ServiceNo = @ServiceNo
+
+                            Select applClose.RequestId, applClose.UpdatedOn as ActionDate from TrnApplClose applClose
+                            WHERE applClose.ServiceNo = @ServiceNo";
+            try
+            {
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    using (var multi = await connection.QueryMultipleAsync(query, new { ServiceNo }))
+                    {
+                        var UnderProcess = (await multi.ReadFirstOrDefaultAsync<DTOGetHistoryCommanResponse>());
+                        var CardComplete = (await multi.ReadAsync<DTOGetHistoryCommanResponse>()).ToList();
+                        var CardClosed = (await multi.ReadAsync<DTOGetHistoryCommanResponse>()).ToList();
+
+                        cardHistoryResponseAll.UnderProcess = UnderProcess;
+                        cardHistoryResponseAll.CardComplete = CardComplete;
+                        cardHistoryResponseAll.CardClosed = CardClosed;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetHistoryForPopup");
+            }
+            return cardHistoryResponseAll;
+        }
+
     }
 }
