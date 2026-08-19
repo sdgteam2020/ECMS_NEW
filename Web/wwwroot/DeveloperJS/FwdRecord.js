@@ -285,7 +285,8 @@ $(function () {
 
                 var someNumbers = [1];
                 GetRemarks("ddlRemarks", 0, someNumbers);
-            } else if (StepCounter == 2) {
+            }
+            else if (StepCounter == 2) {
                 $(".chkforserach").addClass("d-none");
                 $(".serchfwd").addClass("d-none");
                 if (applyfor == 1) {
@@ -307,7 +308,8 @@ $(function () {
                 var Reject = [2];
                 GetRemarks("ddlRRemarks", 0, Reject);
 
-            } else if (StepCounter == 3) {
+            }
+            else if (StepCounter == 3) {
                 if (applyfor == 1) {
                     $(".chkforserach").addClass("d-none");
 
@@ -332,83 +334,77 @@ $(function () {
                 var Reject = [2];
                 GetRemarks("ddlRRemarks", 0, Reject);
             }
-
-
-
-
         }
     });
 
     $("#txtFwdName").autocomplete({
-
-        source: function (request, response) {
-            if (request.term.length > 2) {
-
-
-                var TypeId = 1;
-                if ($("#intoffsArmyNo").prop("checked")) {
-                    TypeId = 1;
-                } else if ($("#intoffName").prop("checked")) {
-                    TypeId = 2;
-                } else if ($("#intoffDomainId").prop("checked")) {
-                    TypeId = 3;
-                }
-                var IsRO = 0;
-                var IsORO = 0;
-                if (applyfor == 1 && StepCounter == 2)
-                    IsORO = 1;
-                else if (applyfor == 2 && StepCounter == 2)
-                    IsRO = 1;
-                var param = {
-                    "Name": request.term,
-                    "TypeId": TypeId,
-                    "StepId": 1,
-                    "UnitId": 0,
-                    "IsRO": IsRO,
-                    "IsORO": IsORO
-                };
-
-                $("#spnFwdToAspNetUsersId").html(0);
-                $.ajax({
-                    url: '/UserProfile/GetDataForFwd',
-                    contentType: 'application/x-www-form-urlencoded',
-                    data: { "request": encryptPayloadData(JSON.stringify(param)) },
-                    type: 'POST',
-                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.length != 0) {
-                            response($.map(data, function (item) {
-
-                                $("#loading").addClass("d-none");
-                                return {
-                                    label: item.ArmyNo + ' ' + item.RankAbbreviation + ' ' + item.Name + ' ' + item.DomainId,
-                                    value: item.AspNetUsersId
-                                };
-
-                            }))
-                        } else {
-
-                            $(".spnFArmyNo").html("");
-                            $(".spnFtoname").html("");
-                            $(".spnFDomainName").html("");
-                            $(".spnFAppName").html("");
-
-                            $("#txtFwdName").val("");
-                            $("#spnFwdToAspNetUsersId").html("0");
-                            $("#spnFwdToUsersId").html("0");
-                            alert("Army No/Offr Name/Domain ID not found.")
-                        }
-                    },
-                    error: function (response) {
-                        alert(response.responseText);
-                    },
-                    failure: function (response) {
-                        alert(response.responseText);
-                    }
-                });
-
+        minLength: 4,
+        source: function (request, autocompleteResponse) {
+            let TypeId = 0;
+            if ($("#intoffsArmyNo").prop("checked")) {
+                TypeId = 1;
+            } else if ($("#intoffDomainId").prop("checked")) {
+                TypeId = 2;
             }
+            var param = {
+                "Name": request.term.trim(),
+                "TypeId": TypeId,
+                "AspNetUsersId": 0
+            };
+
+            $("#spnFwdToAspNetUsersId").html(0);
+            $("#loading").removeClass("d-none");
+            $.ajax({
+                url: '/UserProfile/GetDataForFwd',
+                contentType: 'application/x-www-form-urlencoded',
+                data: { "request": encryptPayloadData(JSON.stringify(param)) },
+                type: 'POST',
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+                success: function (res) {
+                    if (res.Result === true && res.Value && res.Value.length > 0) {
+
+                        const items = $.map(res.Value, function (item) {
+                            return {
+                                label:
+                                    (item.ArmyNo ?? '') + ' ' +
+                                    (item.RankAbbreviation ?? '') + ' ' +
+                                    (item.Name ?? '') + ' ' +
+                                    (item.DomainId ?? ''),
+
+                                value: item.AspNetUsersId
+                            };
+                        });
+
+                        autocompleteResponse(items);
+                    }
+                    else {
+                        autocompleteResponse([]);
+
+                        clearForwardDetails();
+                        $("#btnForward").prop("disabled", true);
+
+                        alert(
+                            res.Message || "Army No/Offr Name/Domain ID not found."
+                        );
+                    }
+
+                },
+                error: function (xhr) {
+
+                    autocompleteResponse([]);
+                    $("#btnForward").prop("disabled", true);
+
+                    clearForwardDetails();
+
+                    alert(
+                        xhr.responseText || "Unable to retrieve forwarding details."
+                    );
+                },
+
+                complete: function () {
+                    $("#loading").addClass("d-none");
+                }
+            });
         },
         select: function (e, i) {
             e.preventDefault();
@@ -419,14 +415,22 @@ $(function () {
             $("#ErrMess1").html("");
 
             $("#btnForward").prop("disabled", false);
-
-            //alert(i.item.value)
-            // var param1 = { "UnitMapId": i.item.value };
-            //$("#btnIOProfileSerch").addClass('d-none');
             FwdData(i.item.value);
         },
         
     });
+
+    function clearForwardDetails() {
+
+        $(".spnFArmyNo").text("");
+        $(".spnFtoname").text("");
+        $(".spnFDomainName").text("");
+        $(".spnFAppName").text("");
+
+        $("#txtFwdName").val("");
+        $("#spnFwdToAspNetUsersId").text("0");
+        $("#spnFwdToUsersId").text("0");
+    }
 
     $('#txtFwdName').on("keyup", function (e) {
         if (e.which == 46) {
@@ -680,8 +684,6 @@ async function GetBasicDetailByRequestIdForFwd(RequestId) {
 function FwdData(AspNetUsersId) {
     var userdata = {
         "AspNetUsersIds": encryptPayloadData(AspNetUsersId),
-
-
     };
     $.ajax({
         url: '/UserProfile/GetByAspnetUserIdBy',
@@ -704,52 +706,8 @@ function FwdData(AspNetUsersId) {
                     $("#spnFwdToUsersId").html(response.UserId);
 
                     GetProfiledetailsByAspNetuserid(AspNetUsersId)
-                    //$(".HProfileDetails").removeClass("d-none");
-                    //$("#ForwardDetails").html("");
-                    //$("#btnForward").removeClass("d-none");
-                    //$("#spnCurrentspnRequestId").html(response.RequestId);
-                    //if (StepCounter == 1) {
-                    //    $(".spnFtoarmyno").html(response.IOArmyNo);
-                    //    $(".spnFtoname").html(response.IOName);
-
-
-                    //    $("#spnFrom").html(response.UserId);
-                    //    $("#spnForwardTo").html(response.IOUserId);
-                    //    $("#spnFwssusno").html(0);
-                    //} else if (StepCounter == 2) {
-                    //    $(".spnFtoarmyno").html(response.GSOArmyNo);
-                    //    $(".spnFtoname").html(response.GSOName);
-
-                    //    $("#spnFrom").html(response.IOUserId);
-                    //    $("#spnForwardTo").html(response.GSOUserId);
-                    //    $("#spnFwssusno").html(0);
-                    //}
-                    //else if (StepCounter == 3) {
-
-                    //    $(".HProfileDetails").addClass("d-none");
-                    //    $("#spnFrom").html(response.GSOUserId);
-                    //    $("#spnFwssusno").html(101);
-
-                    //}
-                    //else if (StepCounter == 4) {
-
-                    //    $(".HProfileDetails").addClass("d-none");
-                    //    $("#spnFrom").html(101);
-                    //    $("#spnForwardTo").html(29);
-                    //    $("#spnFwssusno").html(0);
-
-                    //}
                 }
             } else {
-                //$(".HProfileDetails").addClass("d-none");
-                //$("#btnForward").addClass("d-none");
-                //$("#ForwardDetails").html("Please Add Self Profile");
-
-                //$(".spnFtoarmyno").html("");
-                //$(".spnFtoname").html("");
-                //$("#spnForwardTo").html(0);
-                //$("#spnCurrentspnRequestId").html(0);
-
 
             }
         },
@@ -762,34 +720,25 @@ function FwdData(AspNetUsersId) {
 }
 
 function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
-    //var param = "";
-    //if (StepCounter == 3 && applyfor==1)
-    //    var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
-    //else if (StepCounter == 4 && applyfor == 1)
-    //    var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
-    //else if ((StepCounter == 2 ||StepCounter == 3) && applyfor == 2)
-    //    var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
-    //else
-   
-    var param = {
-        "Name": AspNetUsersId,
-        "TypeId": 0,
-        "UnitId": 0
+    var userdata = {
+        "request": encryptPayloadData(AspNetUsersId),
     };
-
-   
+ 
     $.ajax({
-        url: '/UserProfile/GetDataForFwd',
+        url: '/UserProfile/GetProfileDetailById',
         contentType: 'application/x-www-form-urlencoded',
-        data: { "request": encryptPayloadData(JSON.stringify(param)) },
+        data: userdata,
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (data) {
-            if (data != null) {
-                $(".spnFArmyNo").html(data[0].ArmyNo);
-                $(".spnFtoname").html(data[0].RankAbbreviation + " " + data[0].Name);
-                $(".spnFDomainName").html(data[0].DomainId);
-                $(".spnFAppName").html(data[0].AppointmentName);
+        success: function (response) {
+            if (response.Result === true) {
+                $(".spnFArmyNo").html(response.Value.ArmyNo);
+                $(".spnFtoname").html(response.Value.RankAbbreviation + " " + response.Value.Name);
+                $(".spnFDomainName").html(response.Value.DomainId);
+                $(".spnFAppName").html(response.Value.AppointmentName);
+            }
+            else {
+                toastr.error(response.Message);
             }
         },
         error: function (response) {
@@ -803,24 +752,25 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
 
 function GetProfiledetailsByAspNetuseridForInternalFwd(AspNetUsersId) {
 
-    var param = {
-        "Name": AspNetUsersId,
-        "TypeId": 0,
-        "UnitId": 0
+    var userdata = {
+        "request": encryptPayloadData(AspNetUsersId),
     };
     $.ajax({
-        url: '/UserProfile/GetDataForFwd',
+        url: '/UserProfile/GetProfileDetailById',
         contentType: 'application/x-www-form-urlencoded',
-        data: { "request": encryptPayloadData(JSON.stringify(param)) },
+        data: userdata,
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (data) {
-            if (data != null) {
-                $(".spnInternalFArmyNo").html(data[0].ArmyNo);
-                $(".spnInternalFtoname").html(data[0].RankAbbreviation + " " + data[0].Name);
-                $(".spnInternalFDomainName").html(data[0].DomainId);
-                $(".spnInternalFAppName").html(data[0].AppointmentName);
-                $("#spnFwdToInternalUsersId").html(data[0].UserId);
+        success: function (response) {
+            if (response.Result === true) {
+                $(".spnInternalFArmyNo").html(response.Value.ArmyNo);
+                $(".spnInternalFtoname").html(response.Value.RankAbbreviation + " " + response.Value.Name);
+                $(".spnInternalFDomainName").html(response.Value.DomainId);
+                $(".spnInternalFAppName").html(response.Value.AppointmentName);
+                $("#spnFwdToInternalUsersId").html(response.Value.UserId);
+            }
+            else {
+                toastr.error(response.Message);
             }
         },
         error: function (response) {

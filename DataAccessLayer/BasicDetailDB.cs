@@ -2644,7 +2644,7 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == (int)ApplSubmittedStatusEnum.Rejected)//Reject From IO,RO and AFSAC Cell
             {
-                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,trnicrd.StatusId,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,{isPostingColumn}";
+                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,trnicrd.StatusId,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,{isPostingColumn}";
                 fromJoin = @"FROM TrnICardRequest trnicrd
                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId IN @RejectedSteps AND trnicrd.StatusId = @RunningStatusId                       
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
@@ -5103,27 +5103,27 @@ namespace DataAccessLayer
                     {
                         responseList.Add(exported);
                     }
-                    if (printed != null)
+                    if (printed != null && cardStep >= (byte)CardStepEnum.Printed)
                     {
                         responseList.Add(printed);
                     }
-                    if (CardDispatchToRegimentObliqueORO != null)
+                    if (CardDispatchToRegimentObliqueORO != null && cardStep >= (byte)CardStepEnum.CardDispatchToRegimentObliqueORO)
                     {
                         responseList.Add(CardDispatchToRegimentObliqueORO);
                     }
-                    if (CardInRegimentObliqueORO != null)
+                    if (CardInRegimentObliqueORO != null && cardStep >= (byte)CardStepEnum.CardInRegimentObliqueORO)
                     {
                         responseList.Add(CardInRegimentObliqueORO);
                     }
-                    if (CardDispatchToUnit != null)
+                    if (CardDispatchToUnit != null && cardStep >= (byte)CardStepEnum.CardDispatchToUnit)
                     {
                         responseList.Add(CardDispatchToUnit);
                     }
-                    if (CardDispatchInUnit != null)
+                    if (CardDispatchInUnit != null && cardStep >= (byte)CardStepEnum.CardDispatchInUnit)
                     {
                         responseList.Add(CardDispatchInUnit);
                     }
-                    if (losted != null)
+                    if (losted != null && cardStep >= (byte)CardStepEnum.Printed)
                     {
                         responseList.Add(losted);
                     }

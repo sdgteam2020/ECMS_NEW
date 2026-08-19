@@ -245,7 +245,7 @@ function BindData(UserType, ApplyForId) {
                 var rowData = table_Fwd.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     GetCompletedHistoryByRequestId(rowData.RequestId);
-                    SetClosedHistoryHeader(rowData.RequestId);
+                    SetCompletedHistoryHeader(rowData.RequestId);
                 }
             });
             $("#tbldatatabledata_Completed tbody").off("click", ".cls-btndownloadpdfsignature").on("click", ".cls-btndownloadpdfsignature", function () {

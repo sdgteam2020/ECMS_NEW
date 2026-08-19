@@ -280,11 +280,15 @@ $(document).ready(function () {
         }
     });
 
-    $(document).on("click", ".btn-under-process", function () {
+    $(document).on("click", ".btn-under-process-historyRequest", function () {
 
         const RequestId = $(this).data("request-id");
+        GetRequestHistory(RequestId);
+    });
+    $(document).on("click", ".btn-under-process-cardhistoryRequest", function () {
 
-        UnderProcessDetail(RequestId);
+        const RequestId = $(this).data("request-id");
+        GetMovementHistory(RequestId);
     });
     $(document).on("click", ".btn-complete", function () {
 
@@ -939,9 +943,14 @@ function BindHistoryPopup(data) {
                 <td>${FormatHistoryDate(data.UnderProcess.ActionDate)}</td>
                 <td>
                     <button type="button"
-                            class="btn btn-sm btn-primary btn-under-process"
+                            class="btn btn-sm btn-primary btn-under-process-historyRequest"
                             data-request-id="${data.UnderProcess.RequestId}">
-                        <i class="fa fa-eye"></i> View
+                        <i class="fa fa-history" ></i> Application History
+                    </button>
+                    <button type="button"
+                            class="btn btn-sm btn-primary btn-under-process-cardhistoryRequest"
+                            data-request-id="${data.UnderProcess.RequestId}">
+                        <i class="fa fa-history" ></i> Card History
                     </button>
                 </td>
             </tr>

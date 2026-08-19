@@ -61,9 +61,9 @@ namespace BusinessLogicsLayer.Master
             return response;
         }
 
-        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId, int RO,int ORO, int DomainMapId)
+        public Task<DTOGenericResponse<List<DTOFwdICardResponse>>> GetDataForFwd(DTODataForFwd dTOData)
         {
-            return _iUserProfileDB.GetDataForFwd(StepId, UnitId, Name,TypeId, RO, ORO, DomainMapId);
+            return _iUserProfileDB.GetDataForFwd(dTOData);
         }
         public async Task<DTOProfileResponse?> GetProfileByUserId(int UserId)
         {
@@ -122,6 +122,10 @@ namespace BusinessLogicsLayer.Master
         public async Task<DTOGenericResponse<DTOTokenStatusResponse?>> GetTokenStatus(int AspNetUsersId)
         {
             return await _iUserProfileDB.GetTokenStatus(AspNetUsersId);
+        }
+        public async Task<DTOGenericResponse<DTOGetProfileDetailByIdResponse>> GetProfileDetailById(int AspNetUsersId)
+        {
+            return await _iUserProfileDB.GetProfileDetailById(AspNetUsersId);
         }
     }
 }
