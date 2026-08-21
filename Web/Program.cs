@@ -209,8 +209,6 @@ builder.WebHost.ConfigureKestrel(options =>
 
 var app = builder.Build();
 
-app.UseResponseCompression();
-
 app.UseCookiePolicy(new CookiePolicyOptions
 {
     Secure = CookieSecurePolicy.Always // Set the Secure flag for all cookies
@@ -292,13 +290,15 @@ app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 //------------------- End Instructions----------------------
 
+// ONLY ONE UseResponseCompression()
+app.UseResponseCompression();
+
 app.UseStaticFiles(new StaticFileOptions
 {
     ServeUnknownFileTypes = false,
 });
 
 app.UseRequestLocalization();
-app.UseResponseCompression();
 app.UseRouting();
 app.UseSession(); // MUST be before Authentication & Authorization
 

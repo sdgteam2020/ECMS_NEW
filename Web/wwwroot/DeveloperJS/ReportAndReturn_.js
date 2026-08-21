@@ -266,48 +266,6 @@ $(async function () {
             GetCount();
         });
     }
-    if ($("#btnToggleSearchCard").length > 0) {
-
-        $("#btnToggleSearchCard")
-            .off("click.ecmsFilterToggle")
-            .on("click.ecmsFilterToggle", function () {
-
-                const $button = $(this);
-                const $searchCard = $("#searchUnitCard");
-                const isVisible = $searchCard.is(":visible");
-
-                if (isVisible) {
-
-                    $searchCard.stop(true, true).slideUp(200);
-
-                    $button.attr("aria-expanded", "false");
-
-                    $button
-                        .find(".ecms-filter-toggle-text")
-                        .text("Show Unit Search");
-
-                    $button
-                        .find(".ecms-filter-toggle-icon")
-                        .removeClass("fa-chevron-up")
-                        .addClass("fa-chevron-down");
-                }
-                else {
-
-                    $searchCard.stop(true, true).slideDown(200);
-
-                    $button.attr("aria-expanded", "true");
-
-                    $button
-                        .find(".ecms-filter-toggle-text")
-                        .text("Hide Unit Search");
-
-                    $button
-                        .find(".ecms-filter-toggle-icon")
-                        .removeClass("fa-chevron-down")
-                        .addClass("fa-chevron-up");
-                }
-            });
-    }
 
 });
 function parseVal(val) {
@@ -316,424 +274,349 @@ function parseVal(val) {
     }
     return val;
 }
-function buildReportCard(
-    title,
-    total,
-    applyTypeId,
-    stepId,
-    isApproveId,
-    recordOfficeId = null,
-    subTitle = ""
-) {
-    const hiddenFields = [
-        `<span class="d-none applyTypeId">${applyTypeId}</span>`,
-        `<span class="d-none spnStepId">${stepId}</span>`
-    ];
-
-    if (isApproveId !== null && isApproveId !== undefined) {
-        hiddenFields.push(
-            `<span class="d-none IsApproveId">${isApproveId}</span>`
-        );
-    }
-
-    if (recordOfficeId !== null && recordOfficeId !== undefined) {
-        hiddenFields.push(
-            `<span class="d-none spnRecordOfficeId">${recordOfficeId}</span>`
-        );
-    }
-
-    const subTitleHtml = subTitle
-        ? `<h4 class="c-dashboardInfo__title_OROName">${subTitle}</h4>`
-        : "";
-
-    return `
-        <div class="c-dashboardInfo">
-            <a href="#">
-                ${hiddenFields.join("")}
-
-                <div class="wrap ecms-tile">
-                    <h4 class="c-dashboardInfo__title">
-                        ${title ?? ""}
-                    </h4>
-
-                    ${subTitleHtml}
-
-                    <span class="c-dashboardInfo__count count">
-                        ${total ?? 0}
-                    </span>
-
-                    <span class="c-dashboardInfo__subInfo"></span>
-                </div>
-            </a>
-        </div>
-    `;
-}
-
-function buildReportSections(
-    reportData,
-    applyTypeId,
-    recordOff = [],
-    recordoffCount = []
-) {
-    const initiatorCards = [];
-    const approverCards = [];
-    const verifierCards = [];
-    const afterVerifierCards = [];
-
-    let currentSection = initiatorCards;
-    let groupId = 0;
-
-    for (let i = 0; i < reportData.length; i++) {
-        const item = reportData[i];
-
-        if (item.TypeId != groupId) {
-
-            // Initiator -> application forwarded to Approver.
-            if (item.TypeId == 2) {
-                const total =
-                    Number(item.Total ?? 0) +
-                    Number(reportData[i + 1]?.Total ?? 0);
-
-                initiatorCards.push(
-                    buildReportCard(
-                        "Appl fwd to Approver",
-                        total,
-                        applyTypeId,
-                        item.StepId,
-                        1
-                    )
-                );
-
-                currentSection = approverCards;
-            }
-
-            // Approver -> approved application.
-            else if (item.TypeId == 3) {
-                const total =
-                    Number(item.Total ?? 0) +
-                    Number(reportData[i + 1]?.Total ?? 0);
-
-                approverCards.push(
-                    buildReportCard(
-                        "Approved Appl (Approver Level)",
-                        total,
-                        applyTypeId,
-                        item.StepId,
-                        1
-                    )
-                );
-
-                currentSection = verifierCards;
-            }
-
-            // Verifier -> Record Office status + forward to ADC.
-            else if (item.TypeId == 4) {
-
-                // Original code shows these Record Office cards only for Officers.
-                if (applyTypeId == 1) {
-                    for (const recordOffice of recordOff) {
-                        const officeCounts = recordoffCount.filter(
-                            count => count.RecordOfficeId == recordOffice.RecordOfficeId
-                        );
-
-                        const approved =
-                            officeCounts.find(count => count.Name == "Approved")?.Total ?? 0;
-
-                        const rejected =
-                            officeCounts.find(count => count.Name == "Rejected")?.Total ?? 0;
-
-                        const pending =
-                            officeCounts.find(count => count.Name == "Pending")?.Total ?? 0;
-
-                        verifierCards.push(
-                            buildReportCard(
-                                "Approved / Rejected / Pending",
-                                `${approved}/${rejected}/${pending}`,
-                                1,
-                                99,
-                                null,
-                                recordOffice.RecordOfficeId,
-                                recordOffice.Name
-                            )
-                        );
-                    }
-                }
-
-                const total =
-                    Number(item.Total ?? 0) +
-                    Number(reportData[i + 1]?.Total ?? 0);
-
-                verifierCards.push(
-                    buildReportCard(
-                        "Appl Verified & Fwd to ADC",
-                        total,
-                        applyTypeId,
-                        item.StepId,
-                        1
-                    )
-                );
-
-                // TypeId 4 normal status cards remain below Verifier,
-                // matching the existing page flow.
-                currentSection = afterVerifierCards;
-            }
-        }
-
-        // Drafted / Pending / Rejected and other normal cards.
-        if (item.IsApprove == 0) {
-            currentSection.push(
-                buildReportCard(
-                    item.Name,
-                    item.Total,
-                    applyTypeId,
-                    item.StepId,
-                    0
-                )
-            );
-        }
-
-        groupId = item.TypeId;
-    }
-
-    const sections = [
-        { title: "Initiator", cards: initiatorCards },
-        { title: "Approver", cards: approverCards },
-        { title: "Verifier", cards: verifierCards }
-    ]
-        .filter(section => section.cards.length > 0)
-        .map(section => `
-            <div class="ecms-report-level">
-                <div class="ecms-report-level-title">
-                    ${section.title}
-                </div>
-
-                <div class="ecms-card-row">
-                    ${section.cards.join("")}
-                </div>
-            </div>
-        `);
-
-    if (afterVerifierCards.length > 0) {
-        sections.push(`
-            <div class="ecms-report-level ecms-report-level-last">
-                <div class="ecms-card-row">
-                    ${afterVerifierCards.join("")}
-                </div>
-            </div>
-        `);
-    }
-
-    return sections.join("");
-}
-
 function GetCount() {
-    const requestData = {
-        "TableId": 0,
-        "UnitType": $("input[type='radio'][name=UnitTyperdi]").length > 0
-            ? parseVal($("input[type='radio'][name=UnitTyperdi]:checked").val())
-            : null,
-        "ComdId": $('#ddlCommand').length > 0
-            ? parseVal($('#ddlCommand').val())
-            : null,
-        "CorpsId": $('#ddlCorps').length > 0
-            ? parseVal($('#ddlCorps').val())
-            : null,
-        "DivId": $('#ddlDiv').length > 0
-            ? parseVal($('#ddlDiv').val())
-            : null,
-        "BdeId": $('#ddlBde').length > 0
-            ? parseVal($('#ddlBde').val())
-            : null,
-        "FmnBranchID": $('#ddlFmnBranch').length > 0
-            ? parseVal($('#ddlFmnBranch').val())
-            : null,
-        "PsoId": $('#ddlPSODte').length > 0
-            ? parseVal($('#ddlPSODte').val())
-            : null,
-        "SubDteId": $('#ddlDgSubDte').length > 0
-            ? parseVal($('#ddlDgSubDte').val())
-            : null,
-        "UnitMapId": $('#ddlUnit').length > 0
-            ? parseVal($('#ddlUnit').val())
-            : null
-    };
+    var Itemlist = "";
+    var ItemlistR = "";
+    var ItemlistA = "";
 
-    const encrypted = encryptPayloadData(
-        JSON.stringify(requestData)
-    );
+    var requestData =
+    {
+        "TableId": 0,
+        "UnitType": $("input[type='radio'][name=UnitTyperdi]").length > 0 ? parseVal($("input[type='radio'][name=UnitTyperdi]:checked").val()) : null,
+        "ComdId": $('#ddlCommand').length > 0 ? parseVal($('#ddlCommand').val()) : null,
+        "CorpsId": $('#ddlCorps').length > 0 ? parseVal($('#ddlCorps').val()) : null,
+        "DivId": $('#ddlDiv').length > 0 ? parseVal($('#ddlDiv').val()) : null,
+        "BdeId": $('#ddlBde').length > 0 ? parseVal($('#ddlBde').val()) : null,
+        "FmnBranchID": $('#ddlFmnBranch').length > 0 ? parseVal($('#ddlFmnBranch').val()) : null,
+        "PsoId": $('#ddlPSODte').length > 0 ? parseVal($('#ddlPSODte').val()) : null,
+        "SubDteId": $('#ddlDgSubDte').length > 0 ? parseVal($('#ddlDgSubDte').val()) : null,
+        "UnitMapId": $('#ddlUnit').length > 0 ? parseVal($('#ddlUnit').val()) : null
+
+    };
+    let jsonData = JSON.stringify(requestData);
+
+    let encrypted = encryptPayloadData(jsonData);
+
 
     $.ajax({
         url: '/Home/GetReportReturnCount',
         contentType: 'application/x-www-form-urlencoded',
         data: { "request": encrypted },
         type: 'POST',
-        headers: {
-            'RequestVerificationToken': globalThis.RequestVerificationToken
-        },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
-            if (response == null || response == "null") {
-                return;
-            }
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+                else {
+                    var dTOReportReturnCountOffs = response.dTOReportReturnCountOffs;
+                    var GroupId = 0;
+                    var totalaproved = 0;
 
-            if (response == InternalServerError) {
-                Swal.fire({
-                    text: errormsg
-                });
-                return;
-            }
+                    Itemlist += '<div class="seven ecms-section">';
+                    Itemlist += '<h1 class="ecms-section-title">Offrs</h1>';
+                    Itemlist += '</div>';
+                    for (var i = 0; i < dTOReportReturnCountOffs.length; i++) {
 
-            const officerData =
-                response.dTOReportReturnCountOffs || [];
+                        if (dTOReportReturnCountOffs[i].TypeId != GroupId) {
 
-            const jcoData =
-                response.dTOReportReturnCountJco || [];
+                            if (dTOReportReturnCountOffs[i].TypeId == 2) {
 
-            const recordOff =
-                response.RecordOff || [];
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
+                                Itemlist += '<div class="wrap ecms-tile">';
+                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                                Itemlist += 'Appl fwd to Approver';
+                                Itemlist += '</h4>';
+                                Total1apro = dTOReportReturnCountOffs[i + 1].Total;
+                                Total1apro = Total1apro + dTOReportReturnCountOffs[i].Total;
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count count">' + Total1apro + '</span>';
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                                Itemlist += '</div>';
+                                Itemlist += '</a></div>';
+                            }
+                            if (dTOReportReturnCountOffs[i].TypeId == 3) {
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
+                                Itemlist += '<div class="wrap ecms-tile">';
+                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                                Itemlist += 'Approved Appl (Approver Level)';
+                                Itemlist += '</h4>';
 
-            const recordoffCount =
-                response.RecordoffCount || [];
+                                Total1apro = dTOReportReturnCountOffs[i + 1].Total;
+                                Total1apro = Total1apro + dTOReportReturnCountOffs[i].Total;
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count count">' + Total1apro + '</span>';
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                                Itemlist += '</div>';
+                                Itemlist += '</a></div>';
+                            }
+                            if (dTOReportReturnCountOffs[i].TypeId == 4) {
 
-            const officerHtml = buildReportSections(
-                officerData,
-                1,
-                recordOff,
-                recordoffCount
-            );
+                                var RecordOff = response.RecordOff;
+                                var RecordoffCount = response.RecordoffCount;
 
-            const jcoHtml = buildReportSections(
-                jcoData,
-                2
-            );
+                                for (var j = 0; j < RecordOff.length; j++) {
+                                    Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6">';
+                                    Itemlist += '<a href="#"><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >99</span><span class="d-none spnRecordOfficeId" >' + RecordOff[j].RecordOfficeId + '</span>';
+                                    Itemlist += '<div class="wrap ecms-tile">';
+                                    Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                                    Itemlist += 'Approved / Rejected / Pending';
+                                    Itemlist += '</h4>';
+                                    Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                                    Itemlist += '' + RecordOff[j].Name + '';
+                                    Itemlist += '</h4>';
+                                    var counttot = 0;
+                                    var Approved = 0;
+                                    var Rejected = 0;
+                                    var Pending = 0;
+                                    for (var x = 0; x < RecordoffCount.length; x++) {
 
-            const Itemlist = `
-                <div class="ecms-personnel-card">
-                    <div class="ecms-personnel-card-title">
-                        Officers
-                    </div>
+                                        if (RecordOff[j].RecordOfficeId == RecordoffCount[x].RecordOfficeId) {
 
-                    ${officerHtml}
-                </div>
+                                            //Itemlist += '<span class="hind-font caption-12 c-dashboardInfo__count count">';
+                                            if (RecordoffCount[x].Name == "Approved")
+                                                Approved = RecordoffCount[x].Total;
+                                            else if (RecordoffCount[x].Name == "Rejected")
+                                                Rejected = RecordoffCount[x].Total;
+                                            else if (RecordoffCount[x].Name == "Pending")
+                                                Pending = RecordoffCount[x].Total;
 
-                <div class="ecms-personnel-card">
-                    <div class="ecms-personnel-card-title">
-                        JCOs / OR
-                    </div>
+                                            //Itemlist += '</span>';
+                                            counttot = 1;
+                                        }
+                                    }
+                                    if (counttot == 0) {
 
-                    ${jcoHtml}
-                </div>
-            `;
+                                    }
+                                    Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count count">';
+                                    Itemlist += '' + Approved + '/' + Rejected + '/' + Pending + '';
+                                    Itemlist += '</span>';
 
-            const recordJcoPending =
-                response.RecordJcoPending || [];
+                                    Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                                    Itemlist += '</div>';
+                                    Itemlist += '</div>';
 
-            const recordJco =
-                response.RecordJco || [];
+                                }
 
-            const recordPendingCards = recordJco.map(function (recordOffice) {
-                const pendingRecord = recordJcoPending.find(
-                    item => item.RecordOfficeId == recordOffice.RecordOfficeId
-                );
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
 
-                return buildReportCard(
-                    recordOffice.Name,
-                    pendingRecord?.Total ?? 0,
-                    recordOffice.RecordOfficeId,
-                    pendingRecord ? 100 : 0,
-                    null
-                );
-            });
+                                Itemlist += '<div class="wrap ecms-tile">';
+                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                                Itemlist += 'Appl Verified & Fwd to ADC';
+                                Itemlist += '</h4>';
 
-            const ItemlistR = `
-                <div class="ecms-personnel-card">
-                    <div class="ecms-personnel-card-title">
-                        Record Office Pending
-                    </div>
+                                Total1apro = dTOReportReturnCountOffs[i + 1].Total;
+                                Total1apro = Total1apro + dTOReportReturnCountOffs[i].Total;
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count count">' + Total1apro + '</span>';
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                                Itemlist += '</div>';
+                                Itemlist += '</a></div>';
+                            }
+                            Itemlist += '</div>';
+                            Itemlist += '<hr>';
+                            Itemlist += '<div class="row align-items-stretch">';
 
-                    <div class="ecms-report-level ecms-report-level-last">
-                        <div class="ecms-card-row">
-                            ${recordPendingCards.join("")}
-                        </div>
-                    </div>
-                </div>
-            `;
 
-            const ItemlistA = "";
+                        }
 
-            $("#countlistreport").html(Itemlist);
-            $("#RecordOfficeCountPendding").html(ItemlistR);
-            $("#RecordOfficeCountApprove").html(ItemlistA);
+                        if (dTOReportReturnCountOffs[i].IsApprove == 0) {
+                            Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">0</span><span class="d-none applyTypeId">1</span><span class="d-none spnStepId" >' + dTOReportReturnCountOffs[i].StepId + '</span>';
+                            Itemlist += '<div class="wrap ecms-tile">';
+                            Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                            Itemlist += '' + dTOReportReturnCountOffs[i].Name + '';
+                            Itemlist += '</h4>';
 
-            // Delegated event is required because report cards are generated dynamically.
-            $("body")
-                .off("click.ecmsReportCards", ".c-dashboardInfo")
-                .on("click.ecmsReportCards", ".c-dashboardInfo", function (event) {
-                    event.preventDefault();
+                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count count">' + dTOReportReturnCountOffs[i].Total + '</span>';
 
-                    const $card = $(this);
+                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                            Itemlist += '</div>';
+                            Itemlist += '</a></div>';
+                        }
 
-                    const stepId =
-                        $card.find(".spnStepId").first().text().trim();
-
-                    const applyTypeId =
-                        $card.find(".applyTypeId").first().text().trim();
-
-                    const isApproveElement =
-                        $card.find(".IsApproveId").first();
-
-                    const isApproveId = isApproveElement.length > 0
-                        ? isApproveElement.text().trim()
-                        : undefined;
-
-                    const recordOfficeElement =
-                        $card.find(".spnRecordOfficeId").first();
-
-                    const recordOfficeId = recordOfficeElement.length > 0
-                        ? recordOfficeElement.text().trim()
-                        : undefined;
-
-                    // JCO/OR - Pending at Verifier Level:
-                    // show Record Office Pending cards.
-                    if (
-                        isApproveId == "0" &&
-                        stepId == "3" &&
-                        applyTypeId == "2"
-                    ) {
-                        $("#RecordOfficeCountPendding").removeClass("d-none");
-                        $(".RecordCount").addClass("d-none");
-                        return;
+                        GroupId = dTOReportReturnCountOffs[i].TypeId;
                     }
 
-                    const reportTitle = $card
-                        .find(".c-dashboardInfo__title")
-                        .first()
-                        .text()
-                        .trim();
+                    Itemlist += '<div class="seven ecms-section">';
+                    Itemlist += '<h1 class="ecms-section-title">JCOs/OR</h1>';
+                    Itemlist += '</div>';
+                    let dTOReportReturnCountJco = response.dTOReportReturnCountJco;
 
-                    $("#lblRepotReturnHistory")
-                        .text(reportTitle || "Application History");
+                    for (var i = 0; i < dTOReportReturnCountJco.length; i++) {
+                        var Total1apro = 0
+                        if (dTOReportReturnCountJco[i].TypeId != GroupId) {
 
-                    // Record Office Approved / Rejected / Pending.
-                    if (stepId == "99") {
-                        GetReportReturnHistory(
-                            stepId,
-                            recordOfficeId,
-                            isApproveId
-                        );
-                        return;
+                            if (dTOReportReturnCountJco[i].TypeId == 2) {
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
+                                Itemlist += '<div class="wrap ecms-tile">';
+                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                                Itemlist += 'Appl fwd to Approver';
+                                Itemlist += '</h4>';
+                                Total1apro = dTOReportReturnCountJco[i + 1].Total;
+                                Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count count">' + Total1apro + '</span>';
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                                Itemlist += '</div>';
+                                Itemlist += '</a></div>';
+                            }
+                            else if (dTOReportReturnCountJco[i].TypeId == 3) {
+
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
+                                Itemlist += '<div class="wrap ecms-tile">';
+                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                                Itemlist += 'Approved Appl (Approver Level)';
+                                Itemlist += '</h4>';
+                                Total1apro = dTOReportReturnCountJco[i + 1].Total;
+                                Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count count">' + Total1apro + '</span>';
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                                Itemlist += '</div>';
+                                Itemlist += '</a></div>';
+                            }
+                            if (dTOReportReturnCountJco[i].TypeId == 4) {
+
+                                Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">1</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
+                                Itemlist += '<div class="wrap ecms-tile">';
+                                Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                                Itemlist += 'Appl Verified & Fwd to ADC';
+                                Itemlist += '</h4>';
+
+                                Total1apro = dTOReportReturnCountJco[i + 1].Total;
+                                Total1apro = Total1apro + dTOReportReturnCountJco[i].Total;
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count count">' + Total1apro + '</span>';
+                                Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                                Itemlist += '</div>';
+                                Itemlist += '</a></div>';
+                            }
+                            Itemlist += '</div>';
+                            Itemlist += '<hr>';
+                            Itemlist += '<div class="row align-items-stretch">';
+
+
+                        }
+                        if (dTOReportReturnCountJco[i].IsApprove == 0) {
+                            Itemlist += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none IsApproveId">0</span><span class="d-none applyTypeId">2</span><span class="d-none spnStepId" >' + dTOReportReturnCountJco[i].StepId + '</span>';
+                            Itemlist += '<div class="wrap ecms-tile">';
+                            Itemlist += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                            Itemlist += '' + dTOReportReturnCountJco[i].Name + '';
+                            Itemlist += '</h4>';
+
+                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__count count">' + dTOReportReturnCountJco[i].Total + '</span>';
+
+                            Itemlist += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                            Itemlist += '</div>';
+                            Itemlist += '</a></div>';
+                        }
+                        GroupId = dTOReportReturnCountJco[i].TypeId;
                     }
 
-                    // Normal report card.
-                    GetReportReturnHistory(
-                        stepId,
-                        applyTypeId,
-                        isApproveId
-                    );
-                });
+                    Itemlist += '</div>';
+
+
+                    ///////////////////////////Add////////////////////////
+
+                    ItemlistR += '<div class="seven ecms-section">';
+                    ItemlistR += '<h1 class="ecms-section-title">Record Office Pending</h1>';
+                    ItemlistR += '</div>';
+                    ItemlistR += '<div class="row align-items-stretch">';
+                    var RecordJcoPending = response.RecordJcoPending;
+                    var RecordJco = response.RecordJco;
+                    var countpending = 0;
+                    for (var j = 0; j < RecordJco.length; j++) {
+                        countpending = 0;
+                        ItemlistR += '<div class="c-dashboardInfo col-lg-1 col-sm-6"><a href="#"><span class="d-none applyTypeId">' + RecordJco[j].RecordOfficeId + '</span>';
+                        ItemlistR += '<div class="wrap ecms-tile">';
+                        ItemlistR += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                        ItemlistR += '' + RecordJco[j].Name + '';
+                        ItemlistR += '</h4>';
+                        for (var Z = 0; Z < RecordJcoPending.length; Z++) {
+                            if (RecordJcoPending[Z].RecordOfficeId == RecordJco[j].RecordOfficeId) {
+                                ItemlistR += ' <span class="d-none spnStepId">100</span><span class="hind-font caption-12 c-dashboardInfo__count count">' + RecordJcoPending[Z].Total + '</span>';
+                                countpending = 1
+                            }
+                        }
+                        if (countpending == 0) {
+                            ItemlistR += ' <span class="d-none spnStepId" >0</span><span class="hind-font caption-12 c-dashboardInfo__count count">0</span>';
+
+                        }
+                        ItemlistR += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                        ItemlistR += '</div>';
+                        ItemlistR += '</a></div>';
+
+                    }
+                    ItemlistR += '</div>';
+
+
+
+                    //ItemlistA += '<div class="seven ecms-section">';
+                    //ItemlistA += '<h1>Record Office Reject</h1>';
+                    //ItemlistA += '</div>';
+                    //ItemlistA += '<div class="row align-items-stretch">';
+                    //var RecordJcoCountApproved = response.RecordJcoCountApproved;
+                    //for (var j = 0; j < RecordJcoCountApproved.length; j++) {
+                    //    ItemlistA += '<div class="c-dashboardInfo col-lg-1 col-sm-6">';
+                    //    ItemlistA += '<div class="wrap ecms-tile">';
+                    //    ItemlistA += '<h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">';
+                    //    ItemlistA += '' + RecordJcoCountApproved[j].Name + '';
+                    //    ItemlistA += '</h4>';
+                    //    ItemlistA += ' <span class="hind-font caption-12 c-dashboardInfo__count count">' + RecordJcoCountApproved[j].Total + '</span>';
+                    //    ItemlistA += ' <span class="hind-font caption-12 c-dashboardInfo__subInfo"></span>';
+                    //    ItemlistA += '</div>';
+                    //    ItemlistA += '</div>';
+
+
+                    //}
+                    ItemlistA += '</div>';
+
+
+                    $("#countlistreport").html(Itemlist);
+                    $("#RecordOfficeCountPendding").html(ItemlistR);
+                    $("#RecordOfficeCountApprove").html(ItemlistA);
+
+                    $("body")
+                        .off("click.ecmsReportCards", ".c-dashboardInfo")
+                        .on("click.ecmsReportCards", ".c-dashboardInfo", function (event) {
+                            event.preventDefault();
+
+                            // alert($(this).closest("div").find(".spnStepId").html())
+                            if ($(this).closest("div").find(".IsApproveId").html() == "0" && $(this).closest("div").find(".spnStepId").html() == "3" && $(this).closest("div").find(".applyTypeId").html() == "2") {
+
+                                $("#RecordOfficeCountPendding").removeClass("d-none");
+                                $(".RecordCount").addClass("d-none");
+                            }
+                            //else if ($(this).closest("div").find(".spnStepId").html() == "8" && $(this).closest("div").find(".applyTypeId").html() == "2") {
+
+                            //    $("#RecordOfficeCountApprove").removeClass("d-none");
+                            //    $(".RecordCount").addClass("d-none");
+                            //}
+                            //else
+                            else if ($(this).closest("div").find(".spnStepId").html() == "99") {
+                                //  alert($(this).closest("div").find(".spnRecordOfficeId").html())
+                                const reportTitle = $(this).find(".c-dashboardInfo__title").first().text().trim();
+                                $("#lblRepotReturnHistory").text(reportTitle || "Application History");
+                                GetReportReturnHistory($(this).closest("div").find(".spnStepId").html(), $(this).closest("div").find(".spnRecordOfficeId").html(), $(this).closest("div").find(".IsApproveId").html());
+
+                            }
+                            else {
+                                //  alert($(this).closest("div").find(".spnStepId").html()+'-' + $(this).closest("div").find(".IsApproveId").html());
+
+
+                                const reportTitle = $(this).find(".c-dashboardInfo__title").first().text().trim();
+                                $("#lblRepotReturnHistory").text(reportTitle || "Application History");
+
+                                GetReportReturnHistory($(this).closest("div").find(".spnStepId").html(), $(this).closest("div").find(".applyTypeId").html(), $(this).closest("div").find(".IsApproveId").html());
+                            }
+                        });
+                }
+
+
+            }
+            else {
+
+            }
         },
-
-        error: function () {
+        error: function (result) {
             Swal.fire({
                 text: errormsg002
             });
@@ -1151,18 +1034,17 @@ async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, B
             return;
         }
 
-        const unitOptions = IsOnly
-            ? result
-                .filter(item => item.UnitId == sectid)
-                .map(item => `<option value="${item.UnitId}">${item.UnitName}</option>`)
-            : [
-                `<option value=${null}>All</option>`,
-                ...result.map(
-                    item => `<option value="${item.UnitId}">${item.UnitName}</option>`
-                )
-            ];
+        let listItem = `<option value=${null}>All</option>`;
 
-        $("#" + ddl).html(unitOptions.join(""));
+        for (const item of result) {
+            if (IsOnly && item.UnitId == sectid) {
+                listItem += `<option value="${item.UnitId}">${item.UnitName}</option>`;
+            } else if (!IsOnly) {
+                listItem += `<option value="${item.UnitId}">${item.UnitName}</option>`;
+            }
+        }
+
+        $("#" + ddl).html(listItem);
         if (sectid !== '') {
             $("#" + ddl).val(sectid);
         }
@@ -1204,18 +1086,17 @@ async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
             return;
         }
 
-        const masterOptions = IsOnly
-            ? data
-                .filter(item => item.Id == sectid)
-                .map(item => `<option value="${item.Id}">${item.Name}</option>`)
-            : [
-                `<option value=${null}>All</option>`,
-                ...data.map(
-                    item => `<option value="${item.Id}">${item.Name}</option>`
-                )
-            ];
+        let listItemddl = IsOnly ? '' : `<option value=${null}>All</option>`;
 
-        $("#" + ddl).html(masterOptions.join(""));
+        for (let item of data) {
+            if (IsOnly && item.Id == sectid) {
+                listItemddl += `<option value="${item.Id}">${item.Name}</option>`;
+            } else if (!IsOnly) {
+                listItemddl += `<option value="${item.Id}">${item.Name}</option>`;
+            }
+        }
+
+        $("#" + ddl).html(listItemddl);
         if (sectid !== '') {
             $("#" + ddl).val(sectid);
         }
@@ -1258,18 +1139,17 @@ async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsI
             return;
         }
 
-        const masterOptions = IsOnly
-            ? data
-                .filter(item => item.Id == sectid)
-                .map(item => `<option value="${item.Id}">${item.Name}</option>`)
-            : [
-                `<option value=${null}>All</option>`,
-                ...data.map(
-                    item => `<option value="${item.Id}">${item.Name}</option>`
-                )
-            ];
+        let listItemddl = IsOnly ? '' : `<option value=${null}>All</option>`;
 
-        $("#" + ddl).html(masterOptions.join(""));
+        for (let item of data) {
+            if (IsOnly && item.Id == sectid) {
+                listItemddl += `<option value="${item.Id}">${item.Name}</option>`;
+            } else if (!IsOnly) {
+                listItemddl += `<option value="${item.Id}">${item.Name}</option>`;
+            }
+        }
+
+        $("#" + ddl).html(listItemddl);
         if (sectid !== '') {
             $("#" + ddl).val(sectid);
         }

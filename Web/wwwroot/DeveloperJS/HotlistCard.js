@@ -86,7 +86,6 @@ function BindData() {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
-                $("#lblTotal").html(result.recordsTotal);
                 callback(result); // Sends data to DataTables
 
             } catch (error) {
