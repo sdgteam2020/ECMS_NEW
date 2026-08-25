@@ -1052,66 +1052,84 @@ namespace Web.Controllers
         /// <param name="dTORecord">The record history data to retrieve history for.</param>
         /// <returns>A JSON response containing the record history or an error message.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetRecordHistory([FromBody] DTORecordHistory dTORecord)
+        public async Task<IActionResult> GetRecordHistory([FromBody] EncryptedRequest Data)
         {
+            List<DTOReportReturnListResponse> dTOApps = new List<DTOReportReturnListResponse>();
+
+            var responseData = new DTODataTablesResponse<DTOReportReturnListResponse>
+            {
+                draw = 1,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
+                data = dTOApps    // Empty list of data
+            };
+
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
+            {
+                responseData.Message = "Session data is unavailable or has expired.";
+                return Json(responseData);
+            }
+
+            DTORecordHistory dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTORecordHistory>(Data.Data, sessionData.Salt);
+
+            if (dTORecord == null)
+            {
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
+                return Json(responseData);
+            }
+
             try
             {
-                // Retrieve the current user's ID from the claims
-                int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var user = await userManager.FindByIdAsync(userId.ToString());
+                // Retrieve the record history based on the provided data
 
-                // Initialize the DTO session object and retrieve session data
-                DtoSession? dtoSession = new DtoSession();
-                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                ModelState.Clear();
+                if (TryValidateModel(dTORecord))
                 {
-                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                }
+                    // Retrieve the current user's ID from the claims
+                    int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var user = await userManager.FindByIdAsync(userId.ToString());
 
-                // Retrieve the MapUnitId from the session data
-                int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
-                if (MapUnitId == null)
-                {
-                    return BadRequest(new { message = "Session expired." });
-                }
+                    int MapUnitId = sessionData.UnitId;
 
-                // Fetch the map unit details based on the MapUnitId
-                DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
+                    // Fetch the map unit details based on the MapUnitId
+                    DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId(MapUnitId);
 
-                // Retrieve the user's claims using UserManager
-                var UserClaims = await userManager.GetClaimsAsync(user);
+                    // Retrieve the user's claims using UserManager
+                    var UserClaims = await userManager.GetClaimsAsync(user);
 
-                // Conditional logic based on the user's claims to modify the request data
-                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
-                {
-                    // If user has "Army Level Reports" claim, do not modify the request data
-                }
-                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Fmn Level Reports"))
-                {
-                    dTORecord.Data.UnitType = dTOMap.UnitType;
-
-                    // Modify the request data based on unit type
-                    if (dTOMap.UnitType == 1)
+                    // Conditional logic based on the user's claims to modify the request data
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
                     {
-                        dTORecord.Data.ComdId = (byte?)dTOMap.ComdId;
+                        // If user has "Army Level Reports" claim, do not modify the request data
                     }
-                    else if (dTOMap.UnitType == 2)
-                    {
-                        dTORecord.Data.ComdId = (byte?)dTOMap.ComdId;
-                        dTORecord.Data.FmnBranchID = (byte?)dTOMap.FmnBranchID;
-                    }
-                    else if (dTOMap.UnitType == 3)
-                    {
-                        dTORecord.Data.PsoId = (byte?)dTOMap.PsoId;
-                        dTORecord.Data.SubDteId = (byte?)dTOMap.SubDteId;
-                    }
-                }
-                else
-                {
-                    // Modify request data based on unit type
-                    if (MapUnitId != null)
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Fmn Level Reports"))
                     {
                         dTORecord.Data.UnitType = dTOMap.UnitType;
-                        dTORecord.Data.UnitMapId = (int)MapUnitId;
+
+                        // Modify the request data based on unit type
+                        if (dTOMap.UnitType == 1)
+                        {
+                            dTORecord.Data.ComdId = (byte?)dTOMap.ComdId;
+                        }
+                        else if (dTOMap.UnitType == 2)
+                        {
+                            dTORecord.Data.ComdId = (byte?)dTOMap.ComdId;
+                            dTORecord.Data.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                        }
+                        else if (dTOMap.UnitType == 3)
+                        {
+                            dTORecord.Data.PsoId = (byte?)dTOMap.PsoId;
+                            dTORecord.Data.SubDteId = (byte?)dTOMap.SubDteId;
+                        }
+                    }
+                    else
+                    {
+                        // Modify request data based on unit type
+                        dTORecord.Data.UnitType = dTOMap.UnitType;
+                        dTORecord.Data.UnitMapId = MapUnitId;
                         dTORecord.Data.ComdId = (byte?)dTOMap.ComdId;
                         dTORecord.Data.CorpsId = (byte?)dTOMap.CorpsId;
                         dTORecord.Data.DivId = (byte?)dTOMap.DivId;
@@ -1120,19 +1138,105 @@ namespace Web.Controllers
                         dTORecord.Data.PsoId = (byte?)dTOMap.PsoId;
                         dTORecord.Data.SubDteId = (byte?)dTOMap.SubDteId;
                     }
+                    var ret = await _reportReturnBL.GetRecordHistory(dTORecord);
+                    return Json(ret);
                 }
-
-
-                // Retrieve the record history based on the provided data
-                var ret = await _reportReturnBL.GetRecordHistory(dTORecord);
-                return Json(ret);
+                else
+                {
+                    responseData.Result = false;
+                    responseData.Message = "Invalid Input";
+                    return Json(responseData);
+                }
             }
             catch (Exception ex)
             {
                 // Log any exceptions and return an internal server error
                 _logger.LogError(1001, ex, "Home->GetRecordHistory");
-                return Json(KeyConstants.InternalServerError);
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
+                // Return JSON with empty data
+                return Json(responseData);
             }
+
+            //try
+            //{
+            //    // Retrieve the current user's ID from the claims
+            //    int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //    var user = await userManager.FindByIdAsync(userId.ToString());
+
+            //    // Initialize the DTO session object and retrieve session data
+            //    DtoSession? dtoSession = new DtoSession();
+            //    if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            //    {
+            //        dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            //    }
+
+            //    // Retrieve the MapUnitId from the session data
+            //    int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
+            //    if (MapUnitId == null)
+            //    {
+            //        return BadRequest(new { message = "Session expired." });
+            //    }
+
+            //    // Fetch the map unit details based on the MapUnitId
+            //    DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
+
+            //    // Retrieve the user's claims using UserManager
+            //    var UserClaims = await userManager.GetClaimsAsync(user);
+
+            //    // Conditional logic based on the user's claims to modify the request data
+            //    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
+            //    {
+            //        // If user has "Army Level Reports" claim, do not modify the request data
+            //    }
+            //    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Fmn Level Reports"))
+            //    {
+            //        dTORecord.Data.UnitType = dTOMap.UnitType;
+
+            //        // Modify the request data based on unit type
+            //        if (dTOMap.UnitType == 1)
+            //        {
+            //            dTORecord.Data.ComdId = (byte?)dTOMap.ComdId;
+            //        }
+            //        else if (dTOMap.UnitType == 2)
+            //        {
+            //            dTORecord.Data.ComdId = (byte?)dTOMap.ComdId;
+            //            dTORecord.Data.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+            //        }
+            //        else if (dTOMap.UnitType == 3)
+            //        {
+            //            dTORecord.Data.PsoId = (byte?)dTOMap.PsoId;
+            //            dTORecord.Data.SubDteId = (byte?)dTOMap.SubDteId;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        // Modify request data based on unit type
+            //        if (MapUnitId != null)
+            //        {
+            //            dTORecord.Data.UnitType = dTOMap.UnitType;
+            //            dTORecord.Data.UnitMapId = (int)MapUnitId;
+            //            dTORecord.Data.ComdId = (byte?)dTOMap.ComdId;
+            //            dTORecord.Data.CorpsId = (byte?)dTOMap.CorpsId;
+            //            dTORecord.Data.DivId = (byte?)dTOMap.DivId;
+            //            dTORecord.Data.BdeId = (byte?)dTOMap.BdeId;
+            //            dTORecord.Data.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+            //            dTORecord.Data.PsoId = (byte?)dTOMap.PsoId;
+            //            dTORecord.Data.SubDteId = (byte?)dTOMap.SubDteId;
+            //        }
+            //    }
+
+
+            //    // Retrieve the record history based on the provided data
+            //    var ret = await _reportReturnBL.GetRecordHistory(dTORecord);
+            //    return Json(ret);
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Log any exceptions and return an internal server error
+            //    _logger.LogError(1001, ex, "Home->GetRecordHistory");
+            //    return Json(KeyConstants.InternalServerError);
+            //}
         }
 
         #endregion

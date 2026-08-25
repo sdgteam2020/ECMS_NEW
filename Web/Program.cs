@@ -1,4 +1,4 @@
-using BusinessLogicsLayer;
+﻿using BusinessLogicsLayer;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Service;
 using DataAccessLayer;
@@ -24,6 +24,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
+using Microsoft.AspNetCore.ResponseCompression;
 using ApplicationUser = DataTransferObject.Domain.Identitytable.ApplicationUser;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -178,9 +179,24 @@ builder.Services.Configure<CookieTempDataProviderOptions>(options =>
 
 builder.Services.AddAuthorizationPolicies();
 
+/*
+ * Your proper fix is to keep response compression enabled, but do not compress HTML while running in Development, 
+ * because Visual Studio Browser Refresh/Hot Reload injects code into the HTML response.
+ * Microsoft specifically documents that browser-refresh injection can conflict with response compression.
+ */
 builder.Services.AddResponseCompression(options =>
 {
     options.EnableForHttps = true;
+
+    if (builder.Environment.IsDevelopment())
+    {
+        options.MimeTypes = ResponseCompressionDefaults.MimeTypes
+            .Where(mimeType =>
+                !string.Equals(
+                    mimeType,
+                    "text/html",
+                    StringComparison.OrdinalIgnoreCase));
+    }
 });
 
 // When the code is published on IAM, these ConfigureKestrel code are uncommented.
@@ -290,8 +306,7 @@ app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 //------------------- End Instructions----------------------
 
-// ONLY ONE UseResponseCompression()
-app.UseResponseCompression();
+app.UseResponseCompression();  // ✅ only here
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -299,10 +314,12 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRequestLocalization();
+
 app.UseRouting();
 app.UseSession(); // MUST be before Authentication & Authorization
 
 app.UseCors("CorsPolicy");
+
 app.UseAuthentication();
 app.UseAuthorization();
 

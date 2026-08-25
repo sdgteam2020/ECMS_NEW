@@ -413,6 +413,7 @@ namespace DataAccessLayer
         /// <returns>Returns a paginated list of DTOReportReturnListResponse with sorted and filtered results.</returns>
         public async Task<DTODataTablesResponse<DTOReportReturnListResponse>> GetRecordHistory(DTORecordHistory dTORecord)
         {
+
             // Map allowed sort columns to DB fields
             var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -426,17 +427,21 @@ namespace DataAccessLayer
                 : "ServiceNo";
 
             var sortOrder = dTORecord.sortDirection;
-
+            
+            string selectColumns = "";
+            string fromJoin = "";
+            string fromJoinCount ="";
             string query = "";
             string wherequery = "";
             if (dTORecord.StepId != 99)
             {
                 if(dTORecord.StepId ==100)
                 {
-                    query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName, 
-                            aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, 
-                            aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status
-                            ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   
+                    selectColumns = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName, 
+                                    aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, 
+                                    aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status
+                                    ,fwd.UpdatedOn,fwdsts.Name StatusName";
+                    query = @"from MStepCounterStep Mstep   
                             inner join TrnStepCounter step on Mstep.StepId=step.StepId  
                             inner join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  
                             inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  

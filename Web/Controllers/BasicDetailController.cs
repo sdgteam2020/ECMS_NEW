@@ -617,7 +617,7 @@ namespace Web.Controllers
                     return RedirectToAction("ContactUs", "Home");
                 }
             }
-            catch (FormatException ex)
+            catch (FormatException ex) 
             {
                 // Handle Base64 decoding or int parsing errors
                 _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);

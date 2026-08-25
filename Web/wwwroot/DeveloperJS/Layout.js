@@ -377,11 +377,15 @@ function GetNotification() {
 
             if (response && response.TotalCount > 0) {
 
+                $("#Totalnotification").removeClass("d-none");
+
                 if (response.TotalCount > 99) {
                     $("#Totalnotification").html("99+");
+
                 }
                 else {
                     $("#Totalnotification").html(response.TotalCount);
+                    
                 }
 
                 // Header
@@ -428,6 +432,7 @@ function GetNotification() {
 
             }
             else {
+                $("#Totalnotification").addClass("d-none");
                 $("#Totalnotification").html("0");
                 $(".preview-list").html(`
                         <h6 class="dropdown-header text-uppercase text-muted fw-bold">Pending Action</h6>

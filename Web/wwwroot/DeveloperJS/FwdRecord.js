@@ -552,12 +552,12 @@ $(function () {
         /*  $("#txtFrejectedRemarks").val($("#txtFrejectedRemarks").val() + "" + photo + "" + sing);*/
         Swal.fire({
             title: 'Are you sure?',
-            text: "You won't be Forward!",
+            text: "Appl will be rejected!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Forward it!'
+            confirmButtonText: 'Reject it!'
         }).then((result) => {
             if (result.isConfirmed) {
                 var spnRequestId = $("#spnCurrentspnRequestId").html();

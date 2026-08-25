@@ -656,42 +656,57 @@ namespace Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> GetAllAppCloseList(DTODataTableRequestForAppCloseList dTORecord)
+        public async Task<IActionResult> GetAllAppCloseList([FromBody] EncryptedRequest Data) 
         {
-            // If an exception occurs, return an empty response to avoid breaking the UI
             List<DTOAppClosedListResponse> dTOApps = new List<DTOAppClosedListResponse>();
+
             var responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
             {
-                draw = dTORecord.Draw,
-                recordsTotal = 0,
-                recordsFiltered = 0,
-                data = dTOApps
+                draw = 1,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
+                data = dTOApps    // Empty list of data
             };
+
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
+            {
+                responseData.Message = "Session data is unavailable or has expired.";
+                return Json(responseData);
+            }
+
+            DTODataTableRequestForAppCloseList dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTODataTableRequestForAppCloseList>(Data.Data, sessionData.Salt);
+
+            if (dTORecord == null)
+            {
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
+                return Json(responseData);
+            }
+
             try
             {
-                DtoSession? dtoSession = new DtoSession();
-                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-                {
-                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                }
-                dTORecord.UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
-
-                if (ModelState.IsValid)
+                dTORecord.UnitMapId = sessionData.UnitId;
+                ModelState.Clear();
+                if (TryValidateModel(dTORecord))
                 {
                     var allrecord = await _iPostingBL.GetAppClosedList(dTORecord);
                     return Json(allrecord);
                 }
                 else
                 {
+                    responseData.Result = false;
+                    responseData.Message = "Invalid Input";
                     return Json(responseData);
                 }
-
             }
             catch (Exception ex)
             {
                 // Log the exception for debugging and tracking
                 _logger.LogError(1001, ex, "Posting->GetAllAppCloseList");
-
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
                 // Return JSON with empty data
                 return Json(responseData);
             }

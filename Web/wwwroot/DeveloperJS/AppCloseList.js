@@ -58,28 +58,30 @@ function BindData(applyFor) {
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
                 apply: applyFor
             };
+            let encryptedPayload = "";
+            if (requestData) {
+                const jsonData = JSON.stringify(requestData);
+                encryptedPayload = encryptPayloadData(jsonData);
+
+            }
             try {
                 let response = await fetch("/Posting/GetAllAppCloseList", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Content-Type": "application/json",
                         'RequestVerificationToken': globalThis.RequestVerificationToken
                     },
-                    body: new URLSearchParams(requestData).toString()
+                    body: JSON.stringify({ data: encryptedPayload })
                 });
 
-                if (!response.ok) {
-                    let userMessage = "Something went wrong while connecting to the server. Please try again later.";
-
-                    // Optionally append technical info for logs or developers
-                    console.error(`HTTP error! Status: ${response.status}`);
-
-                    throw new Error(userMessage);
-                }
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.Message}`);
 
                 let result = await response.json();
 
-                $("#lblTotal").html(result.recordsTotal);
+                if (result.Result == false) {
+                    toastr.error("Failed to Fetch Date: " + response.Message);
+                }
+
                 callback(result); // Sends data to DataTables
 
             } catch (error) {

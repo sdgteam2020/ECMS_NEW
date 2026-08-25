@@ -795,6 +795,12 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                             ...userdata
                         }
                     };
+                    let encryptedPayload = "";
+                    if (requestData) {
+                        const jsonData = JSON.stringify(requestData);
+                        encryptedPayload = encryptPayloadData(jsonData);
+
+                    }
                     try {
                         let response = await fetch("/Home/GetRecordHistory", {
                             method: "POST",
@@ -802,12 +808,16 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                                 "Content-Type": "application/json",
                                 'RequestVerificationToken': globalThis.RequestVerificationToken
                             },
-                            body: JSON.stringify(requestData)
+                            body: JSON.stringify({ data: encryptedPayload })
                         });
-                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.Message}`);
 
                         let result = await response.json();
-                        $("#lblTotal").html(result.recordsTotal);
+
+                        if (result.Result == false) {
+                            toastr.error("Failed to Fetch Date: " + response.Message);
+                        }
+
                         callback(result); // Sends data to DataTables
 
                     } catch (error) {
