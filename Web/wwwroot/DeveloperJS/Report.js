@@ -602,7 +602,10 @@ function GetReportReturnHistory(Choice) {
 
 
                     let result = await response.json();
-                    //$("#lblTotal").html(result.recordsTotal);
+
+                    if (result.Result == false) {
+                        toastr.error("Failed to Fetch Date: " + response.Message);
+                    }
                     callback(result); // Sends data to DataTables
 
                 } catch (error) {
