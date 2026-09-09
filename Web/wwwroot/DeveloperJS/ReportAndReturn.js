@@ -815,7 +815,7 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                         let result = await response.json();
 
                         if (result.Result == false) {
-                            toastr.error("Failed to Fetch Date: " + response.Message);
+                            toastr.error("Failed to Fetch Date: " + result.Message);
                         }
 
                         callback(result); // Sends data to DataTables

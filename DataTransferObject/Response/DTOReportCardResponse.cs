@@ -2,7 +2,6 @@
 {
     public class DTOReportCardResponse
     {
-        public int TotalFilteredRecords { get; set; }
         public int? RequestId { get; set; }
         public string? NameAsPerRecord { get; set; }
         public string? Name { get; set; }

@@ -84,6 +84,9 @@ namespace DataTransferObject.Requests
         
         [RegularExpression(@"^[0-9\/]*$", ErrorMessage = "Only numbers and / are allowed.")]
         public string? MonthYear { get; set; }
+
+        public DateTime? monthStart { get; set; }
+        public DateTime? monthEnd { get; set; }
     }
     public class DTODataTablesRequestFor_BasicDetails_Index : DTODataTablesRequest
     {

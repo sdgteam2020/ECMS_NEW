@@ -11,7 +11,7 @@ namespace BusinessLogicsLayer.ReportReturn
         {
             _IReportReturnDB = reportReturnDB;
         }
-        public async Task<DTOReportCardDashboardCountResponse> GetReportCardDashboardCount(DTOMHierarchyRequest dTO)
+        public async Task<DTOGenericResponse<DTOReportCardDashboardCountResponse>> GetReportCardDashboardCount(DTOMHierarchyRequest dTO)
         {
             return await _IReportReturnDB.GetReportCardDashboardCount(dTO);
         }

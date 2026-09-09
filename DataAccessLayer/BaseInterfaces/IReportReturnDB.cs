@@ -5,7 +5,7 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IReportReturnDB
     {
-        public Task<DTOReportCardDashboardCountResponse> GetReportCardDashboardCount(DTOMHierarchyRequest dTO);
+        public Task<DTOGenericResponse<DTOReportCardDashboardCountResponse>> GetReportCardDashboardCount(DTOMHierarchyRequest dTO);
         public Task<DTODataTablesResponse<DTOReportCardResponse>> GetReportCardData(DTODataTablesRequestForReportCard dTO);
         public Task<List<DTOReportReturnCount>> GetMstepCount(DTOMHierarchyRequest Data, int ApplyForId);
   
