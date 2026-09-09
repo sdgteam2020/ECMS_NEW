@@ -21,9 +21,9 @@ body.ecms-report-card-page {
 
 .ecms-card-movement-page {
     position: relative;
-    min-height: calc(100vh - 255px);
-    height: calc(100vh - 255px);
-    padding: 12px 18px 46px;
+    min-height: calc(100vh - 225px);
+    height: calc(100vh - 225px);
+    padding: 12px 18px 10px;
     overflow: hidden;
     background: linear-gradient(90deg, rgba(5, 22, 62, 0.86), rgba(20, 70, 154, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat;
 }
@@ -46,8 +46,8 @@ body.ecms-report-card-page {
 
 .ecms-card-movement-shell {
     width: 100% !important;
-    height: calc(100vh - 276px) !important;
-    max-height: calc(100vh - 276px) !important;
+    height: calc(100vh - 25px) !important;
+    max-height: calc(100vh - 225px) !important;
     margin: 0 auto !important;
     padding: 12px !important;
     border: 1px solid rgba(255,255,255,0.70) !important;
@@ -224,7 +224,6 @@ body.ecms-report-card-page {
 .ecms-card-movement-page .seven,
 .ecms-card-movement-page .ecms-section-title {
     width: 100% !important;
-    margin: 8px 0 0 !important;
 }
 
     .ecms-card-movement-page .seven h1,

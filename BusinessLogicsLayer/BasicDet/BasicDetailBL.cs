@@ -736,6 +736,11 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetClosedHistoryByRequestId(RequestId);
         }
+        public async Task<DTOGetHistoryForPopupResponse> GetHistoryForPopup(string ServiceNo)
+        {
+             return await _iBasicDetailDB.GetHistoryForPopup(ServiceNo);
+
+        }
         public string MaskAadhaar(string? aadhaarNumber)
         {
             if (string.IsNullOrWhiteSpace(aadhaarNumber))

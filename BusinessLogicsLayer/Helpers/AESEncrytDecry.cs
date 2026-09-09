@@ -83,17 +83,29 @@ namespace BusinessLogicsLayer.Helpers
         {
             try
             {
-                string json = AESEncrytDecry.DecryptAES(cipherText, key);
+                string decryptedValue = AESEncrytDecry.DecryptAES(cipherText, key);
 
-                if (string.IsNullOrEmpty(json))
+                if (string.IsNullOrWhiteSpace(decryptedValue))
+                {
                     return default;
+                }
 
-                return await Task.FromResult(JsonConvert.DeserializeObject<T>(json));
+                if (typeof(T) == typeof(string))
+                {
+                    return await Task.FromResult(
+                        (T)(object)decryptedValue
+                    );
+                }
+
+                return await Task.FromResult(
+                    JsonConvert.DeserializeObject<T>(decryptedValue)
+                );
             }
-            catch
+            catch (Exception)
             {
                 return default;
             }
+
         }
 
     }

@@ -17,12 +17,13 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<MUserProfile> GetByIsWithoutTokenApply(int UserId);
         public Task<DTOProfileResponse?> GetUserProfileByArmyNo(string ArmyNo);
         public Task<DTOUserProfileResponse?> GetByArmyNo(string ArmyNo,int UserId);
-        public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId,int IsRO, int IsORO, int DomainMapId);
+        public Task<DTOGenericResponse<List<DTOFwdICardResponse>>> GetDataForFwd(DTODataForFwd dTOData);
         public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int IsRO,int IsORO, int IsAfsacCell, int BasicDetailsId, int DomainMapId);
         public Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo,int AspNetUsersId);
         public  Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo);
         public Task<List<DTOAllRelatedDataByArmyNoResponse>?> GetTopByArmyNo(string ArmyNo);
         public Task<DTOCheckedBeforeUpdateProfileResponse> CheckedBeforeUpdateProfile(DTOUpdateProfileWithMappingRequest dTO);
         public Task<DTOGenericResponse<DTOTokenStatusResponse?>> GetTokenStatus(int AspNetUsersId);
+        public Task<DTOGenericResponse<DTOGetProfileDetailByIdResponse>> GetProfileDetailById(int AspNetUsersId);
     }
 }

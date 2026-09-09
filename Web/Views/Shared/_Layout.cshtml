@@ -57,7 +57,7 @@
         <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
 
         <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/style.min.css" rel="stylesheet" />
+        <link asp-href-include="~/css/style.css" rel="stylesheet" />
         <link asp-href-include="~/css/extra.css" rel="stylesheet" />
         <link asp-href-include="~/css/background.css" rel="stylesheet" />
         <link asp-href-include="~/css/typography.css" rel="stylesheet" />
@@ -381,32 +381,27 @@
                                         <span class="fw-bold text-danger d-none" id="ErrMess1"></span>
                                     </div>
                                 </div>
-                                <div class="form-group chkforserach">
-                                    <div class="col-sm-12 d-flex justify-content-center">
+                                <div class="form-group chkforserach row mb-2">
+                                    <label class="col-form-label col-sm-4 fw-bold">Search Offr By</label>
+                                    <div class="col-sm-8 d-flex">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsArmyNo">
                                             <label class="form-check-label" for="intoffsArmyNo">
                                                 Army No
                                             </label>
                                         </div>
-                                        <div class="form-check form-check-inline d-none">
-                                            <input class="form-check-input" type="radio" name="Intoffrs" id="intoffName">
-                                            <label class="form-check-label" for="intoffName">
-                                                Offr Name
-                                            </label>
-                                        </div>
                                         <div class="form-check form-check-inline ">
                                             <input class="form-check-input" type="radio" name="Intoffrs" id="intoffDomainId">
-                                            <label class="form-check-label" for="intoffName">
+                                            <label class="form-check-label" for="intoffDomainId">
                                                 Domain ID
                                             </label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-2 serchfwd d-none">
-                                    <label class="col-form-label col-sm-4 fw-bold">Army No/Offr Name/Domain ID</label>
+                                    <label class="col-form-label col-sm-4 fw-bold">Army No/Domain ID</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control Alphanumeric" placeholder="Enter Army No/Offrs Name/DomainId" id="txtFwdName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                        <input class="form-control Alphanumeric" placeholder="Enter Army No/DomainId" id="txtFwdName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                     </div>
                                 </div>
                                 <div class="form-group row mb-2">
@@ -757,6 +752,86 @@
         </div>
     </div>
 
+    <div class="modal fade ecms-completedhistory-modal" id="BasicDetailCompletedHistory" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-xl modal-dialog-centered ecms-completedhistory-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title w-100 text-center" id="exampleModalLabel_BasicDetailCompletedHistory">I Card History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card ecms-completedhistory-modal-grid">
+                        <div class="row">
+                            <div class="col-sm-4 mb-3">
+                                <div id="CompletedHistory_BasicDetail_Data">
+                                </div>
+                            </div>
+                            <div class="col-sm-4 mb-3 overflow-auto">
+                                <div id="CompletedHistory_Fwd_Details">
+                                </div>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <div id="CompletedHistory_Dispatch_Details">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary d-print-none" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade ecms-closedhistory-modal" id="BasicDetailClosedHistory" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-xl modal-dialog-centered ecms-closedhistory-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title w-100 text-center"
+                        id="exampleModalLabel_BasicDetailClosedHistory">
+                        I Card History
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="card ecms-closedhistory-modal-grid">
+                        <div class="row">
+
+                            <div class="col-sm-4 mb-3">
+                                <div id="ClosedHistory_BasicDetail_Data"></div>
+                            </div>
+
+                            <div class="col-sm-4 mb-3">
+                                <div id="ClosedHistory_Fwd_Details"></div>
+                            </div>
+
+                            <div class="col-sm-4 mb-3">
+                                <div id="ClosedHistory_Dispatch_Details"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary d-print-none"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
     <!-- Global modal host/stack manager: UI-only, no page business logic. -->
     <script asp-src-include="~/developerjs/ecms-global-modals.js" asp-append-version="true"></script>
 </body>

@@ -431,7 +431,7 @@ $(async function () {
 
     $("#btnRequisition").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('New Requisition');
+        $("#CardReport_lblModelTitle").html('AFSAC under Requisition');
 
         GetReportReturnHistory('Requisition');
     });
@@ -443,7 +443,7 @@ $(async function () {
     });
     $("#btnLostCase").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Lost Case');
+        $("#CardReport_lblModelTitle").html('Lost AFSAC');
 
         GetReportReturnHistory('LostCase');
     });
@@ -602,7 +602,10 @@ function GetReportReturnHistory(Choice) {
 
 
                     let result = await response.json();
-                    //$("#lblTotal").html(result.recordsTotal);
+
+                    if (result.Result == false) {
+                        toastr.error("Failed to Fetch Date: " + response.Message);
+                    }
                     callback(result); // Sends data to DataTables
 
                 } catch (error) {

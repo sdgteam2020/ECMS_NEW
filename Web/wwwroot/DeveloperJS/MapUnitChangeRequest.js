@@ -155,7 +155,12 @@ function Save(choice) {
                     const btnBackDashboard = document.getElementById("btnBackDashboard");
                     let Message;
                     if (parseInt($("#spnMapUnitChangeRequestId").html()) == 0)
-                        Message = `Your Unit Move Request placed successfully with Admin for necy Approval.<br/> Record successfully inserted in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+                        Message = `Your Unit Move Request placed successfully with Admin for necy Approval.<br/>
+                                    Record successfully inserted in DB with ID : <strong>${result.Id}</strong><br/>
+                                    Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.<br/> 
+                                    Based on Ref no, send letter alongwith supporting Docs  to admin for unit move.<br/>
+                                    Based on receipt of auth unit move request will be process.
+                                    `;
 
                     document.getElementById("ConfirmationDialog_Data").innerHTML = Message;
                     btnSearchNew.classList.add("d-none");

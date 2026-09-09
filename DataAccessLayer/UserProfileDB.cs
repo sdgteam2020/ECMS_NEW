@@ -559,78 +559,98 @@ namespace DataAccessLayer
         /// <summary>
         /// Retrieves a list of forwarded ICARD responses based on multiple filtering criteria.
         /// </summary>
-        /// <param name="StepId">The step ID to filter by.</param>
-        /// <param name="UnitId">The unit ID to filter by.</param>
         /// <param name="Name">The name to filter the users by.</param>
         /// <param name="TypeId">The type of search to perform (e.g., by Name, ArmyNo, etc.).</param>
-        /// <param name="RO">The Record Office flag.</param>
-        /// <param name="ORO">The ORO flag.</param>
-        /// <param name="DomainMapId">The domain mapping ID to exclude from the results.</param>
+        /// <param name="AspNetUsersId">The domain mapping ID to exclude from the results.</param>
         /// <returns>A list of DTOFwdICardResponse objects that match the search criteria.</returns>
-        public async Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId,int RO,int ORO, int DomainMapId)
+        public async Task<DTOGenericResponse<List<DTOFwdICardResponse>>> GetDataForFwd(DTODataForFwd dTOData)
         {
+            var response = new DTOGenericResponse<List<DTOFwdICardResponse>>
+            {
+                Result = false,
+                Value = new List<DTOFwdICardResponse>()
+            };
             try
             {
-                string query = "";
+                // Do not modify the original DTO value
+                string searchName = $"%{dTOData.Name?.Replace("[", "[[]").Replace("%", "[%]")}%";
 
-                if (TypeId == 0)
+                string searchCondition;
+
+                switch (dTOData.TypeId)
                 {
-                    query = "Select Top 5 trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,mapp.AppointmentName,usep.ArmyNo,ra.RankAbbreviation,usep.Name from TrnDomainMapping trndomain" +
-                              " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
-                              " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
-                              " inner join MAppointment mapp on mapp.ApptId=trndomain.ApptId" +
-                              " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
-                              " inner join MRank ra on ra.RankId=usep.RankId  " +
-                              " where trndomain.AspNetUsersId like @Name ";
+                    case 1:
+                        searchCondition = "usep.ArmyNo LIKE @Name";
+                        break;
 
-                }
-                else if (TypeId == 1)
-                {
-                    Name = "%" + Name.Replace("[", "[[]").Replace("%", "[%]") + "%";
-                    query = "Select Top 5 trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,mapp.AppointmentName,usep.ArmyNo,ra.RankAbbreviation,usep.Name from TrnDomainMapping trndomain" +
-                              " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
-                              " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
-                              " inner join MAppointment mapp on mapp.ApptId=trndomain.ApptId" +
-                              " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-                              " inner join MRank ra on ra.RankId=usep.RankId " +
-                              " where usep.ArmyNo like @Name and trndomain.AspNetUsersId !=@DomainMapId ";
+                    case 2:
+                        searchCondition = "users.DomainId LIKE @Name";
+                        break;
 
+                    default:
+                        searchCondition = "users.DomainId LIKE @Name";
+                        break;
                 }
-                else if (TypeId == 2)
-                {
-                    Name = "%" + Name.Replace("[", "[[]").Replace("%", "[%]") + "%";
-                    query = "Select Top 5 trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,mapp.AppointmentName,usep.Name, usep.ArmyNo,ra.RankAbbreviation from TrnDomainMapping trndomain" +
-                              " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
-                              " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
-                              " inner join MAppointment mapp on mapp.ApptId=trndomain.ApptId" +
-                              " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-                              " inner join MRank ra on ra.RankId=usep.RankId " +
-                              " where usep.Name like @Name and trndomain.AspNetUsersId !=@DomainMapId ";
+                string query = $@"
+                                SELECT TOP 5 trndomain.AspNetUsersId,ISNULL(usep.UserId, 0) AS UserId,users.DomainId,mapp.AppointmentName,usep.ArmyNo,ra.RankAbbreviation,usep.Name FROM TrnDomainMapping trndomain
+                                INNER JOIN AspNetUsers users ON users.Id = trndomain.AspNetUsersId
+                                INNER JOIN MAppointment mapp ON mapp.ApptId = trndomain.ApptId
+                                LEFT JOIN UserProfile usep ON usep.UserId = trndomain.UserId
+                                LEFT JOIN MRank ra ON ra.RankId = usep.RankId
+                                WHERE {searchCondition} AND trndomain.AspNetUsersId <> @AspNetUsersId;";
 
-                }
-                else if (TypeId == 3)
-                {
-                    Name = "%" + Name.Replace("[", "[[]").Replace("%", "[%]") + "%";
-                    query = "Select Top 5 trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,mapp.AppointmentName,usep.ArmyNo,ra.RankAbbreviation,usep.Name from TrnDomainMapping trndomain" +
-                              " inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id" +
-                              " inner join MapUnit mapu on mapu.UnitMapId=trndomain.UnitId" +
-                              " inner join MAppointment mapp on mapp.ApptId=trndomain.ApptId" +
-                              " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-                              " inner join MRank ra on ra.RankId=usep.RankId " +
-                              " where users.DomainId like @Name and trndomain.AspNetUsersId !=@DomainMapId";
-
-                }
                 using (var connection = _contextDP.CreateConnection())
                 {
-                var BasicDetailList = await connection.QueryAsync<DTOFwdICardResponse>(query, new { UnitId, Name, DomainMapId });
-                return BasicDetailList.ToList();
+                    var result = (await connection.QueryAsync<DTOFwdICardResponse>(query, new { Name = searchName, AspNetUsersId = dTOData.AspNetUsersId })).ToList();
+                    response.Value = result;
+                    response.Result = true;
+                    response.Message = result.Count > 0 ? "Details retrieved successfully." : "No data found.";
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "UserProfileDB->GetDataForFwd");
-                return new List<DTOFwdICardResponse>();
+                response.Message = "Internal Server Error.";
             }
+            return response;
+        }
+
+
+        public async Task<DTOGenericResponse<DTOGetProfileDetailByIdResponse>> GetProfileDetailById(int AspNetUsersId)
+        {
+            var response = new DTOGenericResponse<DTOGetProfileDetailByIdResponse>
+            {
+                Result = false,
+                Value = new DTOGetProfileDetailByIdResponse()
+            };
+            try
+            {
+                string query = @"Select trndomain.AspNetUsersId,ISNULL(usep.UserId,0) UserId,users.DomainId,mapp.AppointmentName,usep.ArmyNo,ra.RankAbbreviation,usep.Name from TrnDomainMapping trndomain
+                                inner join AspNetUsers users on trndomain.AspNetUsersId=users.Id
+                                inner join MAppointment mapp on mapp.ApptId=trndomain.ApptId
+                                inner join UserProfile usep on usep.UserId=trndomain.UserId
+                                inner join MRank ra on ra.RankId=usep.RankId  
+                                where trndomain.AspNetUsersId = @AspNetUsersId";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var result = await connection.QueryFirstOrDefaultAsync<DTOGetProfileDetailByIdResponse>(query, new { AspNetUsersId });
+                    if (result is null)
+                    {
+                        response.Message = "No profile found for the given Id.";
+                        return response;
+                    }
+                    response.Value = result;
+                    response.Result = true;
+                    response.Message = "Profile details retrieved successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetProfileDetailById");
+                response.Message = "Internal Server Error.";
+            }
+            return response;
         }
 
 

@@ -14,19 +14,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\DeveloperJS\ReportAndReturn.js" />
+    <Content Remove="wwwroot\DeveloperJS\ReportAndReturn_.js" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\css\AppStatus.css" />
-    <_ContentIncludedByDefault Remove="wwwroot\DeveloperJS\ReportAndReturn.js" />
     <_ContentIncludedByDefault Remove="wwwroot\Images\dribbble_1.gif" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\css\Sidemenu\feather\fonts\feather-webfont.svg" />
     <None Include="wwwroot\css\Sidemenu\ti-icons\fonts\themify.svg" />
-    <None Include="wwwroot\DeveloperJS\ReportAndReturn.js" />
+    <None Include="wwwroot\DeveloperJS\ReportAndReturn_.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map" />

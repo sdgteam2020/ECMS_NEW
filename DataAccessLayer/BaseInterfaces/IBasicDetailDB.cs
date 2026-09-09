@@ -61,5 +61,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<ICardHistoryResponseAll?> GetClosedHistoryByRequestId(int RequestId);
         public Task<DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>> GetICardPrintPreviewByRequestId(int RequestId);
         public Task<DTOGenericResponse<DTOGetBasicDetailForPdfDigitalSignature>> GetBasicDetailForPdfDigitalSignature(int RequestId);
+        public Task<DTOGetHistoryForPopupResponse> GetHistoryForPopup(string ServiceNo);
     }
 }

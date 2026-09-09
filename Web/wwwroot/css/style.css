@@ -2165,9 +2165,9 @@ textarea.form-control {
 
     .form-check-inline .form-check-input {
         position: static;
-        margin-top: 0;
+/*        margin-top: 0;*/
         margin-right: 0.3125rem;
-        margin-left: 0;
+/*        margin-left: 0;*/
     }
 
 .valid-feedback {

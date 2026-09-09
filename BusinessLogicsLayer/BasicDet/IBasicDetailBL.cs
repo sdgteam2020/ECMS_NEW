@@ -63,6 +63,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<ICardHistoryResponseAll?> GetClosedHistoryByRequestId(int RequestId);
         public Task<DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>> GetICardPrintPreviewByRequestId(int RequestId);
         public Task<DTOGenericResponse<DTOGetBasicDetailForPdfDigitalSignature>> GetBasicDetailForPdfDigitalSignature(int RequestId);
+        public Task<DTOGetHistoryForPopupResponse> GetHistoryForPopup(string ServiceNo);
         public string MaskAadhaar(string? aadhaarNumber);
         public string FormatServiceNo(string? serviceNo);
     }

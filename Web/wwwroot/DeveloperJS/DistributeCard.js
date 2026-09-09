@@ -138,7 +138,6 @@ function BindData() {
                     }
                 }
 
-                $("#lblTotal").html(result.recordsTotal);
                 callback(result); // Sends data to DataTables
 
             } catch (error) {

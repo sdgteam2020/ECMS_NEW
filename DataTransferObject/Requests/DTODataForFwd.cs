@@ -8,12 +8,9 @@ namespace DataTransferObject.Requests
 {
     public class DTODataForFwd
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public int TypeId { get; set; }
-        public int StepId { get; set; }
-        public int UnitId { get; set; }
-        public int ISRO { get; set; }
-        public int IsORO { get; set; }
-        
+        public int? AspNetUsersId { get; set; }
+       
     }
 }

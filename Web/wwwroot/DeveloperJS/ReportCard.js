@@ -501,7 +501,12 @@ function GetReportReturnHistory(Choice, ApplyForId) {
                             throw new Error(error.message || `HTTP error! Status: ${response.status}`);
                         }
 
-                        const result = await response.json();
+                        let result = await response.json();
+
+                        if (result.Result == false) {
+                            toastr.error("Failed to Fetch Date: " + response.Message);
+                        }
+
                         dataTableCallback(result);
                     } catch (error) {
                         console.error("Error fetching data:", error);
@@ -1462,47 +1467,40 @@ async function GetReportCardDashboardCount() {
             body: JSON.stringify({ data: encryptedPayload })
         });
 
-        const data = await response.json();
+        const result = await response.json();
 
-        if (!data || data === "null") return;
-
-        if (data === InternalServerError) {
-            Swal.fire({ text: errormsg });
-            return;
+        if (result.Result == false) {
+            toastr.error("Failed to Fetch Date: " + result.Message);
         }
+        else {
+            $("#TotExported_Officer").html(result.Value.TotExported_Officer);
+            $("#TotPrinted_Officer").html(result.Value.TotPrinted_Officer);
+            $("#TotDispatchToORO").html(result.Value.TotDispatchToORO);
+            $("#TotCardInORO").html(result.Value.TotCardInORO);
+            $("#TotDispatchToUnit_Officer").html(result.Value.TotDispatchToUnit_Officer);
+            $("#TotCardInUnit_Officer").html(result.Value.TotCardInUnit_Officer);
+            $("#TotDistributed_Officer").html(result.Value.TotDistributed_Officer);
 
-        if (data === 0) {
-            // Optionally handle zero count case
-            return;
-        }
+            $("#TotExported_OR").html(result.Value.TotExported_OR);
+            $("#TotPrinted_OR").html(result.Value.TotPrinted_OR);
+            $("#TotDispatchToRegt").html(result.Value.TotDispatchToRegt);
+            $("#TotCardInRegt").html(result.Value.TotCardInRegt);
+            $("#TotDispatchToUnit_OR").html(result.Value.TotDispatchToUnit_OR);
+            $("#TotCardInUnit_OR").html(result.Value.TotCardInUnit_OR);
+            $("#TotDistributed_OR").html(result.Value.TotDistributed_OR);
 
-        $("#TotExported_Officer").html(data.TotExported_Officer);
-        $("#TotPrinted_Officer").html(data.TotPrinted_Officer);
-        $("#TotDispatchToORO").html(data.TotDispatchToORO);
-        $("#TotCardInORO").html(data.TotCardInORO);
-        $("#TotDispatchToUnit_Officer").html(data.TotDispatchToUnit_Officer);
-        $("#TotCardInUnit_Officer").html(data.TotCardInUnit_Officer);
-        $("#TotDistributed_Officer").html(data.TotDistributed_Officer);
-
-        $("#TotExported_OR").html(data.TotExported_OR);
-        $("#TotPrinted_OR").html(data.TotPrinted_OR);
-        $("#TotDispatchToRegt").html(data.TotDispatchToRegt);
-        $("#TotCardInRegt").html(data.TotCardInRegt);
-        $("#TotDispatchToUnit_OR").html(data.TotDispatchToUnit_OR);
-        $("#TotCardInUnit_OR").html(data.TotCardInUnit_OR);
-        $("#TotDistributed_OR").html(data.TotDistributed_OR);
-
-        $('.counter-value').each(function () {
-            $(this).prop('Counter', 0).animate({
-                Counter: $(this).text()
-            }, {
-                duration: 200,
-                easing: 'swing',
-                step: function (now) {
-                    $(this).text(Math.ceil(now));
-                }
+            $('.counter-value').each(function () {
+                $(this).prop('Counter', 0).animate({
+                    Counter: $(this).text()
+                }, {
+                    duration: 200,
+                    easing: 'swing',
+                    step: function (now) {
+                        $(this).text(Math.ceil(now));
+                    }
+                });
             });
-        });
+        }
     } catch (error) {
         Swal.fire({ text: errormsg002 });
         console.error("GetReportDashboardCount error:", error);

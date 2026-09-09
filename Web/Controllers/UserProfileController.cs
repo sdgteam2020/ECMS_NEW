@@ -404,38 +404,70 @@ namespace Web.Controllers
 
         /// <summary>
         /// This method retrieves data for forwarding based on provided parameters.
-        /// It fetches data based on StepId, UnitId, Name, TypeId, ISRO, and IsORO, 
-        /// along with the user's DomainMapId.
+        /// It fetches data based on Name, TypeId 
+        /// along with the user's AspNetUsersId.
         /// </summary>
         /// <param name="Name">The name associated with the data retrieval.</param>
         /// <param name="TypeId">The type ID for filtering data.</param>
-        /// <param name="StepId">The step ID to filter data.</param>
-        /// <param name="UnitId">The unit ID for filtering data.</param>
-        /// <param name="ISRO">Filter flag for ISRO.</param>
-        /// <param name="IsORO">Filter flag for ORO.</param>
         /// <returns>Returns a JSON response with the retrieved data or an error message.</returns>
         [HttpPost]
         public async Task<IActionResult> GetDataForFwd(string request)
         {
-            try
+            var response = new DTOGenericResponse<List<DTOFwdICardResponse>>
             {
-                DTODataForFwd Data =await AESEncrytDecry.DecryptAESWithDTO<DTODataForFwd>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
-                if (Data == null)
-                {
-                    return Json(KeyConstants.IncorrectData); // Return error message for invalid data
-                }
-                // Retrieve the user's DomainMapId from claims
-                int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                Result = false,
+                Value = new List<DTOFwdICardResponse>()
+            };
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
-                // Call the method to get data for forwarding based on the provided parameters
-                return Json(await _userProfileBL.GetDataForFwd(Data.StepId, Data.UnitId, Data.Name, Data.TypeId, Data.ISRO, Data.IsORO, DomainMapId));
-            }
-            catch (Exception ex)
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
             {
-                // Log the error and return an internal server error response
-                return Json(KeyConstants.InternalServerError);
+                response.Message = "Session data is unavailable or has expired.";
+                return Json(response);
             }
+
+            DTODataForFwd Data = await AESEncrytDecry.DecryptAESWithDTO<DTODataForFwd>(request, sessionData.Salt);
+
+            if (Data == null)
+            {
+                response.Message = "Invalid input.";
+                return Json(response);
+            }
+
+            Data.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            response = await _userProfileBL.GetDataForFwd(Data);
+            return Json(response);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetProfileDetailById(string request)
+        {
+            var response = new DTOGenericResponse<DTOGetProfileDetailByIdResponse>
+            {
+                Result = false,
+                Value = new DTOGetProfileDetailByIdResponse()
+            };
+
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
+            {
+                response.Message = "Session data is unavailable or has expired.";
+                return Json(response);
+            }
+
+            int AspNetUsersId = await AESEncrytDecry.DecryptAESWithDTO<int>(request, sessionData.Salt);
+
+            if (AspNetUsersId == 0)
+            {
+                response.Message = "Invalid input.";
+                return Json(response);
+            }
+
+            response = await _userProfileBL.GetProfileDetailById(AspNetUsersId);
+            return Json(response);
+        }
+
 
         /// <summary>
         /// This method retrieves officers by UnitMapId based on various filters.

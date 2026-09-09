@@ -356,35 +356,46 @@ namespace DataAccessLayer
                     ["ServiceNo"] = "basic_2.ServiceNo",
                     ["UpdatedOn"] = "appcl.UpdatedOn",
                     ["Authority"] = "appcl.Authority",
-                    ["Remarks"] = "appcl.Remarks"
+                    ["Remarks"] = "appcl.Remarks",
+                    ["Reason"] = "mpr.Reason"
                 };
-
-                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "appcl.UpdatedOn";
 
                 var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
 
-                string selectFields = @"appcl.UpdatedOn,basic_2.ServiceNo,mr.RankAbbreviation as RankName,basic_2.FName,basic_2.LName,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority";
-                string fromJoinClause = @"from TrnApplClose appcl
+                string selectColumns = @"appcl.UpdatedOn,basic_2.ServiceNo,mr.RankAbbreviation as RankName,basic_2.FName,basic_2.LName,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority";
+                string fromJoin = @"from TrnApplClose appcl
                                         inner join TrnICardRequest trnicardr on trnicardr.RequestId=appcl.RequestId
                                         inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId and basic_2.UnitId =@UnitMapId
                                         inner join MRank mr on mr.RankId = basic_2.RankId
                                         inner join MApplyFor mappl on mappl.ApplyForId = basic_2.ApplyForId
                                         inner join MPostingReason mpr on mpr.Id= appcl.ReasonId";
-                string whereClause = @"where
+                string fromJoinCount = @"from TrnApplClose appcl
+                                        inner join TrnICardRequest trnicardr on trnicardr.RequestId=appcl.RequestId
+                                        inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId and basic_2.UnitId =@UnitMapId
+                                        inner join MApplyFor mappl on mappl.ApplyForId = basic_2.ApplyForId";
+                string wherequery = @"where
                                        mappl.ApplyForId=@apply
                                        AND (
                                             @SearchTerm IS NULL OR 
                                             basic_2.ServiceNo LIKE @SearchTerm OR
                                             appcl.Authority LIKE @SearchTerm
                                         )";
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "appcl.UpdatedOn";
 
-                var multiQuery = $@"
-                        WITH RecordCTE AS (
-                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
-                        )
-                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+                var sql = $@"
+                            SELECT COUNT(1) AS TotalRecords
+                            {fromJoinCount}
+                            {wherequery}
+                            OPTION (RECOMPILE);
 
+                            SELECT {selectColumns}     
+                            {fromJoin}
+                            {wherequery}
+                            ORDER BY {sortColumn} {sortOrder}
+                            OFFSET @Start ROWS
+                            FETCH NEXT @Length ROWS ONLY;
+                            ";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -392,29 +403,32 @@ namespace DataAccessLayer
                     var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue.Trim()}%";
 
                     var parameters = new DynamicParameters();
-                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Start", dTO.Start, DbType.Int32);
+                    parameters.Add("@Length", dTO.Length, DbType.Int32);
                     parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
                     parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@apply", dTO.apply, DbType.Int32, ParameterDirection.Input);
 
-                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
-                    var records = (await ret.ReadAsync<DTOAppClosedListResponse>()).ToList();
-                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
 
-                    responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
-                    {
-                        draw = dTO.Draw,
-                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
-                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
-                        data = records,
-                    };
+                    using var multi = await connection.QueryMultipleAsync(sql, parameters);
+
+                    var totalRecords = await multi.ReadFirstOrDefaultAsync<int>();
+
+                    var records = (await multi.ReadAsync<DTOAppClosedListResponse>()).ToList();
+
+                    responseData.Message = "ok";
+                    responseData.Result = true;
+                    responseData.recordsTotal = totalRecords;
+                    responseData.recordsFiltered = totalRecords;
+                    responseData.data = records;
 
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "PostingDB->GetAppClosedList");
+                responseData.Message = "Internal Server Error";
+                responseData.Result = false;
             }
             return responseData;
         }
