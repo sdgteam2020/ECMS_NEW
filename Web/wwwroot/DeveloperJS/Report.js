@@ -97,26 +97,33 @@ $(async function () {
     }
     await GetReportDashboardCount();
 
-    if ($('#ddlUnit').length > 0) {
-        let previousValue = $('#ddlUnit').val();
-        let calledForSingleOption = false;
-
-        $('#ddlUnit').on('focus', function () {
-            previousValue = $(this).val();
-            calledForSingleOption = false;
-        });
-
-        $('#ddlUnit').on('blur', async function () {
-            const currentValue = $(this).val();
-
-            if (currentValue !== previousValue) {
-                await GetReportDashboardCount();
-            } else if ($('#ddlUnit option').length === 1 && !calledForSingleOption) {
-                await GetReportDashboardCount();
-                calledForSingleOption = true;
-            }
+    if ($('#btnSearch').length > 0) {
+        $('#btnSearch').on("click", async function () {
+            ResetCount();
+            await GetReportDashboardCount();
         });
     }
+
+    //if ($('#ddlUnit').length > 0) {
+    //    let previousValue = $('#ddlUnit').val();
+    //    let calledForSingleOption = false;
+
+    //    $('#ddlUnit').on('focus', function () {
+    //        previousValue = $(this).val();
+    //        calledForSingleOption = false;
+    //    });
+
+    //    $('#ddlUnit').on('blur', async function () {
+    //        const currentValue = $(this).val();
+
+    //        if (currentValue !== previousValue) {
+    //            await GetReportDashboardCount();
+    //        } else if ($('#ddlUnit option').length === 1 && !calledForSingleOption) {
+    //            await GetReportDashboardCount();
+    //            calledForSingleOption = true;
+    //        }
+    //    });
+    //}
 
     if ($('#ddlCommand').length > 0) {
         let lastVal = $('#ddlCommand').val();
@@ -1240,45 +1247,45 @@ async function GetReportDashboardCount() {
             "UnitMapId": $('#ddlUnit').length > 0 ? parseVal($('#ddlUnit').val()) : null
 
         };
+        let encryptedPayload = "";
+        if (requestData) {
+            const jsonData = JSON.stringify(requestData);
+            encryptedPayload = encryptPayloadData(jsonData);
+
+        }
+
         const response = await fetch('/Home/GetReportDashboardCount', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
-            body: JSON.stringify(requestData)
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
-        const data = await response.json();
+        const result = await response.json();
 
-        if (!data || data === "null") return;
-
-        if (data === InternalServerError) {
-            Swal.fire({ text: errormsg });
-            return;
+        if (result.Result == false) {
+            toastr.error("Failed to Fetch Date: " + result.Message);
         }
+        else {
+            $("#TotRequisition").html(result.Value.TotRequisition);
+            $("#TotLostCases").html(result.Value.TotLostCases);
+            $("#TotMonthlyProcessed").html(result.Value.TotMonthlyProcessed);
+            $("#TotNonFunctionalCard").html(result.Value.TotNonFunctionalCard);
 
-        if (data === 0) {
-            // Optionally handle zero count case
-            return;
-        }
-
-        $("#TotRequisition").html(data.TotRequisition);
-        $("#TotLostCases").html(data.TotLostCases);
-        $("#TotMonthlyProcessed").html(data.TotMonthlyProcessed);
-        $("#TotNonFunctionalCard").html(data.TotNonFunctionalCard);
-
-        $('.counter-value').each(function () {
-            $(this).prop('Counter', 0).animate({
-                Counter: $(this).text()
-            }, {
-                duration: 200,
-                easing: 'swing',
-                step: function (now) {
-                    $(this).text(Math.ceil(now));
-                }
+            $('.counter-value').each(function () {
+                $(this).prop('Counter', 0).animate({
+                    Counter: $(this).text()
+                }, {
+                    duration: 200,
+                    easing: 'swing',
+                    step: function (now) {
+                        $(this).text(Math.ceil(now));
+                    }
+                });
             });
-        });
+        }
     } catch (error) {
         Swal.fire({ text: errormsg002 });
         console.error("GetReportDashboardCount error:", error);

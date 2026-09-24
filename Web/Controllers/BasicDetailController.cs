@@ -4394,27 +4394,47 @@ namespace Web.Controllers
         /// <param name="dTO">DataTables request object containing paging, sorting, and filtering info.</param>
         /// <returns>JSON result containing the list of lost card records.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetAllLost(DTODataTablesRequestForCommanCheckAll dTO)
+        public async Task<IActionResult> GetAllLost([FromBody] EncryptedRequest request)
         {
-            // If an exception occurs, return an empty response to avoid breaking the UI
-            List<DTOLostCardGetResponse> dTOLosts = new List<DTOLostCardGetResponse>();
-            var responseData = new DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>
+            List<DTOLostCardGetResponse> dTOApps = new List<DTOLostCardGetResponse>();
+
+            var responseData = new DTODataTablesResponse<DTOLostCardGetResponse>
             {
-                draw = dTO.Draw,
-                recordsTotal = 0,
-                recordsFiltered = 0,
-                selectedIds = null,
-                data = dTOLosts
+                draw = 1,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
+                data = dTOApps    // Empty list of data
             };
+
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
+            {
+                responseData.Result = false;
+                responseData.Message = "Session data is unavailable or has expired.";
+                return Json(responseData);
+            }
+
+            DTODataTablesRequestForCommanCheckAll dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForCommanCheckAll>(request.Data, sessionData.Salt);
+
+            if (dTORecord == null)
+            {
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
+                return Json(responseData);
+            }
             try
             {
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTORecord))
                 {
                     // Call the business layer to get all lost card records and return as JSON
-                    return Json(await _lostCardBL.GetAllLost(dTO));
+                    return Json(await _lostCardBL.GetAllLost(dTORecord));
                 }
                 else
                 {
+                    responseData.Result = false;
+                    responseData.Message = "Invalid Input";
                     return Json(responseData);
                 }
 
@@ -4423,7 +4443,8 @@ namespace Web.Controllers
             {
                 // Log the exception for debugging and tracking
                 _logger.LogError(1001, ex, "BasicDetail->GetAllLost");
-
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
                 // Return JSON with empty data
                 return Json(responseData);
             }
@@ -4671,29 +4692,50 @@ namespace Web.Controllers
         /// <param name="dTO">The DataTables request object containing paging, sorting, and filter information.</param>
         /// <returns>A JSON result containing the list of distributed cards.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetAllDistribute(DTODataTablesRequestForCommanCheckAll dTO)
+        public async Task<IActionResult> GetAllDistribute([FromBody] EncryptedRequest request)
         {
-            // If an exception occurs, return an empty response to avoid breaking the UI
-            List<DTODistributeCardGetResponse> dTODistributes = new List<DTODistributeCardGetResponse>();
+            List<DTODistributeCardGetResponse> dTOApps = new List<DTODistributeCardGetResponse>();
+
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>
             {
-                draw = dTO.Draw,
-                recordsTotal = 0,
-                recordsFiltered = 0,
+                draw = 1,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
                 selectedIds = null,
-                data = dTODistributes
+                data = dTOApps    // Empty list of data
             };
+
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
+            {
+                responseData.Result = false;
+                responseData.Message = "Session data is unavailable or has expired.";
+                return Json(responseData);
+            }
+
+            DTODataTablesRequestForCommanCheckAll dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForCommanCheckAll>(request.Data, sessionData.Salt);
+
+            if (dTORecord == null)
+            {
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
+                return Json(responseData);
+            }
+
             try
             {
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTORecord))
                 {
-                    DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                    dTO.UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+                    dTORecord.UnitMapId = sessionData.UnitId;
                     // Call business layer to retrieve dispatch card data for dialog
-                    return Json(await _distributeCardBL.GetAllDistribute(dTO));
+                    return Json(await _distributeCardBL.GetAllDistribute(dTORecord));
                 }
                 else
                 {
+                    responseData.Result = false;
+                    responseData.Message = "Invalid Input";
                     return Json(responseData);
                 }
 
@@ -4702,7 +4744,8 @@ namespace Web.Controllers
             {
                 // Log the exception for debugging and tracking
                 _logger.LogError(1001, ex, "BasicDetail->GetAllDistribute");
-
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
                 // Return JSON with empty data
                 return Json(responseData);
             }
