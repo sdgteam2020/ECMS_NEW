@@ -264,7 +264,7 @@ function BindData() {
                     $("#txtArmedName").val(rowData.ArmedName);
                     $("#txtAbbreviation").val(rowData.Abbreviation.toUpperCase());
 
-                    if (rowData.flagInf == true) {
+                    if (rowData.FlagInf == true) {
                         $("#radioInfyes").prop("checked", true);
                     }
                     else {
@@ -448,6 +448,14 @@ function DeleteMultiple(ids) {
 function getColumnsForArmedType() {
     let columns = [];
     columns = [
+        {
+            title: "",
+            data: "ArmedId",
+            name: "ArmedId",
+            visible: false,        // hidden
+            searchable: false,
+            width: "0px",
+        },
         // Serial number column
         {
             title: "S No",

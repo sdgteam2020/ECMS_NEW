@@ -465,7 +465,7 @@ namespace DataAccessLayer
 
                 if (dTOBeforePostingOut != null)
                 {
-                    if (dTOBeforePostingOut.StatusId == 1 && dTOBeforePostingOut.UnitId == trnPostingOut.FromUnitID && dTOBeforePostingOut.UnitId != trnPostingOut.ToUnitID && trnPostingOut.TrnFwdId == dTOBeforePostingOut.MaxTrnFwdId &&  dTOBeforePostingOut.ToAspNetUsersId != null && dTOBeforePostingOut.ToUserID != null)
+                    if (dTOBeforePostingOut.StatusId == 1 && dTOBeforePostingOut.UnitId == trnPostingOut.FromUnitID && dTOBeforePostingOut.UnitId != trnPostingOut.ToUnitID && dTOBeforePostingOut.ToAspNetUsersId != null && dTOBeforePostingOut.ToUserID != null)
                     {
                         dTOBeforePostingOut.Result = true;
                         dTOBeforePostingOut.Message = "Ok";
@@ -484,10 +484,6 @@ namespace DataAccessLayer
                         else if (dTOBeforePostingOut.UnitId == trnPostingOut.ToUnitID)
                         {
                             dTOBeforePostingOut.Message = "The source unit and the destination unit are not the same.";
-                        }
-                        else if (dTOBeforePostingOut.MaxTrnFwdId != trnPostingOut.TrnFwdId)
-                        {
-                            dTOBeforePostingOut.Message = "Invalid Movement ID.";
                         }
                         else if (dTOBeforePostingOut.ToAspNetUsersId == null)
                         {

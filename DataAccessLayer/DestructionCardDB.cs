@@ -83,7 +83,7 @@ namespace DataAccessLayer
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,
-                data = dTODestructionCardGetResponses
+                data = new List<DTODestructionCardGetResponse>()    // Empty list of data
             };
             try
             {
@@ -96,46 +96,62 @@ namespace DataAccessLayer
                     ["Remark"] = "tdc.Remark"
                 };
 
-                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "tdc.UpdatedOn";
-
-
-                var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+                var sortColumn = allowedSortColumns.TryGetValue(dTO.sortColumn ?? string.Empty, out var dbSortColumn) ? dbSortColumn : "tdc.UpdatedOn";
+                var sortOrder = string.Equals(dTO.sortDirection, "desc", StringComparison.OrdinalIgnoreCase) ? "DESC" : "ASC";
 
                 // Base query for fetching data
-                string selectFields = "";
-                string fromJoinClause = "";
-                string whereClause = "";
+                string selectFields = string.Empty;
+                string fromJoinClause = string.Empty;
+                string fromJoinCount = string.Empty;
+                string searchFilter = string.Empty;
                 selectFields = @"appl.Name ApplyFor,req.RequestId,tdc.DestructedCardId,basic_2.ServiceNo,ranks.RankAbbreviation RankName,basic_2.FName,basic_2.LName,Muni.Abbreviation UnitAbbreviation,tdc.UpdatedOn,tdc.Remark,tdc.DestructedOn,
                                 (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(tdc.RemarksIds,','))) RemarksNameList";
                 fromJoinClause = @"from TrnDestructionCards tdc
                                 inner join TrnICardRequest req on req.RequestId = tdc.RequestId
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
                                 inner join MRank ranks on ranks.RankId = basic_2.RankId
                                 inner join MapUnit uni on uni.UnitMapId = basic_2.UnitId
                                 inner join MUnit Muni on Muni.UnitId=uni.UnitId
                                 inner join MApplyFor appl on appl.ApplyForId = basic_2.ApplyForId";
-                whereClause = @"Where  @SearchTerm IS NULL OR basic_2.ServiceNo LIKE @SearchTerm ";
+                fromJoinCount = @"from TrnDestructionCards tdc
+                                inner join TrnICardRequest req on req.RequestId = tdc.RequestId
+                                inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+                                inner join MapUnit uni on uni.UnitMapId = basic_2.UnitId
+                                inner join MUnit Muni on Muni.UnitId=uni.UnitId";
+                searchFilter = @"Where  @SearchTerm IS NULL OR basic_2.ServiceNo LIKE @SearchTerm ";
 
-                var multiQuery = $@"
-                        WITH RecordCTE AS (
-                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
-                        )
-                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
-                string queryRequestIds = $@"SELECT req.RequestId {fromJoinClause} {whereClause}";
+                var sql = $@"
+                            SELECT COUNT(1) AS TotalRecords
+                            {fromJoinCount}
+                            {searchFilter}
+                            OPTION (RECOMPILE);
+
+                            SELECT
+                            {selectFields}     
+                            {fromJoinClause}
+                            {searchFilter}
+                            ORDER BY {sortColumn} {sortOrder}
+                            OFFSET @Start ROWS
+                            FETCH NEXT @Length ROWS ONLY
+                            OPTION (RECOMPILE);
+                            ";
+
+                string queryRequestIds = $@"SELECT req.RequestId {fromJoinClause} {searchFilter}";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue.Trim()}%";
 
                     var parameters = new DynamicParameters();
-                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Start", dTO.Start, DbType.Int32);
+                    parameters.Add("@Length", dTO.Length, DbType.Int32);
                     parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
 
-                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
-                    var records = (await ret.ReadAsync<DTODestructionCardGetResponse>()).ToList();
-                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+                    using var multi = await connection.QueryMultipleAsync(sql, parameters);
+
+                    var totalRecords = await multi.ReadFirstOrDefaultAsync<int>();
+
+                    var records = (await multi.ReadAsync<DTODestructionCardGetResponse>()).ToList();
 
                     List<int>? selectedIds = new List<int>();
 
@@ -149,21 +165,22 @@ namespace DataAccessLayer
                         selectedIds = null;
                     }
 
-                    responseData = new DTODataTablesWithSelectedIdsResponse<DTODestructionCardGetResponse>
-                    {
-                        draw = dTO.Draw,
-                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
-                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
-                        selectedIds = selectedIds,
-                        data = records,
-                    };
+                    responseData.Message = "ok";
+                    responseData.Result = true;
+                    responseData.recordsTotal = totalRecords;
+                    responseData.recordsFiltered = totalRecords;
+                    responseData.selectedIds = selectedIds;
+                    responseData.data = records;
+                    return responseData;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "DestructionCardDB->GetAllDestruction");
+                responseData.Message = "Internal Server Error";
+                responseData.Result = false;
+                return responseData;
             }
-            return responseData;
         }
 
         /// <summary>

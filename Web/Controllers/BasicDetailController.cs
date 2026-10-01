@@ -5950,27 +5950,48 @@ namespace Web.Controllers
         /// Returns a JSON result containing the destruction card records.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> GetAllDestruction(DTODataTablesRequestForCommanCheckAll dTO)
+        public async Task<IActionResult> GetAllDestruction([FromBody] EncryptedRequest Data)
         {
-            // If an exception occurs, return an empty response to avoid breaking the UI
-            List<DTODestructionCardGetResponse> dTODestructions = new List<DTODestructionCardGetResponse>();
+            List<DTODestructionCardGetResponse> dTOApps = new List<DTODestructionCardGetResponse>();
+
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTODestructionCardGetResponse>
             {
-                draw = dTO.Draw,
-                recordsTotal = 0,
-                recordsFiltered = 0,
+                draw = 1,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
                 selectedIds = null,
-                data = dTODestructions
+                data = dTOApps    // Empty list of data
             };
+
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
+            {
+                responseData.Message = "Session data is unavailable or has expired.";
+                return Json(responseData);
+            }
+
+            DTODataTablesRequestForCommanCheckAll dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForCommanCheckAll>(Data.Data, sessionData.Salt);
+
+            if (dTORecord == null)
+            {
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
+                return Json(responseData);
+            }
+
             try
             {
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTORecord))
                 {
                     // Call the business layer to fetch all destruction card records and return as JSON
-                    return Json(await _destructionCardBL.GetAllDestruction(dTO));
+                    return Json(await _destructionCardBL.GetAllDestruction(dTORecord));
                 }
                 else
                 {
+                    responseData.Result = false;
+                    responseData.Message = "Invalid Input";
                     return Json(responseData);
                 }
 
@@ -5979,7 +6000,8 @@ namespace Web.Controllers
             {
                 // Log the exception for debugging and tracking
                 _logger.LogError(1001, ex, "BasicDetail->GetAllDestruction");
-
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
                 // Return JSON with empty data
                 return Json(responseData);
             }
