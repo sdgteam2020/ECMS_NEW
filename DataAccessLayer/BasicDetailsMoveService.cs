@@ -52,7 +52,7 @@ namespace DataAccessLayer
             //For testing purposes, you can use the below code to run the data move every minute instead of once a day at 11:55 PM. Just remember to comment out the above code block and uncomment the below block.
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(30), stoppingToken);
                 await MoveDataAsync(stoppingToken);
             }
         }
