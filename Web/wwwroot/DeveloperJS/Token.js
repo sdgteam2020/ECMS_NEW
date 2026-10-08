@@ -1,4 +1,5 @@
-﻿$(function () {
+﻿let TokenExpired = true;
+$(function () {
     $("#loadingToken").hide();
     $("#btnfetchtoken").on("click", async function () {
         await GetTokenDetails("FetchUniqueTokenDetails", "txtArmyNo");
@@ -11,10 +12,12 @@
 async function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thumbprint) {
     $("#loadingToken").show();
 
-    if (IcNo === "IC75695P") {
-        IcNo = "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3"; //7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996
-    } else if (IcNo === "IC60056W") {
-        IcNo = "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448";
+    if (TokenExpired) {
+        if (IcNo === "IC75695P") {
+            IcNo = "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3"; //7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996
+        } else if (IcNo === "IC60056W") {
+            IcNo = "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448";
+        }
     }
 
     try {
@@ -165,7 +168,7 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid,ddl='') {
                     keyValuePairs[k.trim()] = v ? v.trim() : "";
                 });
 
-                const datef2 = new Date();
+                const CurrentDate = new Date();
 
                 const validToDate = parseApiDate(data[0].ValidTo);
 
@@ -176,34 +179,57 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid,ddl='') {
                     validTo = validToDate;
                 }
 
-                if (datef2 <= validTo) { //validTo >= datef2
-                    $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Token Expired</span>.</div>');
-                    $("#" + txt).val("");
-                    if (thumbprint !== "") $("#" + thumbprint).val("");
-                    $("#txtspnIsToken").val("");
-                } else {
-                    $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check" aria-hidden="true"></i><span class="m-lg-2">Token Detected</span></div>');
-                    if (thumbprint !== "")
-                        $("#" + thumbprint).val(data[0].Thumbprint);
-                    $("#txtspnIsToken").val("Ok");
+                if (TokenExpired)
+                {
+                    if (CurrentDate <= validTo)
+                    {
+                        $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Token Expired</span>.</div>');
+                        $("#" + txt).val("");
+                        if (thumbprint !== "") $("#" + thumbprint).val("");
+                        $("#txtspnIsToken").val("");
+                    }
+                    else {
+                        $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check" aria-hidden="true"></i><span class="m-lg-2">Token Detected</span></div>');
+                        if (thumbprint !== "")
+                            $("#" + thumbprint).val(data[0].Thumbprint);
+                        $("#txtspnIsToken").val("Ok");
 
-                    if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3") { //"7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996"
-                        if (ddl != '') {
-                            $("#" + ddl).val("IC");
-                            $("#" + txt).val("75695P");
+                        if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3") { //"7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996"
+                            if (ddl != '') {
+                                $("#" + ddl).val("IC");
+                                $("#" + txt).val("75695P");
+                            } else {
+                                $("#" + txt).val("IC75695P");
+                            }
+                        } else if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".toLowerCase().trim()) {
+                            if (ddl != '') {
+                                $("#" + ddl).val("IC");
+                                $("#" + txt).val("60056W");
+                            } else {
+                                $("#" + txt).val("IC60056W");
+                            }
                         } else {
-                            $("#" + txt).val("IC75695P");
+                            $("#" + txt).val(keyValuePairs.SERIALNUMBER.toUpperCase().trim());
                         }
-                    } else if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".toLowerCase().trim()) {
-                        if (ddl != '') {
-                            $("#" + ddl).val("IC");
-                            $("#" + txt).val("60056W");
-                        } else {
-                            $("#" + txt).val("IC60056W");
-                        }
-                    } else {
+                    }
+                }
+                else
+                {
+                    if (CurrentDate >= validTo)
+                    {
+                        $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Token Expired</span>.</div>');
+                        $("#" + txt).val("");
+                        if (thumbprint !== "") $("#" + thumbprint).val("");
+                        $("#txtspnIsToken").val("");
+                    }
+                    else {
+                        $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check" aria-hidden="true"></i><span class="m-lg-2">Token Detected</span></div>');
+                        if (thumbprint !== "")
+                            $("#" + thumbprint).val(data[0].Thumbprint);
+                        $("#txtspnIsToken").val("Ok");
+
                         $("#" + txt).val(keyValuePairs.SERIALNUMBER.toUpperCase().trim());
-                    } 
+                    }
                 }
             }
             else if (data[0].Status === '404') {
