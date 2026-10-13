@@ -101,22 +101,31 @@ function BindData() {
                 AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked
             };
             try {
+                let encryptedPayload = "";
+                if (requestData) {
+                    const jsonData = JSON.stringify(requestData);
+                    encryptedPayload = encryptPayloadData(jsonData);
+                }
+
                 let response = await fetch("/BasicDetail/GetAllDestruction", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Content-Type": "application/json",
                         'RequestVerificationToken': globalThis.RequestVerificationToken
                     },
-                    body: new URLSearchParams(requestData).toString()
+                    body: JSON.stringify({ data: encryptedPayload })
                 });
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                //if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
+
+                if (result.Result == false) {
+                    toastr.error("Failed to Fetch Date: " + response.Message);
+                }
 
                 // 🔁 If no data returned, always clear selection
                 if (result.data.length === 0) {
                     globalThis.selectedIds = [];
-                    console.log("No results. Cleared selectedIds.");
                 }
 
                 // Only update selectedIds if server returns new ones
@@ -124,7 +133,6 @@ function BindData() {
                     if (result.selectedIds != null && result.selectedIds.length > 0) {
                         //selectedIds = result.selectedIds;
                         globalThis.selectedIds = result.selectedIds.map(x => x.toString());
-                        console.log("Fetched selectedIds from server:", globalThis.selectedIds);
                         // If user hadn’t checked Select All, now we just load into selectedIds silently
                         if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
                     }

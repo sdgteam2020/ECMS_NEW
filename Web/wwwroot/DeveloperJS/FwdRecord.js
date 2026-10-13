@@ -19,8 +19,7 @@ $(function () {
 
     $("#btntokenTofwd").on("click", async function () {
         $("#msgforfwd").html('');
-
-        await GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
+        await GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").text(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
     });
     sessionStorage.removeItem('ArmyNo');
 

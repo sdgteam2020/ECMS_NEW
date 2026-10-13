@@ -1044,8 +1044,12 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="dTO">The hierarchy request containing filter parameters such as UnitMapId, UnitType, ComdId, etc.</param>
         /// <returns>Returns a <see cref="DTOReportDashboardCountResponse"/> object with counts for requisitions, lost cases, monthly processed, and non-functional cards.</returns>
-        public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTOMHierarchyRequest dTO)
+        public async Task<DTOGenericResponse<DTOReportDashboardCountResponse>> GetReportDashboardCount(DTOMHierarchyRequest dTO)
         {
+            DTOGenericResponse<DTOReportDashboardCountResponse> responseData = new DTOGenericResponse<DTOReportDashboardCountResponse>();
+            responseData.Result = false;
+            responseData.Value = new DTOReportDashboardCountResponse();
+
             string query = @"declare @TotRequisition int=0
                             declare @TotLostCases int=0
                             declare @TotMonthlyProcessed int=0
@@ -1138,14 +1142,17 @@ namespace DataAccessLayer
                     parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running);
 
-                    var ret = await connection.QueryAsync<DTOReportDashboardCountResponse>(query, parameters);
-                    return ret.FirstOrDefault();
+                    responseData.Value = await connection.QueryFirstOrDefaultAsync<DTOReportDashboardCountResponse>(query, parameters) ?? new DTOReportDashboardCountResponse();
+                    responseData.Result = true;
+                    responseData.Message = "ok";
+                    return responseData;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "ReportReturnDB->GetReportDashboardCount");
-                return null;
+                responseData.Message = "Internal Server Error";
+                return responseData;
             }
         }
 

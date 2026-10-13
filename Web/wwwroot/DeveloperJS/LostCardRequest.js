@@ -3,6 +3,7 @@ var data = {};
 var TokenArmyNo = "";
 var token;
 var spnLostCardRequestId = 0;
+let TokenExpired = true;
 
 $(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
@@ -410,14 +411,22 @@ async function GetTokenSignXml(xml) {
             success: function (response) {
                 if (response) {
                     var xmlContent = new XMLSerializer().serializeToString(response);
-                    // No Token Found
-                    if (xmlContent.indexOf("<Root>No Token Found</Root>") == -1) {
+
+                    // Check if <Root> tag exists
+                    var rootTag = response.getElementsByTagName("Root");
+
+                    if (rootTag.length > 0) {
+
+                        // Get message inside <Root>
+                        var errorMessage = rootTag[0].textContent.trim();
+
+                        toastr.error(errorMessage);
+                        resolve(false);
+                    }
+                    else {
                         //toastr.success("XML Signed Successfully!");
                         signedXML = xmlContent;
                         resolve(true);
-                    } else {
-                        toastr.error("Please Insert Token!");
-                        resolve(false);
                     }
                 }
             },
@@ -482,39 +491,89 @@ async function GetTokenDetails(ApiId, xml) {
 
                 let pairs = data[0].subject.split(", ");
                 let keyValuePairs = {};
+                let validTo;
 
                 pairs.forEach(pair => {
                     let [k, v] = pair.split("=");
                     keyValuePairs[k.trim()] = v ? v.trim() : "";
                 });
 
-                const datef2 = new Date();
-                let [day, month, year, hours, minutes, seconds] = data[0].ValidTo.match(/\d+/g).map(Number);
-                let validTo = new Date(year, month - 1, day, hours, minutes, seconds);
-                if (datef2 >= validTo) { // validTo >= datef2
-                    toastr.error("Token Expired");
+                const CurrentDate = new Date();
+                const validToDate = parseApiDate(data[0].ValidTo);
+
+                if (validToDate === null) {
+                    toastr.error("Invalid ValidTo date:", data[0].ValidTo);
                     return false;
-                } else {
+                }
+                else {
+                    validTo = validToDate;
+                }
 
-                    if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3") { //"7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996"
-                        TokenArmyNo = "IC75695P";
-                    } else if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".toLowerCase().trim()) {
-                        TokenArmyNo = "IC60056W";
-                    } else {
-                        TokenArmyNo = keyValuePairs.SERIALNUMBER.toUpperCase().trim();
+                if (TokenExpired)
+                {
+                    if (CurrentDate <= validTo)
+                    {
+                        toastr.error("Token Expired");
+                        return false;
                     }
+                    else
+                    {
+                        if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3") { //"7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996"
+                            TokenArmyNo = "IC75695P";
+                        } else if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".toLowerCase().trim()) {
+                            TokenArmyNo = "IC60056W";
+                        } else {
+                            TokenArmyNo = keyValuePairs.SERIALNUMBER.toUpperCase().trim();
+                        }
 
-                    if ($("#aspntokenarmyno").html() === TokenArmyNo) {
-                        if (await GetTokenSignXml(xml)) {
-                            return true;
+                        if ($("#aspntokenarmyno").html() === TokenArmyNo) {
+                            let thumbprint = data[0].Thumbprint;
+                            if (await GetTokenvalidatepersid2fa(thumbprint)) {
+                                if (await GetTokenSignXml(xml)) {
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
+                            }
+                            else {
+                                return false;
+                            }
                         }
                         else {
+                            toastr.error("ICNO Not Match Inserted Token");
                             return false;
                         }
                     }
-                    else {
-                        toastr.error("ICNO Not Match Inserted Token");
+                }
+                else
+                {
+                    if (CurrentDate >= validTo)
+                    {
+                        toastr.error("Token Expired");
                         return false;
+                    }
+                    else
+                    {
+                        TokenArmyNo = keyValuePairs.SERIALNUMBER.toUpperCase().trim();
+                        if ($("#aspntokenarmyno").html() === TokenArmyNo) {
+                            let thumbprint = data[0].Thumbprint;
+                            if (await GetTokenvalidatepersid2fa(thumbprint)) {
+                                if (await GetTokenSignXml(xml)) {
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                        else {
+                            toastr.error("ICNO Not Match Inserted Token");
+                            return false;
+                        }
                     }
                 }
             }
@@ -540,4 +599,313 @@ async function GetTokenDetails(ApiId, xml) {
         $("#loadingToken").hide();
         return false;
     }
+}
+async function GetTokenvalidatepersid2fa(thumbprint) {
+    $("#loadingToken").show();
+    try {
+        const response = await fetch(HostUrlDGISToken + '/Temporary_Listen_Addresses/validatepersid2fa', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+            },
+            body: JSON.stringify({
+                "inputPersID": TokenArmyNo,
+            }),
+        });
+
+        const response2 = await fetch(HostUrlDGISToken + '/Temporary_Listen_Addresses/FetchTokenOCSPDetails?ThumbPrint=' + thumbprint, {
+            method: "GET",
+            cache: "no-cache",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        const data = await response.json();
+
+        const data2 = await response2.json();
+
+        $("#loadingToken").hide();
+
+        if (data) {
+            const validationResult = data.ValidatePersID2FAResult;
+            const CSPStatus = data2[0].OCSPCheck;
+
+            if (validationResult === true && CSPStatus === true) { 
+                return true;
+            }
+            else {
+                if (validationResult === false) {
+                    toastr.error("ICNO Not Match Inserted Token")
+                    return false;
+                }
+                else if (CSPStatus === false) {
+                    toastr.error(data2[0].OCSPMsg)
+                    return false;
+                }
+                return false;
+            }
+        }
+    } catch (error) {
+        toastr.error("DGIS Appl Not Running");
+        TokenArmyNo = "";
+        return false;
+        $("#loadingToken").hide();
+    }
+}
+function parseApiDate(dateString) {
+
+    if (!dateString || typeof dateString !== "string") {
+        return null;
+    }
+
+    dateString = dateString.trim();
+
+    const monthNames = {
+        jan: 0,
+        january: 0,
+        feb: 1,
+        february: 1,
+        mar: 2,
+        march: 2,
+        apr: 3,
+        april: 3,
+        may: 4,
+        jun: 5,
+        june: 5,
+        jul: 6,
+        july: 6,
+        aug: 7,
+        august: 7,
+        sep: 8,
+        sept: 8,
+        september: 8,
+        oct: 9,
+        october: 9,
+        nov: 10,
+        november: 10,
+        dec: 11,
+        december: 11
+    };
+
+    let match;
+
+    // ==========================================================
+    // FORMAT 1:
+    // 13-01-2029 14:57:39
+    // 13/01/2029 14:57:39
+    // 13.01.2029 14:57:39
+    // ==========================================================
+    match = dateString.match(
+        /^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?$/
+    );
+
+    if (match) {
+
+        let day = Number(match[1]);
+        let month = Number(match[2]) - 1;
+        let year = Number(match[3]);
+        let hour = Number(match[4]);
+        let minute = Number(match[5]);
+        let second = Number(match[6] || 0);
+
+        if (year < 100) {
+            year += 2000;
+        }
+
+        return createValidDate(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second
+        );
+    }
+
+
+    // ==========================================================
+    // FORMAT 2:
+    // 05-May-23 2:39:40 PM
+    // 05-May-2023 2:39:40 PM
+    // 05-May-2023 14:39:40
+    // ==========================================================
+    match = dateString.match(
+        /^(\d{1,2})[-\/\s]([A-Za-z]+)[-\/\s](\d{2,4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?$/i
+    );
+
+    if (match) {
+
+        let day = Number(match[1]);
+        let monthName = match[2].toLowerCase();
+        let year = Number(match[3]);
+
+        let hour = Number(match[4]);
+        let minute = Number(match[5]);
+        let second = Number(match[6] || 0);
+
+        let ampm = match[7];
+
+        let month = monthNames[monthName];
+
+        if (month === undefined) {
+            return null;
+        }
+
+        if (year < 100) {
+            year += 2000;
+        }
+
+        // Convert 12-hour time to 24-hour
+        if (ampm) {
+
+            ampm = ampm.toUpperCase();
+
+            if (ampm === "PM" && hour < 12) {
+                hour += 12;
+            }
+
+            if (ampm === "AM" && hour === 12) {
+                hour = 0;
+            }
+        }
+
+        return createValidDate(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second
+        );
+    }
+
+
+    // ==========================================================
+    // FORMAT 3:
+    // 13-01-2029
+    // 13/01/2029
+    // ==========================================================
+    match = dateString.match(
+        /^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/
+    );
+
+    if (match) {
+
+        let day = Number(match[1]);
+        let month = Number(match[2]) - 1;
+        let year = Number(match[3]);
+
+        if (year < 100) {
+            year += 2000;
+        }
+
+        return createValidDate(
+            year,
+            month,
+            day,
+            0,
+            0,
+            0
+        );
+    }
+
+
+    // ==========================================================
+    // FORMAT 4:
+    // 05-May-23
+    // 05 May 2023
+    // ==========================================================
+    match = dateString.match(
+        /^(\d{1,2})[-\/\s]([A-Za-z]+)[-\/\s](\d{2,4})$/
+    );
+
+    if (match) {
+
+        let day = Number(match[1]);
+        let monthName = match[2].toLowerCase();
+        let year = Number(match[3]);
+
+        let month = monthNames[monthName];
+
+        if (month === undefined) {
+            return null;
+        }
+
+        if (year < 100) {
+            year += 2000;
+        }
+
+        return createValidDate(
+            year,
+            month,
+            day,
+            0,
+            0,
+            0
+        );
+    }
+
+
+    // ==========================================================
+    // FORMAT 5:
+    // ISO date
+    // 2029-01-13T14:57:39
+    // 2029-01-13T14:57:39Z
+    // ==========================================================
+    let nativeDate = new Date(dateString);
+
+    if (!isNaN(nativeDate.getTime())) {
+        return nativeDate;
+    }
+
+
+    // Unknown / invalid format
+    return null;
+}
+
+
+// ==========================================================
+// DATE VALIDATION
+// Prevent invalid dates like 31-02-2029
+// ==========================================================
+function createValidDate(year, month, day, hour, minute, second) {
+
+    if (
+        month < 0 ||
+        month > 11 ||
+        day < 1 ||
+        day > 31 ||
+        hour < 0 ||
+        hour > 23 ||
+        minute < 0 ||
+        minute > 59 ||
+        second < 0 ||
+        second > 59
+    ) {
+        return null;
+    }
+
+    const date = new Date(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second
+    );
+
+    // Validate actual calendar date
+    if (
+        date.getFullYear() !== year ||
+        date.getMonth() !== month ||
+        date.getDate() !== day ||
+        date.getHours() !== hour ||
+        date.getMinutes() !== minute ||
+        date.getSeconds() !== second
+    ) {
+        return null;
+    }
+
+    return date;
 }

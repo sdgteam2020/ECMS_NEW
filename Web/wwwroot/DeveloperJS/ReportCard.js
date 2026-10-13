@@ -85,26 +85,33 @@ $(async function () {
     }
     await GetReportCardDashboardCount();
 
-    if ($('#ddlUnit').length > 0) {
-        let previousValue = $('#ddlUnit').val();
-        let calledForSingleOption = false;
-
-        $('#ddlUnit').on('focus', function () {
-            previousValue = $(this).val();
-            calledForSingleOption = false;
-        });
-
-        $('#ddlUnit').on('blur', async function () {
-            const currentValue = $(this).val();
-
-            if (currentValue !== previousValue) {
-                await GetReportCardDashboardCount();
-            } else if ($('#ddlUnit option').length === 1 && !calledForSingleOption) {
-                await GetReportCardDashboardCount();
-                calledForSingleOption = true;
-            }
+    if ($('#btnSearch').length > 0) {
+        $('#btnSearch').on("click", async function () {
+            ResetCount();
+            await GetReportCardDashboardCount();
         });
     }
+
+    //if ($('#ddlUnit').length > 0) {
+    //    let previousValue = $('#ddlUnit').val();
+    //    let calledForSingleOption = false;
+
+    //    $('#ddlUnit').on('focus', function () {
+    //        previousValue = $(this).val();
+    //        calledForSingleOption = false;
+    //    });
+
+    //    $('#ddlUnit').on('blur', async function () {
+    //        const currentValue = $(this).val();
+
+    //        if (currentValue !== previousValue) {
+    //            await GetReportCardDashboardCount();
+    //        } else if ($('#ddlUnit option').length === 1 && !calledForSingleOption) {
+    //            await GetReportCardDashboardCount();
+    //            calledForSingleOption = true;
+    //        }
+    //    });
+    //}
 
     if ($('#ddlCommand').length > 0) {
         let lastVal = $('#ddlCommand').val();

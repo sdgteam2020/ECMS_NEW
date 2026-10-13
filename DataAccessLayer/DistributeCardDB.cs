@@ -73,14 +73,13 @@ namespace DataAccessLayer
         /// </remarks>
         public async Task<DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>> GetAllDistribute(DTODataTablesRequestForCommanCheckAll dTO)
         {
-            List<DTODistributeCardGetResponse> dTODistributeCardGetResponses = new List<DTODistributeCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>
             {
                 draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,
-                data = dTODistributeCardGetResponses
+                data = new List<DTODistributeCardGetResponse>()
             };
             try
             {
@@ -94,27 +93,41 @@ namespace DataAccessLayer
                 };
 
                 // Default sort column and order
-                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "tdc.UpdatedOn";
+                var sortColumn = allowedSortColumns.TryGetValue(dTO.sortColumn ?? string.Empty, out var dbSortColumn) ? dbSortColumn : "tdc.UpdatedOn";
+                var sortOrder = string.Equals(dTO.sortDirection, "desc", StringComparison.OrdinalIgnoreCase) ? "DESC" : "ASC";
 
-                var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
                 string selectFields = @"appl.Name ApplyFor,req.RequestId,tdc.DistributeCardId,basic_2.ServiceNo,ranks.RankAbbreviation RankName,basic_2.FName,basic_2.LName,Muni.Abbreviation UnitAbbreviation,tdc.UpdatedOn,tdc.Remark,tdc.DistributedOn";
                 string fromJoinClause = @"from TrnDistributeCards tdc
                                         inner join TrnICardRequest req on req.RequestId = tdc.RequestId
-                                        inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                         inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId = @UnitMapId
                                         inner join MRank ranks on ranks.RankId = basic_2.RankId
                                         inner join MapUnit uni on uni.UnitMapId = basic_2.UnitId
                                         inner join MUnit Muni on Muni.UnitId=uni.UnitId
                                         inner join MApplyFor appl on appl.ApplyForId = basic_2.ApplyForId";
-                string whereClause = @"Where  @SearchTerm IS NULL OR basic_2.ServiceNo LIKE @SearchTerm";
+                string fromJoinCount = @"from TrnDistributeCards tdc
+                                        inner join TrnICardRequest req on req.RequestId = tdc.RequestId
+                                        inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId = @UnitMapId";
+                string searchFilter = @"Where  @SearchTerm IS NULL OR basic_2.ServiceNo LIKE @SearchTerm";
 
-                var multiQuery = $@"
-                        WITH RecordCTE AS (
-                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
-                        )
-                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
-                string queryRequestIds = $@"SELECT req.RequestId {fromJoinClause} {whereClause}";
+                var sql = $@"
+                            SELECT COUNT(1) AS TotalRecords
+                            {fromJoinCount}
+                            {searchFilter}
+                            OPTION (RECOMPILE);
+
+                            SELECT
+                            {selectFields}     
+                            {fromJoinClause}
+                            {searchFilter}
+                            ORDER BY {sortColumn} {sortOrder}
+                            OFFSET @Start ROWS
+                            FETCH NEXT @Length ROWS ONLY
+                            OPTION (RECOMPILE);
+                            ";
+
+
+                string queryRequestIds = $@"SELECT req.RequestId {fromJoinClause} {searchFilter}";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -122,15 +135,16 @@ namespace DataAccessLayer
                     var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue.Trim()}%";
 
                     var parameters = new DynamicParameters();
-                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Start", dTO.Start, DbType.Int32);
+                    parameters.Add("@Length", dTO.Length, DbType.Int32);
                     parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
                     parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
 
-                    // Execute the SQL query to get the records and total count
-                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
-                    var records = (await ret.ReadAsync<DTODistributeCardGetResponse>()).ToList();
-                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+                    using var multi = await connection.QueryMultipleAsync(sql, parameters);
+
+                    var totalRecords = await multi.ReadFirstOrDefaultAsync<int>();
+
+                    var records = (await multi.ReadAsync<DTODistributeCardGetResponse>()).ToList();
 
                     List<int>? selectedIds = new List<int>();
 
@@ -144,21 +158,20 @@ namespace DataAccessLayer
                         selectedIds = null;
                     }
 
-                    // Prepare the response data
-                    responseData = new DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>
-                    {
-                        draw = dTO.Draw,
-                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
-                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
-                        selectedIds = selectedIds,
-                        data = records
-                    };
+                    responseData.Message = "ok";
+                    responseData.Result = true;
+                    responseData.recordsTotal = totalRecords;
+                    responseData.recordsFiltered = totalRecords;
+                    responseData.selectedIds = selectedIds;
+                    responseData.data = records;
                     return responseData;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "DistributeCardDB->GetAllDistribute");
+                responseData.Message = "Internal Server Error";
+                responseData.Result = false;
                 return responseData;
             }
             

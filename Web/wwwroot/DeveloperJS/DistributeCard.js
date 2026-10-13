@@ -67,7 +67,7 @@ function BindData() {
         autoWidth: false,  //Set autoWidth to true (let DataTables decide)
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
-        order: [[6, 'desc']], // Default sorting on the first column
+        order: [[5, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
 
             let searchStatus = getSearchStatusForBindDialog(data.search.value);
@@ -101,17 +101,27 @@ function BindData() {
                 AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked
             };
             try {
+                let encryptedPayload = "";
+                if (requestData) {
+                    const jsonData = JSON.stringify(requestData);
+                    encryptedPayload = encryptPayloadData(jsonData);
+                }
+
                 let response = await fetch("/BasicDetail/GetAllDistribute", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Content-Type": "application/json",
                         'RequestVerificationToken': globalThis.RequestVerificationToken
                     },
-                    body: new URLSearchParams(requestData).toString()
+                    body: JSON.stringify({ data: encryptedPayload })
                 });
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
+
+                if (result.Result == false) {
+                    toastr.error("Failed to Fetch Date: " + response.Message);
+                }
 
                 // 🔁 If no data returned, always clear selection
                 if (result.data.length === 0) {

@@ -76,7 +76,7 @@ $(document).ready(function () {
 
         if ($("#ddlForArmyNoRulePrefix").val() == '') {
             toastr.error("Please select the Prefix.");
-            return;
+            return;1
         }
 
         let fullArmyNo = getFullArmyNumber();

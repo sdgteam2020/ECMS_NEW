@@ -1212,76 +1212,103 @@ namespace Web.Controllers
         /// <param name="dTORecord">The request data for the report dashboard count.</param>
         /// <returns>A JSON response containing the dashboard count data or an error message.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetReportDashboardCount([FromBody] DTOMHierarchyRequest dTORecord)
+        public async Task<IActionResult> GetReportDashboardCount([FromBody] EncryptedRequest request)
         {
-            // Retrieve the current user's ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var user = await userManager.FindByIdAsync(userId.ToString());
+            DTOGenericResponse<DTOReportDashboardCountResponse> responseData = new DTOGenericResponse<DTOReportDashboardCountResponse>();
+            responseData.Result = false;
+            responseData.Value = new DTOReportDashboardCountResponse();
 
-            // Initialize the DTO session object and retrieve session data
-            DtoSession? dtoSession = new DtoSession();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
             {
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                responseData.Message = "Session data is unavailable or has expired.";
+                return Json(responseData);
             }
 
-            // Retrieve the MapUnitId from the session data
-            int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
-            if (MapUnitId == null)
+            DTOMHierarchyRequest dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTOMHierarchyRequest>(request.Data, sessionData.Salt);
+
+            if (dTORecord == null)
             {
-                return BadRequest(new { message = "Session expired." });
+                responseData.Message = "Invalid Input";
+                return Json(responseData);
             }
 
-            // Fetch the map unit details based on the MapUnitId
-            DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
-
-            // Retrieve the user's claims using UserManager
-            var UserClaims = await userManager.GetClaimsAsync(user);
-
-            // Conditional logic based on the user's claims to modify the request data
-            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
+            try
             {
-                // If user has "Army Level Reports" claim, do not modify the request data
-            }
-            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Fmn Level Reports"))
-            {
-                dTORecord.UnitType = dTOMap.UnitType;
-
-                // Modify the request data based on unit type
-                if (dTOMap.UnitType == 1)
+                ModelState.Clear();
+                if (TryValidateModel(dTORecord))
                 {
-                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
-                }
-                else if (dTOMap.UnitType == 2)
-                {
-                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
-                    dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
-                }
-                else if (dTOMap.UnitType == 3)
-                {
-                    dTORecord.PsoId = (byte?)dTOMap.PsoId;
-                    dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
-                }
-            }
-            else
-            {
-                // Modify request data based on unit type
-                if (MapUnitId != null)
-                {
-                    dTORecord.UnitType = dTOMap.UnitType;
-                    dTORecord.UnitMapId = (int)MapUnitId;
-                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
-                    dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
-                    dTORecord.DivId = (byte?)dTOMap.DivId;
-                    dTORecord.BdeId = (byte?)dTOMap.BdeId;
-                    dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
-                    dTORecord.PsoId = (byte?)dTOMap.PsoId;
-                    dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
-                }
-            }
+                    // Retrieve the current user's ID from the claims
+                    int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var user = await userManager.FindByIdAsync(userId.ToString());
 
-            // Return the report dashboard count data as a JSON response
-            return Json(await _reportReturnBL.GetReportDashboardCount(dTORecord));
+                    // Retrieve the MapUnitId from the session data
+                    int MapUnitId = sessionData.UnitId;
+
+                    // Fetch the map unit details based on the MapUnitId
+                    DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId(MapUnitId);
+
+                    // Retrieve the user's claims using UserManager
+                    var UserClaims = await userManager.GetClaimsAsync(user);
+
+                    // Conditional logic based on the user's claims to modify the request data
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
+                    {
+                        // If user has "Army Level Reports" claim, do not modify the request data
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Fmn Level Reports"))
+                    {
+                        dTORecord.UnitType = dTOMap.UnitType;
+
+                        // Modify the request data based on unit type
+                        if (dTOMap.UnitType == 1)
+                        {
+                            dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                        }
+                        else if (dTOMap.UnitType == 2)
+                        {
+                            dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                            dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                        }
+                        else if (dTOMap.UnitType == 3)
+                        {
+                            dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                            dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                        }
+                    }
+                    else
+                    {
+                        // Modify request data based on unit type
+                        dTORecord.UnitType = dTOMap.UnitType;
+                        dTORecord.UnitMapId = MapUnitId;
+                        dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                        dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                        dTORecord.DivId = (byte?)dTOMap.DivId;
+                        dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                        dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                        dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                        dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                    }
+
+                    // Return the report dashboard count data as a JSON response
+                    return Json(await _reportReturnBL.GetReportDashboardCount(dTORecord));
+                }
+                else
+                {
+                    responseData.Result = false;
+                    responseData.Message = "Invalid Input";
+                    return Json(responseData);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log any exceptions and return an internal server error
+                _logger.LogError(1001, ex, "Home->GetReportDashboardCount");
+                responseData.Message = "Invalid Input";
+                // Return JSON with empty data
+                return Json(responseData);
+            }
         }
 
 
