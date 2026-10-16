@@ -27,8 +27,12 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="Data">An instance of MRegistration containing the ApplyForId to filter the records.</param>
         /// <returns>A list of MRegistration records that match the ApplyForId.</returns>
-        public async Task<List<MRegistration>> GetByApplyFor(MRegistration Data)
+        public async Task<DTOGenericResponse<List<MRegistration>>> GetByApplyFor(MRegistration Data)
         {
+            DTOGenericResponse<List<MRegistration>> responseData = new DTOGenericResponse<List<MRegistration>>();
+            responseData.Result = false;
+            responseData.Value = new List<MRegistration>();
+
             try
             {
                 var ret = await _context.MRegistration
@@ -42,12 +46,16 @@ namespace DataAccessLayer
                             })
                             .AsNoTracking()
                             .ToListAsync();
-                return ret;
+                responseData.Value = ret;
+                responseData.Result = true;
+                responseData.Message = "Data retrieved successfully.";
+                return responseData;
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "RegistrationDB->GetByApplyFor");
-                return new List<MRegistration>();
+                responseData.Message = "Internal Server Error.";
+                return responseData;
             }
 
         }
@@ -91,27 +99,43 @@ namespace DataAccessLayer
         {
             try
             {
-                var result = await _context.MArmyPrefixRule
+                return await _context.MArmyPrefixRule
                                .Where(x => x.ApplyForId == Data.ApplyForId && x.IsActive)
                                .OrderBy(x => x.Order)
-                               .Select(x => new
+                               .Select(x => new MArmyPrefixRule
                                {
-                                   x.Id,
-                                   x.Prefix,
-                                   x.MinDigits,
-                                   x.MaxDigits,
-                                   x.StorePrefix
+                                   Id = x.Id,
+                                   Prefix = x.Prefix,
+                                   MinDigits = x.MinDigits,
+                                   MaxDigits = x.MaxDigits,
+                                   StorePrefix = x.StorePrefix
                                })
                                .AsNoTracking()
                                .ToListAsync();
-                return result.Select(x => new MArmyPrefixRule
-                {
-                    Id=x.Id,
-                    Prefix = x.Prefix,
-                    MinDigits = x.MinDigits,
-                    MaxDigits = x.MaxDigits,
-                    StorePrefix = x.StorePrefix
-                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "RegistrationDB->GetArmyPrefixRules");
+                return new List<MArmyPrefixRule>();
+            }
+        }
+        public async Task<List<MArmyPrefixRule>> GetAllArmyPrefixRules()
+        {
+            try
+            {
+                return await _context.MArmyPrefixRule
+                               .Where(x => x.IsActive)
+                               .OrderBy(x => x.Order)
+                               .Select(x => new MArmyPrefixRule
+                               {
+                                   Id = x.Id,
+                                   Prefix = x.Prefix,
+                                   MinDigits = x.MinDigits,
+                                   MaxDigits = x.MaxDigits,
+                                   StorePrefix = x.StorePrefix
+                               })
+                               .AsNoTracking()
+                               .ToListAsync();
             }
             catch (Exception ex)
             {

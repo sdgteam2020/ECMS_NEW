@@ -1,7 +1,7 @@
 ﻿$(function () {
-    var $success = $('#toast-success');
-    if ($success.length) {
-        var msg = $success.data('message');
+    var $success1 = $('#toast-success');
+    if ($success1.length) {
+        var msg = $success1.data('message');
         if (msg) {
             toastr.success(msg);
         }

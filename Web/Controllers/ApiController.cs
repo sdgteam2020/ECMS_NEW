@@ -101,7 +101,7 @@ namespace Web.Controllers
                         retdat.Pers_Army_No = ICNumber;
                         retdat.jwt = ret.token;
                         retdat.ApplyForId = Type;
-                        retdat.PubKey = apiHelpers.GetHashValue("EISAC_OFFR");
+                        retdat.PubKey = "1843387C03CB35252A69796A02FACB535C0A6FE4";//apiHelpers.GetHashValue("EISAC_OFFR");
 
                         // Get the last 4 digits of the IC number for decryption purposes
                         string PubKeyForDesc = retdat.Pers_Army_No.Substring(retdat.Pers_Army_No.Length - 4, 4);
@@ -178,7 +178,7 @@ namespace Web.Controllers
                         retdat.Pers_Army_No = ICNumber;
                         retdat.jwt = ret.token;
                         retdat.ApplyForId = Type;
-                        retdat.PubKey = apiHelpers.GetHashValue("EISAC");
+                        retdat.PubKey = "9F8AF0E4A5E7A23353672C93A22DD5AA6B130F8D";// apiHelpers.GetHashValue("EISAC"); //9F8AF0E4A5E7A23353672C93A22DD5AA6B130F8D EISAC
 
                         // Get the last 4 digits of the IC number for decryption purposes
                         string PubKeyForDesc = retdat.Pers_Army_No.Substring(retdat.Pers_Army_No.Length - 4, 4);

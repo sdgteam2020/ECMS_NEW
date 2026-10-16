@@ -6,6 +6,7 @@ using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.IAMSetting;   
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
@@ -24,6 +25,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OneLogin.Saml;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Net;
@@ -61,10 +63,11 @@ namespace Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IIAMSettingBL _iAMSettingBL;
         private readonly IHostEnvironment _hostEnv;
+        private readonly IRegistrationBL _registrationBL;//Interface for registration business logic layer
         //private static readonly Regex armyNoRegex = new Regex(@"^[A-Z]{2}\d{5,6}[A-Z]$", RegexOptions.IgnoreCase);
         private static readonly Regex armyNoRegex = new Regex(@"^(IC|SL|SS|WC|TA)\d{5,6}[A-Z]$", RegexOptions.IgnoreCase);
         public AccountController(IConfiguration configuration,IUnitOfWork unitOfWork,IUnitBL unitBL, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
-            IDataProtectionProvider dataProtectionProvider, IService service, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger, ITrnLoginLogBL trnLoginLogBL, IHttpContextAccessor httpContextAccessor, IIAMSettingBL iAMSettingBL, IHostEnvironment hostEnv)
+            IDataProtectionProvider dataProtectionProvider, IService service, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger, ITrnLoginLogBL trnLoginLogBL, IHttpContextAccessor httpContextAccessor, IIAMSettingBL iAMSettingBL, IRegistrationBL registrationBL, IHostEnvironment hostEnv)
         {
             _configuration = configuration;
             this.roleManager = roleManager;
@@ -86,6 +89,7 @@ namespace Web.Controllers
             _httpContextAccessor= httpContextAccessor;
             _iAMSettingBL = iAMSettingBL;
             _hostEnv = hostEnv;
+            _registrationBL = registrationBL;
         }
         public class Log
         {
@@ -358,7 +362,13 @@ namespace Web.Controllers
 
                 ModelState.Clear();
 
-                string error = ArmyNoHelper.ValidateArmyNo(dTO.ArmyNo);
+                DTOApplyForRequest dTOApplyFor = new DTOApplyForRequest();
+                dTOApplyFor.ApplyForId = 1;
+
+                var mArmyPrefixes = new List<MArmyPrefixRule>();
+                mArmyPrefixes = await _registrationBL.GetArmyPrefixRules(dTOApplyFor);
+
+                string error = ArmyNoHelper.ValidateArmyNo(dTO.ArmyNo, mArmyPrefixes);
 
                 if (!string.IsNullOrEmpty(error))
                 {
@@ -1187,7 +1197,13 @@ namespace Web.Controllers
 
                     if (ModelState.IsValid)
                     {
-                        string error = ArmyNoHelper.ValidateArmyNo(model.ICNo);
+                        DTOApplyForRequest dTOApplyFor = new DTOApplyForRequest();
+                        dTOApplyFor.ApplyForId = 1;
+
+                        var mArmyPrefixes = new List<MArmyPrefixRule>();
+                        mArmyPrefixes = await _registrationBL.GetArmyPrefixRules(dTOApplyFor);
+
+                        string error = ArmyNoHelper.ValidateArmyNo(model.ICNo, mArmyPrefixes);
 
                         if (!string.IsNullOrEmpty(error))
                         {
@@ -2462,7 +2478,12 @@ namespace Web.Controllers
                     // Validate model
                     if (ModelState.IsValid)
                     {
-                        string error = ArmyNoHelper.ValidateArmyNo(model.ICNo);
+                        DTOApplyForRequest dTOApplyFor = new DTOApplyForRequest();
+                        dTOApplyFor.ApplyForId = 1;
+
+                        var mArmyPrefixes = new List<MArmyPrefixRule>();
+                        mArmyPrefixes = await _registrationBL.GetArmyPrefixRules(dTOApplyFor);
+                        string error = ArmyNoHelper.ValidateArmyNo(model.ICNo, mArmyPrefixes);
 
                         if (!string.IsNullOrEmpty(error))
                         {

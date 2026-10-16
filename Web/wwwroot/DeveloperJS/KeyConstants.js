@@ -47,3 +47,21 @@ const AllRegimental = 21;
 const ORO = 22;
 const HostUrlDGISToken = 'https://dgisapp.army.mil:55102'; /*localhost*/
 const HostUrl = 'https://localhost:7023';
+
+const MReg_Self = 1;
+const MReg_Offrs_SameUnit = 2;
+const MReg_Offrs_OtherUnit = 3;
+const MReg_GCs_LCs_Cadets = 4;
+const MReg_JCOs_OR_SameUnit = 6;
+const MReg_JCOs_OR_OtherUnit = 7;
+const MReg_Rect = 9;
+const MReg_AMC_ADC_Offrs = 10;
+
+const MICardType_First_time = 1;
+const MICardType_Damaged = 2;
+const MICardType_Change_Rank = 3;
+const MICardType_Change_ArmyNo = 4;
+const MICardType_LostCard = 5;
+
+const MApplyFor_Offrs = 1;
+const MApplyFor_JCO_ORs = 2;

@@ -56,7 +56,7 @@ namespace BusinessLogicsLayer.API
                     var body = new
                     {
                         pers_Army_No = Data.Pers_Army_No,
-                        pubKey = Data.PubKey,
+                        PubKey = Data.PubKey,
 
                     };
                     var uri = $"{Data.ApiUrl}?{await query.ReadAsStringAsync()}";

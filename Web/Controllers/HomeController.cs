@@ -1536,13 +1536,25 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetRegistrationApplyfor(string request)
         {
-            MRegistration Data = await AESEncrytDecry.DecryptAESWithDTO<MRegistration>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
-            if (Data == null)
+            DTOGenericResponse<List<MRegistration>> responseData = new DTOGenericResponse<List<MRegistration>>();
+            responseData.Result = false;
+            responseData.Value = new List<MRegistration>();
+
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
             {
-                return Json(KeyConstants.InternalServerError); // Return error message for invalid data
+                responseData.Message = "Session data is unavailable or has expired.";
+                return Json(responseData);
             }
 
+            MRegistration Data = await AESEncrytDecry.DecryptAESWithDTO<MRegistration>(request, sessionData.Salt);
 
+            if (Data == null)
+            {
+                responseData.Message = "Invalid Input";
+                return Json(responseData);
+            }
             // Fetch the registration data based on the "ApplyFor" property
             return Json(await _registrationBL.GetByApplyFor(Data));
         }
@@ -2057,6 +2069,11 @@ namespace Web.Controllers
             }           
             return Json(await _registrationBL.GetArmyPrefixRules(data));
 
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllArmyPrefixRules()
+        {
+            return Json(await _registrationBL.GetAllArmyPrefixRules());
         }
         #endregion
     }

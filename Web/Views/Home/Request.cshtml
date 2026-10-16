@@ -97,7 +97,7 @@
 
                 <div class="col-md-12 col-sm-6 text-center mt-4 ApplyCard" id="btnIcardFor">
                 </div>
-                <div class="col-md-12 col-sm-6 text-center d-none1 ApplyCard" id="icardrequestfor">
+                <div class="col-md-12 col-sm-6 text-center ApplyCard" id="icardrequestfor">
                 </div>
                 <div class="col-12 mt-4 ApplyCard d-none" id="armyNoSection">
                     <div class="army-form-card">
@@ -112,7 +112,7 @@
 
                         <!-- Old Army No -->
                         <div class="army-field d-none" id="oldArmyNoWrapper">
-                            <label>Old Army No</label>
+                            <label>Old Army No</label> 
 
                             <div class="army-combo">
                                 <select id="ddlForOldArmyNoRulePrefix" class="army-prefix">
@@ -122,7 +122,7 @@
                                        id="txtApplyForOldArmyNo"
                                        placeholder="Enter Old Army No"
                                        maxlength="9"
-                                       minlength="8" />
+                                       minlength="7" />
                             </div>
                         </div>
 
@@ -138,7 +138,7 @@
                                        id="txtApplyForArmyNo"
                                        placeholder="Enter Army No"
                                        maxlength="9"
-                                       minlength="8" />
+                                       minlength="7" />
                             </div>
                         </div>
 
@@ -156,7 +156,7 @@
                     <button type="button" class="btn btn-warning mt-4 btn1 disabled" id="btnNext">Next</button>
                 </div>
 
-                <div class="col-md-12 col-sm-6 text-center mt-4 d-none1 ApplyCard" id="">
+                <div class="col-md-12 col-sm-6 text-center mt-4 d-none ApplyCard" id="divTokenMsg">
                     <span id="tokenmsg"></span>
                 </div>
             </div>
@@ -283,6 +283,7 @@
     </div>
 </div>
 @section Scripts {
+    <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/Request.js"></script>
     <script asp-src-include="~/developerjs/Token.js"></script>
     <script asp-src-include="~/developerjs/helper_CompletedHistory.js"></script>

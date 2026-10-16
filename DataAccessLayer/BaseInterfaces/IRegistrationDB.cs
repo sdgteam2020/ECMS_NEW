@@ -13,8 +13,9 @@ namespace DataAccessLayer.BaseInterfaces
     public interface IRegistrationDB : IGenericRepositoryDL<MRegistration>
     {
        
-        public Task<List<MRegistration>> GetByApplyFor(MRegistration Data);
+        public Task<DTOGenericResponse<List<MRegistration>>> GetByApplyFor(MRegistration Data);
         public Task<DTOApplyCardDetailsResponse> GetApplyCardDetails(DTOApplyCardDetailsRequest Data);
-        Task<List<MArmyPrefixRule>> GetArmyPrefixRules(DTOApplyForRequest Data);
+        public Task<List<MArmyPrefixRule>> GetArmyPrefixRules(DTOApplyForRequest Data);
+        public Task<List<MArmyPrefixRule>> GetAllArmyPrefixRules();
     }
 }
