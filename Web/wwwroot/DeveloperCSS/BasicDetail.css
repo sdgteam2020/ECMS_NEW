@@ -2411,7 +2411,7 @@ body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign {
 .ecms-basicdetail-page textarea#IdenMark1,
 .ecms-basicdetail-page textarea#PermanentAddress {
     min-height: 38px !important;
-    max-height: none !important;
+    max-height: 169px !important;
     overflow-y: auto !important;
     resize: vertical !important;
     box-sizing: border-box;
