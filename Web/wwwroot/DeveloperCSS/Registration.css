@@ -591,7 +591,6 @@ body:has(.ecms-registration-page) {
     .ecms-registration-page select,
     .ecms-registration-page textarea {
         min-height: 34px !important;
-        height: auto !important;
         padding-top: 5px !important;
         padding-bottom: 5px !important;
     }
@@ -704,4 +703,19 @@ body:has(.ecms-registration-page) {
         max-height: none !important;
         overflow: visible !important;
     }
+}
+/* Permanent Address textarea */
+.ecms-registration-page #PermanentAddress {
+    width: 100%;
+    height: 100px;
+    min-height: 38px !important;
+    max-height: none !important;
+    resize: vertical !important;
+    overflow-y: auto !important;
+    box-sizing: border-box;
+}
+
+/* Keep label aligned when textarea grows */
+.ecms-registration-page .persAddress {
+    align-items: flex-start !important;
 }

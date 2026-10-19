@@ -287,7 +287,6 @@ body:has(.ecms-basicdetail-page) {
 .ecms-basicdetail-page textarea {
     width: 100% !important;
     min-height: 34px !important;
-    height: auto !important;
     border: 1px solid rgba(165, 187, 219, .95) !important;
     border-radius: 8px !important;
     background-color: rgba(255,255,255,.98) !important;
@@ -297,24 +296,31 @@ body:has(.ecms-basicdetail-page) {
     box-shadow: inset 0 1px 2px rgba(6,27,68,.04) !important;
 }
 
-    .ecms-basicdetail-page .form-control:focus,
-    .ecms-basicdetail-page .form-select:focus,
-    .ecms-basicdetail-page select:focus,
-    .ecms-basicdetail-page textarea:focus {
-        border-color: #3f7cff !important;
-        box-shadow: 0 0 0 3px rgba(63, 124, 255, .16) !important;
-        outline: none !important;
+    .ecms-basicdetail-page .form-control:not(textarea),
+    .ecms-basicdetail-page .form-select,
+    .ecms-basicdetail-page select {
+        height: auto !important;
     }
 
-    .ecms-basicdetail-page .form-control[readonly],
-    .ecms-basicdetail-page .form-control:disabled,
-    .ecms-basicdetail-page .form-select:disabled,
-    .ecms-basicdetail-page select:disabled,
-    .ecms-basicdetail-page textarea[readonly] {
-        background: linear-gradient(135deg, #eef3fa, #dce5f0) !important;
-        color: #48566d !important;
-        opacity: 1 !important;
-    }
+
+        .ecms-basicdetail-page .form-control:focus,
+        .ecms-basicdetail-page .form-select:focus,
+        .ecms-basicdetail-page select:focus,
+        .ecms-basicdetail-page textarea:focus {
+            border-color: #3f7cff !important;
+            box-shadow: 0 0 0 3px rgba(63, 124, 255, .16) !important;
+            outline: none !important;
+        }
+
+        .ecms-basicdetail-page .form-control[readonly],
+        .ecms-basicdetail-page .form-control:disabled,
+        .ecms-basicdetail-page .form-select:disabled,
+        .ecms-basicdetail-page select:disabled,
+        .ecms-basicdetail-page textarea[readonly] {
+            background: linear-gradient(135deg, #eef3fa, #dce5f0) !important;
+            color: #48566d !important;
+            opacity: 1 !important;
+        }
 
 .ecms-basicdetail-page #IdenMark1 {
     min-height: 62px !important;
@@ -864,22 +870,27 @@ body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign {
     .ecms-basicdetail-page textarea,
     .ecms-basicdetail-page .select2-container--default .select2-selection--single {
         min-height: 1.9rem !important;
-        height: 1.9rem !important;
         padding-top: .22rem !important;
         padding-bottom: .22rem !important;
         font-size: .72rem !important;
         border-radius: var(--ecms-radius-sm, 7px) !important;
     }
 
+        .ecms-basicdetail-page .form-control:not(textarea),
+        .ecms-basicdetail-page .form-select,
+        .ecms-basicdetail-page select,
+        .ecms-basicdetail-page .select2-container--default .select2-selection--single {
+            height: 1.9rem !important;
+        }
+
+
     .ecms-basicdetail-page #IdenMark1 {
         min-height: 3.45rem !important;
-        height: 3.45rem !important;
         resize: none !important;
     }
 
     .ecms-basicdetail-page #PermanentAddress {
         min-height: 4.95rem !important;
-        height: 4.95rem !important;
         resize: none !important;
     }
 
@@ -1350,27 +1361,32 @@ body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign {
     .ecms-basicdetail-page textarea,
     .ecms-basicdetail-page .select2-container--default .select2-selection--single {
         min-height: 2.05rem !important;
-        height: 2.05rem !important;
         padding-top: .25rem !important;
         padding-bottom: .25rem !important;
         font-size: .80rem !important;
     }
 
-        .ecms-basicdetail-page .select2-container--default
-        .select2-selection--single .select2-selection__rendered {
-            line-height: 1.9rem !important;
-            font-size: .80rem !important;
+        .ecms-basicdetail-page .form-control:not(textarea),
+        .ecms-basicdetail-page .form-select,
+        .ecms-basicdetail-page select,
+        .ecms-basicdetail-page .select2-container--default .select2-selection--single {
+            height: 2.05rem !important;
         }
+
+
+            .ecms-basicdetail-page .select2-container--default
+            .select2-selection--single .select2-selection__rendered {
+                line-height: 1.9rem !important;
+                font-size: .80rem !important;
+            }
 
     .ecms-basicdetail-page #IdenMark1 {
         min-height: 3.7rem !important;
-        height: 3.7rem !important;
         font-size: .80rem !important;
     }
 
     .ecms-basicdetail-page #PermanentAddress {
         min-height: 5.25rem !important;
-        height: 5.25rem !important;
         font-size: .80rem !important;
         line-height: 1.3 !important;
     }
@@ -1553,18 +1569,23 @@ body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign {
     .ecms-basicdetail-page textarea,
     .ecms-basicdetail-page .select2-container--default .select2-selection--single {
         min-height: 2.15rem !important;
-        height: auto !important;
         font-size: .82rem !important;
     }
 
+        .ecms-basicdetail-page .form-control:not(textarea),
+        .ecms-basicdetail-page .form-select,
+        .ecms-basicdetail-page select,
+        .ecms-basicdetail-page .select2-container--default .select2-selection--single {
+            height: auto !important;
+        }
+
+
     .ecms-basicdetail-page #IdenMark1 {
         min-height: 4rem !important;
-        height: 4rem !important;
     }
 
     .ecms-basicdetail-page #PermanentAddress {
         min-height: 5.8rem !important;
-        height: 5.8rem !important;
     }
 
     .ecms-media-stack {
@@ -1667,18 +1688,23 @@ body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign {
         .ecms-basicdetail-page textarea,
         .ecms-basicdetail-page .select2-container--default .select2-selection--single {
             min-height: 2.25rem !important;
-            height: auto !important;
             font-size: .84rem !important;
         }
 
+            .ecms-basicdetail-page .form-control:not(textarea),
+            .ecms-basicdetail-page .form-select,
+            .ecms-basicdetail-page select,
+            .ecms-basicdetail-page .select2-container--default .select2-selection--single {
+                height: auto !important;
+            }
+
+
         .ecms-basicdetail-page #IdenMark1 {
             min-height: 4.25rem !important;
-            height: auto !important;
         }
 
         .ecms-basicdetail-page #PermanentAddress {
             min-height: 6rem !important;
-            height: auto !important;
         }
 
     .ecms-media-card-head strong {
@@ -2373,5 +2399,39 @@ body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign {
     .ecms-summary-card label[id] {
         font-size: .72rem !important;
         line-height: 1.2 !important;
+    }
+}
+
+
+/* ==============================================================
+   TEXTAREA RESIZE FIX: Remove fixed heights with !important.
+   Manual resizing requires height NOT to be !important, because
+   browser resizing sets the element's inline height normally.
+   ============================================================== */
+.ecms-basicdetail-page textarea#IdenMark1,
+.ecms-basicdetail-page textarea#PermanentAddress {
+    min-height: 38px !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    resize: vertical !important;
+    box-sizing: border-box;
+}
+
+.ecms-basicdetail-page textarea#IdenMark1 {
+    height: 60px; /* No !important: manual resizing works */
+}
+
+.ecms-basicdetail-page textarea#PermanentAddress {
+    height: 100px; /* No !important: manual resizing works */
+}
+
+/* Desktop form has fixed-height columns, so allow a field column to
+   scroll instead of cutting off its resized textarea. This leaves
+   the photo/signature stack and the declaration row unchanged. */
+@media (min-width: 1200px) {
+    .ecms-basicdetail-page .ecms-left-fields,
+    .ecms-basicdetail-page .ecms-right-fields {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
     }
 }
