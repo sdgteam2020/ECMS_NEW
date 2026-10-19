@@ -10,7 +10,7 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ServiceNumber { get; set; } = string.Empty;
 
-        [MinLength(8, ErrorMessage = "Minimum length of Army No is eight character.")]
+        [MinLength(7, ErrorMessage = "Minimum length of Army No is seven character.")]
         [MaxLength(9, ErrorMessage = "Maximum length of Army No is nine character.")]
         public string? OldServiceNo { get; set; } = string.Empty;
 

@@ -71,7 +71,7 @@ namespace DataTransferObject.ViewModels
         [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        [MinLength(8, ErrorMessage = "Minimum length of Army No is eight character.")]
+        [MinLength(7, ErrorMessage = "Minimum length of Army No is seven character.")]
         [MaxLength(9, ErrorMessage = "Maximum length of Army No is nine character.")]
         public string ServiceNo { get; set; } = string.Empty;
 

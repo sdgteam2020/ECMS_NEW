@@ -196,12 +196,19 @@ function BindData(StepCounter, JCOOR) {
                 className: "nowrap",
                 width: "120px",
                 render: function (data, type, row) {
-                    let displayText = data;
 
-                    // If first two chars are alphabets, insert space
-                    if (/^[A-Za-z]{2}/.test(data)) {
-                        displayText = data.slice(0, 2) + ' ' + data.slice(2);
+                    if (!data) return "";
+
+                    let serviceNo = String(data).trim().toUpperCase();
+
+                    if (type !== "display") {
+                        return serviceNo;
                     }
+
+                    let displayText = serviceNo.replace(
+                        /^([A-Za-z]+)(?=\d)/,
+                        "$1 "
+                    );
 
                     return `<a href="#" class="service-no-link">${displayText}</a>`;
                 }

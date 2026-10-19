@@ -22,6 +22,7 @@ using Newtonsoft.Json;
 using System.Collections.Immutable;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DataAccessLayer
 {
@@ -1269,7 +1270,13 @@ namespace DataAccessLayer
                 {
                     if (ApplyForId == 1)
                     {
-                        string ini = ServiceNo.Substring(0, 2).ToUpper();
+                        Match match = Regex.Match(ServiceNo, @"^([A-Z]{1,3})([0-9]{5,6})([A-Z])$");
+
+                        if (!match.Success)
+                            return null;
+
+                        string ini = match.Groups[1].Value; // ServiceNo.Substring(0, 2).ToUpper();
+
                         string MP6F = dTOApplFwdCondition.MP6F.Name;
                         string MPRSO = dTOApplFwdCondition.MPRSO.Name;
                         var ArmedAbbreviation = dTOApplFwdCondition.MPRSO.ArmedAbbreviation;

@@ -35,16 +35,27 @@ async function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thu
         if (data && data.length > 0) {
             if (data[0].Status === '200') {
                 thumbprint = data[0].Thumbprint;
-                await GetTokenvalidatepersid2fa(IcNo, msgid, txticno, thumbprint);
+                let res = await GetTokenvalidatepersid2fa(IcNo, msgid, txticno, thumbprint);
+                if (res == true) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
             } else if (data[0].Status === '404') {
                 $("#" + msgid).html(`<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">${data[0].Remarks} </span></div>`);
                 $("#" + txticno).val("");
+                return false;
             }
+        }
+        else {
+            return false;
         }
     } catch (error) {
         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
         $("#" + txticno).val("");
         $("#loadingToken").hide();
+        return false;
     }
 }
 
@@ -85,24 +96,33 @@ async function GetTokenvalidatepersid2fa(IcNo, msgid, txticno, thumbprint) {
 
                 if (CSPStatus === true) {
                     if (txticno !== "") {
-                        await GetTokenDetails('FetchUniqueTokenDetails', txticno, thumbprint);
+                        let res = await GetTokenDetails('FetchUniqueTokenDetails', txticno, thumbprint);
+                        if (res == true) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
                     }
                 }
                 else {
                     $("#" + msgid).html(`<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">${data2[0].OCSPMsg}</span></div>`);
                     $("#" + txticno).val("");
                     $("#txtspnIsToken").val("");
+                    return false;
                 }
             }
             else {
                 $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">ICNO Not Match Inserted Token </span></div>');
                 $("#" + txticno).val("");
                 $("#txtspnIsToken").val("");
+                return false;
             }
         }
     } catch (error) {
         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
         $("#loadingToken").hide();
+        return false;
     }
 }
 
@@ -128,14 +148,24 @@ async function GetTokenValidate(ApiId, IcNo, msgid) {
 
             if (result[0].Status === '200') {
                 $("#" + msgid).html(`<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">${result[0].Remark}</span></div>`);
+                return true;
             } else if (result[0].Status === '404') {
                 $("#" + msgid).html(`<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">${result[0].Remark}</span></div>`);
                 $("#txtspnIsToken").val("");
+                return false;
             }
+            else{
+                return false;
+            }
+        }
+        else
+        {
+            return false;
         }
     } catch (error) {
         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
         $("#loadingToken").hide();
+        return false;
     }
 }
 
@@ -172,20 +202,24 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid, ddl = '') {
 
                 if (validToDate === null) {
                     $("#" + msgid).html("Invalid ValidTo date:", data[0]);
-                    return 0;
+                    return false;
                 }
                 else {
                     validTo = validToDate;
                 }
 
-                if (TokenExpired) {
-                    if (CurrentDate <= validTo) {
+                if (TokenExpired)
+                {
+                    if (CurrentDate <= validTo)
+                    {
                         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Token Expired</span>.</div>');
                         $("#" + txt).val("");
                         if (thumbprint !== "") $("#" + thumbprint).val("");
                         $("#txtspnIsToken").val("");
+                        return false;
                     }
-                    else {
+                    else
+                    {
                         $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check" aria-hidden="true"></i><span class="m-lg-2">Token Detected</span></div>');
                         if (thumbprint !== "")
                             $("#" + thumbprint).val(data[0].Thumbprint);
@@ -208,14 +242,17 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid, ddl = '') {
                         } else {
                             $("#" + txt).val(keyValuePairs.SERIALNUMBER.toUpperCase().trim());
                         }
+                        return true;
                     }
                 }
-                else {
+                else
+                {
                     if (CurrentDate >= validTo) {
                         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Token Expired</span>.</div>');
                         $("#" + txt).val("");
                         if (thumbprint !== "") $("#" + thumbprint).val("");
                         $("#txtspnIsToken").val("");
+                        return false;
                     }
                     else {
                         $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check" aria-hidden="true"></i><span class="m-lg-2">Token Detected</span></div>');
@@ -224,6 +261,7 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid, ddl = '') {
                         $("#txtspnIsToken").val("Ok");
 
                         $("#" + txt).val(keyValuePairs.SERIALNUMBER.toUpperCase().trim());
+                        return true;
                     }
                 }
             }
@@ -231,22 +269,26 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid, ddl = '') {
                 $("#" + msgid).html(`<div class="mt-4 alert alert-danger alert-dismissible fade show"><i class="fa fa-check" aria-hidden="true"></i><span class="m-lg-2">${data[0].Remarks}</span></div>`);
                 $("#" + txt).val("");
                 $("#txtspnIsToken").val("");
+                return false;
             }
             else if (data[0].Status === '500') {
                 $("#" + msgid).html(`<div class="mt-4 alert alert-danger alert-dismissible fade show"><i class="fa fa-check" aria-hidden="true"></i><span class="m-lg-2">Technical Error While Fetching Token</span></div>`);
                 $("#" + txt).val("");
                 $("#txtspnIsToken").val("");
+                return false;
             }
         }
         else {
             $("#" + msgid).html(errormsg001);
-            return 0;
+            return false;
         }
+        return false;
     }
     catch (error) {
         $("#" + msgid).html(`<div class="mt-4 alert alert-danger alert-dismissible fade show"><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span></div>`);
         $("#" + txt).val("");
         $("#loadingToken").hide();
+        return false;
     }
 }
 function parseApiDate(dateString) {

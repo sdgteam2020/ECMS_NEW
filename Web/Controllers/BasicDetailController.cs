@@ -914,8 +914,8 @@ namespace Web.Controllers
                             string? NewServiceNo = model.ServiceNo;
 
                             // Validate Army number lengths
-                            if ((OldServiceNo != null && (OldServiceNo.Length > 7 && OldServiceNo.Length < 10)) &&
-                                (NewServiceNo != null && (NewServiceNo.Length > 7 && NewServiceNo.Length < 10)))
+                            if ((OldServiceNo != null && (OldServiceNo.Length > 6 && OldServiceNo.Length < 10)) &&
+                                (NewServiceNo != null && (NewServiceNo.Length > 6 && NewServiceNo.Length < 10)))
                             {
                                 // Disallow same Old and New Army numbers
                                 if (NewServiceNo == OldServiceNo)
@@ -951,9 +951,9 @@ namespace Web.Controllers
                                     ModelState.AddModelError("OldServiceNo", "Old Service No required.");
                                     goto end;
                                 }
-                                if (OldServiceNo.Length < 8 || OldServiceNo.Length > 9)
+                                if (OldServiceNo.Length < 7 || OldServiceNo.Length > 9)
                                 {
-                                    ModelState.AddModelError("OldServiceNo", "Minimum eight and Maximum nine length of Army No.");
+                                    ModelState.AddModelError("OldServiceNo", "Minimum seven and Maximum nine length of Army No.");
                                     goto end;
                                 }
                                 if (NewServiceNo == null)
@@ -961,9 +961,9 @@ namespace Web.Controllers
                                     ModelState.AddModelError("ServiceNo", "New Service No required.");
                                     goto end;
                                 }
-                                if (NewServiceNo.Length < 8 || NewServiceNo.Length > 9)
+                                if (NewServiceNo.Length < 7 || NewServiceNo.Length > 9)
                                 {
-                                    ModelState.AddModelError("ServiceNo", "Minimum eight and Maximum nine length of Army No.");
+                                    ModelState.AddModelError("ServiceNo", "Minimum seven and Maximum nine length of Army No.");
                                     goto end;
                                 }
                             }

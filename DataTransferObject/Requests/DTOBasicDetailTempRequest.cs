@@ -36,7 +36,7 @@ namespace DataTransferObject.Requests
 
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [MinLength(8, ErrorMessage = "Minimum length of Army No is eight character.")]
+        [MinLength(7, ErrorMessage = "Minimum length of Army No is seven character.")]
         [MaxLength(9, ErrorMessage = "Maximum length of Army No is nine character.")]
         public string ServiceNo { get; set; } = string.Empty;
 

@@ -54,6 +54,16 @@
 });
 async function handleSubmit(event, isNewUser) {
     try {
+
+        let Tk = $('#spnTk').html();
+
+        if (Tk == true || Tk == "True") {
+            let reuslt = await GetTokenDetails('FetchUniqueTokenDetails', 'ICNo', '', 'tokenmsg')
+            if (reuslt == false) {
+                return false;
+            }
+        }
+
         const result = await SubmitsEncry1(isNewUser);
         if (!result) {
             event.preventDefault();  // Prevent form submission if the result is false

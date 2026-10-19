@@ -22,8 +22,7 @@ namespace Web.Healpers
             // Prefix: 1 to 3 alphabets
             // Number: 5 or 6 digits
             // Suffix: exactly 1 alphabet
-            Match match = Regex.Match(armyNo,@"^([A-Z]{1,3})([0-9]{5,6})([A-Z])$"
-            );
+            Match match = Regex.Match(armyNo,@"^([A-Z]{1,3})([0-9]{5,6})([A-Z])$");
 
             if (!match.Success)
                 return "Invalid Army No Format.";

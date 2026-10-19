@@ -93,7 +93,7 @@ $(function () {
         let OldServiceNo;
         let errorMessage = [];
 
-        if (fullArmyNo.length > 7 && fullArmyNo.length < 10) {
+        if (fullArmyNo.length > 6 && fullArmyNo.length < 10) {
 
             if (parseInt(OffType) == MApplyFor_Offrs) {
                 if (parseInt(RegistrationApplyFor) == MReg_Offrs_SameUnit || parseInt(RegistrationApplyFor) == MReg_Offrs_OtherUnit || parseInt(RegistrationApplyFor) == MReg_GCs_LCs_Cadets || parseInt(RegistrationApplyFor) == MReg_AMC_ADC_Offrs)
@@ -124,7 +124,7 @@ $(function () {
                 OldServiceNo = getFullOldArmyNumber();
                 NewServiceNo = getFullArmyNumber();
 
-                if (OldServiceNo.length > 7 && OldServiceNo.length < 10) {
+                if (OldServiceNo.length > 6 && OldServiceNo.length < 10) {
 
                     if (OldServiceNo.toUpperCase() == NewServiceNo.toUpperCase()) {
                         toastr.error("Old Army No and New Army No not same.");

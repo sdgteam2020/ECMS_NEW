@@ -35,6 +35,7 @@
                             <div class="card-sigin">
                                 <div class="main-signup-header login-form">
                                     <span id="spnhdns" class="d-none">@dTOTempSession.Salt</span>
+                                    <span id="spnTk" class="d-none">@dTOTempSession?.IsToken</span>
                                     <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1 ">Kindly Validate your IC Number here.</p>
                                     <div class="pb-3 mt-3">
                                         <form asp-antiforgery="true" method="post" asp-action="TokenValidate" autocomplete="off" role="form">

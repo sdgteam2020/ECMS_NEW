@@ -338,15 +338,33 @@ function getColumnsForApprovalForIO(cvalue, JCOOR, Type) {
                     className: "nowrap",
                     width: "120px",
                     render: function (data, type, row) {
-                        // Check if first two characters are alphabets
-                        if (/^[A-Za-z]{2}/.test(data)) {
-                            // Insert space after first two characters
-                            return `<a href="#" class="cls-BasicDetail">${data.slice(0, 2) + ' ' + data.slice(2)}</a>`;
 
-                        } else {
-                            // No space needed
-                            return `<a href="#" class="cls-BasicDetail">${data}</a>`;;
+                        if (!data) return "";
+
+                        let serviceNo = String(data).trim().toUpperCase();
+
+                        if (type !== "display") {
+                            return serviceNo;
                         }
+
+                        let displayText = serviceNo.replace(
+                            /^([A-Za-z]+)(?=\d)/,
+                            "$1 "
+                        );
+
+                        return `<a href="#" class="cls-BasicDetail">${displayText}</a>`;
+
+
+
+                        //// Check if first two characters are alphabets
+                        //if (/^[A-Za-z]{2}/.test(data)) {
+                        //    // Insert space after first two characters
+                        //    return `<a href="#" class="cls-BasicDetail">${data.slice(0, 2) + ' ' + data.slice(2)}</a>`;
+
+                        //} else {
+                        //    // No space needed
+                        //    return `<a href="#" class="cls-BasicDetail">${data}</a>`;;
+                        //}
                     }
                 },
                 {

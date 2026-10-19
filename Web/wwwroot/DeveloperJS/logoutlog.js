@@ -6,6 +6,16 @@
     form.addEventListener('submit', async function (event) {
         event.preventDefault();
 
+        let Tk = $('#spnTk').html();
+        
+        if (Tk == true || Tk == "True") {
+            let reuslt = await GetTokenDetails('FetchUniqueTokenDetails', 'ICNo', '', 'tokenmsg')
+            if (reuslt == false)
+            {
+                return false;
+            }
+        }
+
         if ($(form).valid && !$(form).valid()) {
             return false;
         }
