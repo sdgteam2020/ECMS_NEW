@@ -515,15 +515,20 @@ function getColumnsForApprovalForIO(cvalue, JCOOR, Type) {
                     data: "ServiceNo",
                     name: "ServiceNo",
                     render: function (data, type, row) {
-                        // Check if first two characters are alphabets
-                        if (/^[A-Za-z]{2}/.test(data)) {
-                            // Insert space after first two characters
-                            return `<a href="#" class="cls-BasicDetail">${data.slice(0, 2) + ' ' + data.slice(2)}</a>`;
+                        if (!data) return "";
 
-                        } else {
-                            // No space needed
-                            return `<a href="#" class="cls-BasicDetail">${data}</a>`;;
+                        let serviceNo = String(data).trim().toUpperCase();
+
+                        if (type !== "display") {
+                            return serviceNo;
                         }
+
+                        let displayText = serviceNo.replace(
+                            /^([A-Za-z]+)(?=\d)/,
+                            "$1 "
+                        );
+
+                        return `<a href="#" class="cls-BasicDetail">${displayText}</a>`;
                     }
                 },
                 {

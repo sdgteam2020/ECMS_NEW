@@ -15,17 +15,24 @@ $(function () {
     });
 
     $(".ValidateArmyNo").on("blur", function () {
-        let inputValue = $(this).val().trim().toUpperCase();;
 
-        // Validate the input: first two and last characters must be alphabets
-        let pattern = /^[A-Z]{2}\d{5,6}[A-Z]$/;
+        let inputValue = ($(this).val() || "").trim().toUpperCase();
+
+        // Prefix: 1-2 letters + 5-6 digits + 1 suffix letter
+        // OR 3 letters + exactly 5 digits + 1 suffix letter
+        let pattern = /^(?:[A-Z]{1,2}[0-9]{5,6}|[A-Z]{3}[0-9]{5})[A-Z]$/;
 
         if (!pattern.test(inputValue)) {
-            toastr.warning('Enter valid Army No like IC12345X, SC123456L, SL78925P');
 
-            $(this).val("");// Block the keypress
-           
+            toastr.warning(
+                "Please enter a valid Army No. Examples: V12345X, IC123456L, NTR12345X."
+            );
+
+            $(this).val("");
+            return;
         }
+
+        $(this).val(inputValue);
     });
     //$('.form-control').on('keypress', function () {
 
