@@ -46,112 +46,87 @@ async function SubmitsEncry1() {
 
 }
 async function ChkSfx() {
-    // Simulating an asynchronous check (no external fetch needed)
-    await new Promise(resolve => resolve()); // The 'await' here is just for structure
-
     let ArmyNo = document.getElementById('ICNo').value.trim().toUpperCase();
 
-    if (ArmyNo.length < 8 || ArmyNo.length > 9) {
-        alert('Invalid Army No.');
+    // Validate Army No length (7 to 9 characters)
+    if (ArmyNo.length < 7 || ArmyNo.length > 9) {
+        toastr.error("Army No must be between 7 and 9 characters.");
         return false;
     }
 
-    const allowedPrefixes = ["IC", "SL", "SS", "WC", "TA"];
-    const prefix = ArmyNo.substring(0, 2);
+    // Allowed Army No prefixes
+    const allowedPrefixes = [
+        "IC", "SS", "TA", "SL", "WC", "DR",
+        "LC", "MR", "MS", "NR", "NS",
+        "NTR", "NTS", "PC", "RC", "SC",
+        "SCO", "ST", "DS", "GC", "TC",
+        "V", "VS", "WS"
+    ];
 
+    // Extract prefix, numeric part and suffix
+    const match = ArmyNo.match(/^([A-Z]{1,3})([0-9]{5,6})([A-Z])$/);
+
+    if (!match) {
+        toastr.error("Please enter a valid Army No. Examples: V12345X, IC123456L, NTR12345X.");
+        return false;
+    }
+
+    const prefix = match[1];
+    const numericPart = match[2];
+    const actualSuffix = match[3];
+
+    // Validate prefix
     if (!allowedPrefixes.includes(prefix)) {
-        alert('Invalid Army No prefix.');
+        toastr.error("Invalid Army No Prefix.");
         return false;
     }
 
-    const regex = /^(IC|SL|SS|WC|TA)\d{5,6}[A-Z]$/;
-
-    if (!regex.test(ArmyNo)) {
-        alert('Invalid Army No.');
-        return false;
-    }
-    var armyno = ArmyNo.replace(/[A-Za-z]/g, '');
-
-    var txt = ArmyNo.slice(-1);
-
-    var vlength = armyno.length;
-    var NumMulti = parseInt(vlength) + 1;
-    var vMulti = 0;
-    var vSum = 0;
-    var Sfx;
-    for (var i = 0; i < vlength; i++) {
-        vMulti = parseInt(armyno.charAt(i)) * parseInt(NumMulti);
-        vSum = parseInt(vSum) + parseInt(vMulti);
-        NumMulti = parseInt(NumMulti) - 1;
-
-    }
-
-    var Reminder = parseInt(vSum) % 11;
-    switch (Reminder) {
-        case (0):
-            {
-                Sfx = "A"
-                break;
-            }
-        case (1):
-            {
-                Sfx = "F"
-                break;
-            }
-        case (2):
-            {
-                Sfx = "H"
-                break;
-            }
-        case (3):
-            {
-                Sfx = "K"
-                break;
-            }
-        case (4):
-            {
-                Sfx = "L"
-                break;
-            }
-        case (5):
-            {
-                Sfx = "M"
-                break;
-            }
-        case (6):
-            {
-                Sfx = "N"
-                break;
-            }
-        case (7):
-            {
-                Sfx = "P"
-                break;
-            }
-        case (8):
-            {
-                Sfx = "W"
-                break;
-            }
-        case (9):
-            {
-                Sfx = "X"
-                break;
-            }
-        case (10):
-            {
-                Sfx = "Y"
-                break;
-            }
-    }
-    if (txt.toUpperCase() === Sfx) {
-        return true;
-    }
-    else {
-        alert("Invalid suffix of Army No.");
+    // Three-letter prefix must contain exactly 5 digits
+    if (prefix.length === 3 && numericPart.length !== 5) {
+        toastr.error("Three-letter Army No Prefix requires exactly 5 digits.");
         return false;
     }
 
+    // Calculate expected suffix using Modulo 11
+    let length = numericPart.length;
+    let multiplier = length + 1;
+    let sum = 0;
+
+    for (let i = 0; i < length; i++) {
+
+        let digit = Number(numericPart[i]);
+
+        sum += digit * multiplier;
+        multiplier--;
+    }
+
+    let remainder = sum % 11;
+
+    // Suffix mapping
+    const suffixMap = {
+        0: "A",
+        1: "F",
+        2: "H",
+        3: "K",
+        4: "L",
+        5: "M",
+        6: "N",
+        7: "P",
+        8: "W",
+        9: "X",
+        10: "Y"
+    };
+
+    const expectedSuffix = suffixMap[remainder];
+
+    // Validate suffix
+    if (actualSuffix !== expectedSuffix) {
+        toastr.error("Invalid Army No Suffix.");
+        return false;
+    }
+
+    // Army No is valid
+    return true;
 }
 function encryptData(plainText, secretKey) {
     const key = CryptoJS.enc.Utf8.parse(secretKey);

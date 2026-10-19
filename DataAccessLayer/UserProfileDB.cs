@@ -743,40 +743,6 @@ namespace DataAccessLayer
                 return dTOFwdICardResponse;
             }
         }
-
-        /// <summary>
-        /// Retrieves the user profile's token application status based on the user ID.
-        /// </summary>
-        /// <param name="UserId">The ID of the user to fetch the profile for.</param>
-        /// <returns>The MUserProfile object containing token application details.</returns>
-        public async Task<MUserProfile> GetByIsWithoutTokenApply(int UserId)
-        {
-            try { 
-                string query = "SELECT prof.IsWithTokenApply,prof.IsToken" +
-                                    " from UserProfile prof " +
-                                    " inner join MRank ran on prof.RankId = ran.RankId " +
-                                    " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId " +
-                                    " inner join AspNetUserRoles maprole on maprole.UserId=trnd.AspNetUsersId" +
-                                    " inner join AspNetRoles roles on roles.Id=maprole.RoleId" +
-                                    " inner join MAppointment appt on appt.ApptId=trnd.ApptId" +
-                                    " left join MapUnit mapu on mapu.UnitMapId = trnd.UnitId " +
-                                    " left join MUnit munit on munit.UnitId = mapu.UnitId " +
-                                    " left join AspNetUsers usermodify on usermodify.Id=trnd.MappedBy " +
-                                    " left join AspNetUsers users on trnd.AspNetUsersId = users.Id" +
-                                    " where trnd.AspNetUsersId=@UserId";
-                using (var connection = _contextDP.CreateConnection())
-                {
-                    var BasicDetailList = await connection.QueryAsync<MUserProfile>(query, new { UserId });
-                    return BasicDetailList.FirstOrDefault()?? new MUserProfile();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "UserProfileDB->GetByIsWithoutTokenApply");
-                return new MUserProfile(); 
-            }
-        }
-
         public async Task<DTOCheckedBeforeUpdateProfileResponse> CheckedBeforeUpdateProfile(DTOUpdateProfileWithMappingRequest dTO)
         {
             DTOCheckedBeforeUpdateProfileResponse dTOCheckedBeforeUpdate = new DTOCheckedBeforeUpdateProfileResponse();

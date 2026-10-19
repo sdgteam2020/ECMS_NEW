@@ -335,38 +335,6 @@ namespace Web.Controllers
             }
         }
 
-        /// <summary>
-        /// This method retrieves a user profile for users who do not have a token applied.
-        /// It fetches the profile based on the user's ID and returns the result.
-        /// </summary>
-        /// <param name="ArmyNo">The army number of the user (not used in this implementation).</param>
-        /// <returns>Returns a JSON response containing the user profile.</returns>
-        [HttpPost]
-        public async Task<IActionResult> GetByArmyNoIsWithoutTokenApply(string ArmyNo)
-        {
-            try
-            {
-                ArmyNo = AESEncrytDecry.DecryptAES(ArmyNo, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);  //decrypt password
-                if (ArmyNo == null)
-                {
-                   return Json(KeyConstants.IncorrectData); // Return error message for invalid ArmyNo
-
-                }
-                // Retrieve the current user's ID from the claims
-                int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-                // Fetch the user profile for users who have not applied for a token
-                MUserProfile dTOUserProfileResponse = await _userProfileBL.GetByIsWithoutTokenApply(userid);
-
-                // Return the profile as JSON
-                return Json(dTOUserProfileResponse);
-            }
-            catch (Exception ex)
-            {
-                // In case of an exception, return an internal server error response
-                return Json(KeyConstants.InternalServerError);
-            }
-        }
         [HttpPost]
         public async Task<IActionResult> GetTokenStatus()
         {

@@ -66,112 +66,125 @@ async function handleSubmit(event, isNewUser) {
     }
 }
 async function ChkSfx() {
-    // Simulating an asynchronous check (no external fetch needed)
-    await new Promise(resolve => resolve()); // The 'await' here is just for structure
+
+    await new Promise(resolve => resolve());
 
     let ArmyNo = document.getElementById('ICNo').value.trim().toUpperCase();
 
-    if (ArmyNo.length < 8 || ArmyNo.length > 9) {
-        alert('Invalid Army No.');
+    // Minimum 7 and Maximum 9 characters
+    if (ArmyNo.length < 7 || ArmyNo.length > 9) {
+        alert('Army No must be between 7 and 9 characters.');
         return false;
     }
 
-    const allowedPrefixes = ["IC", "SL", "SS", "WC", "TA"];
-    const prefix = ArmyNo.substring(0, 2);
+    // Allowed Army No Prefixes
+    const allowedPrefixes = [
+        "IC", "SS", "TA", "SL", "WC", "DR",
+        "LC", "MR", "MS", "NR", "NS",
+        "NTR", "NTS", "PC", "RC", "SC",
+        "SCO", "ST", "DS", "GC", "TC",
+        "V", "VS", "WS"
+    ];
 
+    // Prefix: 1 to 3 alphabets
+    // Number: 5 or 6 digits
+    // Suffix: 1 alphabet
+    const regex = /^([A-Z]{1,3})([0-9]{5,6})([A-Z])$/;
+
+    const match = ArmyNo.match(regex);
+
+    if (!match) {
+        alert('Enter valid Army No. Examples: V12345X, IC123456L, NTR12345X.');
+        return false;
+    }
+
+    // Extract prefix, number and suffix
+    const prefix = match[1];
+    const armyno = match[2];
+    const txt = match[3];
+
+    // Validate Prefix
     if (!allowedPrefixes.includes(prefix)) {
-        alert('Invalid Army No prefix.');
+        alert('Invalid Army No Prefix.');
         return false;
     }
 
-    const regex = /^(IC|SL|SS|WC|TA)\d{5,6}[A-Z]$/;
-
-    if (!regex.test(ArmyNo)) {
-        alert('Invalid Army No.');
+    // If prefix is 3 letters, number must be exactly 5 digits
+    if (prefix.length === 3 && armyno.length !== 5) {
+        alert('Three-letter Army No Prefix requires exactly 5 digits.');
         return false;
     }
-    var armyno = ArmyNo.replace(/[A-Za-z]/g, '');
 
-    var txt = ArmyNo.slice(-1);
-
+    // Existing suffix calculation logic
     var vlength = armyno.length;
     var NumMulti = parseInt(vlength) + 1;
     var vMulti = 0;
     var vSum = 0;
     var Sfx;
+
     for (var i = 0; i < vlength; i++) {
+
         vMulti = parseInt(armyno.charAt(i)) * parseInt(NumMulti);
         vSum = parseInt(vSum) + parseInt(vMulti);
         NumMulti = parseInt(NumMulti) - 1;
-
     }
 
     var Reminder = parseInt(vSum) % 11;
+
     switch (Reminder) {
-        case (0):
-            {
-                Sfx = "A"
-                break;
-            }
-        case (1):
-            {
-                Sfx = "F"
-                break;
-            }
-        case (2):
-            {
-                Sfx = "H"
-                break;
-            }
-        case (3):
-            {
-                Sfx = "K"
-                break;
-            }
-        case (4):
-            {
-                Sfx = "L"
-                break;
-            }
-        case (5):
-            {
-                Sfx = "M"
-                break;
-            }
-        case (6):
-            {
-                Sfx = "N"
-                break;
-            }
-        case (7):
-            {
-                Sfx = "P"
-                break;
-            }
-        case (8):
-            {
-                Sfx = "W"
-                break;
-            }
-        case (9):
-            {
-                Sfx = "X"
-                break;
-            }
-        case (10):
-            {
-                Sfx = "Y"
-                break;
-            }
+        case 0:
+            Sfx = "A";
+            break;
+
+        case 1:
+            Sfx = "F";
+            break;
+
+        case 2:
+            Sfx = "H";
+            break;
+
+        case 3:
+            Sfx = "K";
+            break;
+
+        case 4:
+            Sfx = "L";
+            break;
+
+        case 5:
+            Sfx = "M";
+            break;
+
+        case 6:
+            Sfx = "N";
+            break;
+
+        case 7:
+            Sfx = "P";
+            break;
+
+        case 8:
+            Sfx = "W";
+            break;
+
+        case 9:
+            Sfx = "X";
+            break;
+
+        case 10:
+            Sfx = "Y";
+            break;
     }
-    if (txt.toUpperCase() === Sfx) {
+
+    // Validate Suffix
+    if (txt === Sfx) {
         return true;
     }
     else {
         alert("Invalid Army No.");
         return false;
     }
-
 }
 
 async function SubmitsEncry1(result) {

@@ -30,32 +30,40 @@ $(function () {
     $('input.js-uppercase').on('input', function () {
         this.value = this.value.toUpperCase();
     });
+
     $("#btnProfileAddButton").on("click", async function () {
-        if ($("#txtArmyNo").val().length > 7 && $("#txtArmyNo").val().length < 10) {
-            let ArmyNoSfx = ($("#txtArmyNo").val() || "").trim().toUpperCase();
 
-            let pattern = /^[A-Z]{2}\d{5,6}[A-Z]$/;
+        let ArmyNoSfx = ($("#txtArmyNo").val() || "").trim().toUpperCase();
 
-            if (!pattern.test(ArmyNoSfx)) {
-                toastr.warning('Enter valid Army No like IC12345X, SC123456L, SL78925P');
-
-                $("#txtArmyNo").val("");
-            }
-            else {
-                result = await ChkSfx(ArmyNoSfx);
-                if (result == false) {
-                    toastr.error("Invalid Army No.");
-                }
-                else {
-                    Proceed();
-                }
-            }
-
-
+        // Check Army No length
+        if (ArmyNoSfx.length < 7 || ArmyNoSfx.length > 9) {
+            toastr.error("Army No must be between 7 and 9 characters.");
+            return;
         }
-        else {
-            toastr.error("Minimum eight and Maximum nine length of Army No.");
+
+        // 1-2 prefix letters + 5-6 digits + 1 suffix letter
+        // OR 3 prefix letters + exactly 5 digits + 1 suffix letter
+        let pattern = /^(?:[A-Z]{1,2}[0-9]{5,6}|[A-Z]{3}[0-9]{5})[A-Z]$/;
+
+        if (!pattern.test(ArmyNoSfx)) {
+            toastr.warning(
+                "Please enter a valid Army No. Examples: V12345X, IC123456L, NTR12345X."
+            );
+
+            $("#txtArmyNo").val("");
+            return;
         }
+
+        // Validate Army No suffix
+        let result = await ChkSfx(ArmyNoSfx);
+
+        if (result === false) {
+            toastr.error("Invalid Army No Suffix.");
+            return;
+        }
+
+        // Continue when all validations pass
+        Proceed();
 
     });
 

@@ -8,9 +8,11 @@ var IsWithTokenApply = true;
 var skey = "";
 var CurrentPrefixApplyForId = 0;
 
-$(document).ready(function () {
+$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     skey = $('#spnhdns').html();
+
+    $("#divTokenMsg").addClass("d-none");
 
     $('#txtApplyForOldArmyNo, #txtApplyForArmyNo').on('input', function () {
         this.value = this.value.toUpperCase();
@@ -53,8 +55,8 @@ $(document).ready(function () {
         $("#btnJCOs").removeClass("btn-primary").addClass("btn-outline-primary");
 
         resetArmyNoUi();
-        GetAllRegistrationApplyFor(1);
-        getArmyPrefixRules(1);
+        GetAllRegistrationApplyFor(MApplyFor_Offrs);
+        getArmyPrefixRules(MApplyFor_Offrs);
     });
 
     $("#btnJCOs").on("click", function () {
@@ -62,55 +64,65 @@ $(document).ready(function () {
         $("#btnaddOffrs").removeClass("btn-primary").addClass("btn-outline-primary");
 
         resetArmyNoUi();
-        GetAllRegistrationApplyFor(2);
-        getArmyPrefixRules(2);
+        GetAllRegistrationApplyFor(MApplyFor_JCO_ORs);
+        getArmyPrefixRules(MApplyFor_JCO_ORs);
     });
 
     $("#btntokenrefresh").on("click", async function () {
         await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
-        applyArmyNoToControl($("#txtApplyForArmyNo").val(), "#ddlForArmyNoRulePrefix", "#txtApplyForArmyNo", false, false);
-        $('#btnNext').removeClass("disabled").prop("disabled", false);
+        if ($("#txtApplyForArmyNo").val() !== "") {
+            applyArmyNoToControl($("#txtApplyForArmyNo").val(), "#ddlForArmyNoRulePrefix", "#txtApplyForArmyNo", false, false);
+            $('#btnNext').removeClass("disabled").prop("disabled", false);
+            $("#divTokenMsg").removeClass("d-none");
+        }
+        else {
+            $("#divTokenMsg").removeClass("d-none");
+        }
+
     });
 
     $("#btnNext").on("click", async function () {
 
         if ($("#ddlForArmyNoRulePrefix").val() == '') {
             toastr.error("Please select the Prefix.");
-            return;1
+            return;
         }
 
         let fullArmyNo = getFullArmyNumber();
+        let NewServiceNo;
+        let OldServiceNo;
+        let errorMessage = [];
 
         if (fullArmyNo.length > 7 && fullArmyNo.length < 10) {
 
-            if (parseInt(OffType) == 1) {
-                if (
-                    parseInt(RegistrationApplyFor) == 2 ||
-                    parseInt(RegistrationApplyFor) == 3 ||
-                    parseInt(RegistrationApplyFor) == 4 ||
-                    parseInt(RegistrationApplyFor) == 10
-                ) {
+            if (parseInt(OffType) == MApplyFor_Offrs) {
+                if (parseInt(RegistrationApplyFor) == MReg_Offrs_SameUnit || parseInt(RegistrationApplyFor) == MReg_Offrs_OtherUnit || parseInt(RegistrationApplyFor) == MReg_GCs_LCs_Cadets || parseInt(RegistrationApplyFor) == MReg_AMC_ADC_Offrs)
+                {
                     if (IsWithTokenApply == true) {
                         $("#txtApplyForArmyNo").val("");
                         await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg", "ddlForArmyNoRulePrefix");
+                        applyArmyNoToControl($("#txtApplyForArmyNo").val(), "#ddlForArmyNoRulePrefix", "#txtApplyForArmyNo", false, false);
                     }
-                } else {
-                    if (IsToken == true && parseInt(RegistrationApplyFor) == 1) {
+                }
+                else {
+                    if (IsToken == true && parseInt(RegistrationApplyFor) == MICardType_First_time) {
                         $("#txtApplyForArmyNo").val("");
                         await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg", "ddlForArmyNoRulePrefix");
+                        applyArmyNoToControl($("#txtApplyForArmyNo").val(), "#ddlForArmyNoRulePrefix", "#txtApplyForArmyNo", false, false);
                     }
                 }
             }
 
-            if (lCardType == 4) {
+            if (lCardType == MICardType_Change_ArmyNo)
+            {
 
                 if ($("#ddlForOldArmyNoRulePrefix").val() == '') {
                     toastr.error("Please select the Old Prefix.");
                     return;
                 }
 
-                let OldServiceNo = getFullOldArmyNumber();
-                let NewServiceNo = getFullArmyNumber();
+                OldServiceNo = getFullOldArmyNumber();
+                NewServiceNo = getFullArmyNumber();
 
                 if (OldServiceNo.length > 7 && OldServiceNo.length < 10) {
 
@@ -122,75 +134,49 @@ $(document).ready(function () {
                     let OldArmyNoFound = await CheckArmyNo(OldServiceNo);
                     let NewArmyNoFound = await CheckArmyNo(NewServiceNo);
 
-                    let OldFirstTwo = await checkFirstTwoChars(OldServiceNo);
-                    let NewFirstTwo = await checkFirstTwoChars(NewServiceNo);
-
                     let OldArmyNoSfx = await ChkSfx(OldServiceNo);
                     let NewArmyNoSfx = await ChkSfx(NewServiceNo);
 
-                    if (OldArmyNoSfx == false) {
-                        toastr.error("Invalid Old Army No.");
-                    } else if (NewArmyNoSfx == false) {
-                        toastr.error("Invalid New Army No.");
-                    } else if (OldArmyNoFound == false) {
-                        toastr.error("Old Army No not found.");
-                    } else if (NewArmyNoFound == true) {
-                        toastr.error("New Army No is already used.");
-                    } else if (OldFirstTwo === '') {
-
-                        if (NewFirstTwo === '') {
-                            toastr.error("Both Old and New Army No is OR rank.");
-                        } else if (
-                            OffType == 2 &&
-                            (NewFirstTwo === 'IC' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'SS' || NewFirstTwo === 'TA')
-                        ) {
-                            toastr.error("Please Select Offrs tab.");
-                        } else if (OffType == 1 && NewFirstTwo === 'JC') {
-                            toastr.error("Please Select JCOs/OR tab.");
-                        } else {
-                            CheckArmyNOExist();
+                    if (OldArmyNoSfx == false || NewArmyNoSfx == false || OldArmyNoFound == false || NewArmyNoFound == true) {
+                        if (OldArmyNoSfx == false) {
+                            errorMessage.push("Invalid Old Army No Suffix.");
+                        }
+                        if (OldArmyNoFound == false) {
+                            errorMessage.push("Old Army No not found.");
+                        }
+                        if (NewArmyNoSfx == false) {
+                            errorMessage.push("Invalid New Army No Suffix.")
+                        }
+                        if (NewArmyNoFound == true) {
+                            errorMessage.push("New Army No is already used.");
                         }
 
-                    } else if (OldFirstTwo !== '') {
-
-                        if (OldFirstTwo === 'IC' && NewFirstTwo === '') {
-                            toastr.error("Permanent Commissioned Officers are not downgraded.");
-                        } else if (OldFirstTwo === 'IC' && NewFirstTwo === 'IC') {
-                            toastr.error("Both Old and New Army No is permanent commissioned officers.");
-                        } else if (
-                            OldFirstTwo === 'IC' &&
-                            (NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA' || NewFirstTwo === 'JC')
-                        ) {
-                            toastr.error("Permanent Commissioned Officers are not downgraded.");
-                        } else if (
-                            (OldFirstTwo === 'SL' || OldFirstTwo === 'TA') &&
-                            (NewFirstTwo === 'IC' || NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA' || NewFirstTwo === 'JC')
-                        ) {
-                            toastr.error("SL / TA are not changed Army No.");
-                        } else if (
-                            (OldFirstTwo === 'SS' || OldFirstTwo === 'WC') &&
-                            OffType == 2 &&
-                            NewFirstTwo !== '' &&
-                            NewFirstTwo === 'IC'
-                        ) {
-                            toastr.error("Please Select Offrs tab.");
-                        } else if (
-                            OldFirstTwo === 'JC' &&
-                            OffType == 2 &&
-                            NewFirstTwo !== '' &&
-                            (NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA')
-                        ) {
-                            toastr.error("Please Select Offrs tab.");
-                        }
-                        else
-                        {
-                            CheckArmyNOExist();
+                        if (errorMessage.length > 0) {
+                            toastr.error(
+                                errorMessage.map((msg, index) =>
+                                    `${index + 1}.${msg}`).join("<br>"),
+                                "Validation Failed",
+                                {
+                                    claseButton: true,
+                                    timeOut: 8000,
+                                    extendedTimeOut: 3000,
+                                    escapeHtml: false,
+                                    positionClass: "toast-top-right"
+                                }
+                            );
                         }
                     }
-
+                    else {
+                        const selectedRadio = document.querySelector('input[name="Status_check"]:checked');
+                        if (selectedRadio.value == 'Proceed') {
+                            CheckArmyNOExist(NewServiceNo, OldServiceNo);
+                        }
+                        else {
+                            GetHistoryForPopup(OldServiceNo)
+                        }
+                    }
                 }
-                else
-                {
+                else {
                     toastr.error("Minimum eight and Maximum nine length of Old Army No.");
                 }
 
@@ -198,18 +184,19 @@ $(document).ready(function () {
             else
             {
 
-                if (parseInt(OffType) != 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0) {
+                if (parseInt(OffType) != 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0)
+                {
 
-                    let ArmyNoSfx = getFullArmyNumber();
+                    NewServiceNo = getFullArmyNumber();
                     let result;
 
-                    if (OffType == 1 && parseInt(RegistrationApplyFor) == 1) {
-                        if (getFullArmyNumber() === $("#aspntokenarmyno").html().trim()) {
-                            result = await ChkSfx(ArmyNoSfx);
+                    if (OffType == MApplyFor_Offrs && parseInt(RegistrationApplyFor) == MReg_Self) {
+                        if (NewServiceNo === $("#aspntokenarmyno").html().trim()) {
+                            result = await ChkSfx(NewServiceNo);
                             IsValid = result == false ? 0 : 1;
 
                             if (result == false) {
-                                toastr.error("Invalid Army No.");
+                                toastr.error("Invalid Army No Suffix.");
                             }
                         } else {
                             Message = "Please Insert Valid Token. Token ArmyNo And Login ArmyNo Not Match";
@@ -217,40 +204,47 @@ $(document).ready(function () {
                         }
                     }
 
-                    if (OffType == 1 && parseInt(RegistrationApplyFor) == 2) {
-                        if (getFullArmyNumber() != "") {
-                            result = await ChkSfx(ArmyNoSfx);
+                    if (OffType == MApplyFor_Offrs && parseInt(RegistrationApplyFor) == MReg_Offrs_SameUnit)
+                    {
+                        if (NewServiceNo != "") {
+                            result = await ChkSfx(NewServiceNo);
                             IsValid = result == false ? 0 : 1;
 
                             if (result == false) {
-                                toastr.error("Invalid Army No.");
+                                toastr.error("Invalid Army No Suffix.");
                             }
-                        } else {
+                        }
+                        else {
                             Message = "Please Insert Token";
                             IsValid = 0;
                         }
-                    } else if (OffType == 1 && parseInt(RegistrationApplyFor) != 1) {
-                        if (getFullArmyNumber() != "") {
-                            result = await ChkSfx(ArmyNoSfx);
+                    }
+                    else if (OffType == MApplyFor_Offrs && parseInt(RegistrationApplyFor) != MReg_Self)
+                    {
+                        if (NewServiceNo != "") {
+                            result = await ChkSfx(NewServiceNo);
                             IsValid = result == false ? 0 : 1;
 
                             if (result == false) {
-                                toastr.error("Invalid Army No.");
+                                toastr.error("Invalid Army No Suffix.");
                             }
-                        } else {
+                        }
+                        else {
                             Message = "Please Enter Army No";
                             IsValid = 0;
                         }
-                    } else if (OffType == 2) {
-                        if (getFullArmyNumber() == "") {
+                    }
+                    else if (OffType == MApplyFor_JCO_ORs)
+                    {
+                        if (NewServiceNo == "") {
                             IsValid = 0;
                             Message = "Please Enter Army No";
                         } else {
-                            result = await ChkSfx(ArmyNoSfx);
+                            result = await ChkSfx(NewServiceNo);
                             IsValid = result == false ? 0 : 1;
 
                             if (result == false) {
-                                toastr.error("Invalid Army No.");
+                                toastr.error("Invalid Army No Suffix.");
                             }
                         }
                     }
@@ -258,24 +252,24 @@ $(document).ready(function () {
                     if (IsValid == 1) {
                         const selectedRadio = document.querySelector('input[name="Status_check"]:checked');
                         if (selectedRadio.value == 'Proceed') {
-                            CheckArmyNOExist();
+                            CheckArmyNOExist(NewServiceNo, OldServiceNo);
                         }
                         else {
-                            GetHistoryForPopup(fullArmyNo)
+                            GetHistoryForPopup(NewServiceNo)
                         }
-                        
+
                     } else if (Message != "") {
                         toastr.error(Message);
                     }
 
-                } else {
+                }
+                else {
                     toastr.error("Invalid Selected");
                 }
             }
 
         }
-        else
-        {
+        else {
             toastr.error("Minimum eight and Maximum nine length of Army No.");
         }
     });
@@ -352,42 +346,34 @@ function GetAllRegistrationApplyFor(Id) {
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({ text: errormsg });
-                } else if (response == 0) {
-                    $("#btnIcardFor").html("");
-                    $("#icardrequestfor").html("");
-                } else {
-                    OffType = Id;
+            if (response.Result == true) {
+                OffType = Id;
 
-                    listItem += '<div class="seven"><h1>I-Card Appl Initiated for </h1></div>';
+                listItem = listItem + `<div class="seven"><h1>I-Card Appl Initiated for </h1></div>`;
 
-                    for (var i = 0; i < response.length; i++) {
-                        listItem += '<button type="button" class="btn btn-outline-primary mr-2 applyforoffs btn1" id="icardFor' + response[i].RegistrationId + '">';
-                        listItem += response[i].Name;
-                        listItem += '<span class="spnRegistration d-none">' + response[i].RegistrationId + '</span>';
-                        listItem += '</button>';
-                    }
-
-                    $("#btnIcardFor").html(listItem);
-                    $("#icardrequestfor").html("");
-
-                    $('.applyforoffs').on("click", function () {
-                        $("#spnNext").addClass("d-none");
-                        clearArmyNoFields();
-                        hideArmyNoSection();
-                        hideOldArmyNo();
-                        setNewArmyNoPlaceholder("Enter Army No");
-
-                        $('.applyforoffs').removeClass("btn-primary").addClass("btn-outline-primary");
-                        $(this).removeClass("btn-outline-primary").addClass("btn-primary");
-
-                        RegistrationApplyFor = $(this).closest("button").find(".spnRegistration").html();
-                        AddAllCardType();
-                    });
+                for (var i = 0; i < response.Value.length; i++) {
+                    listItem = listItem + `<button type="button" class="btn btn-outline-primary mr-2 applyforoffs btn1" id="icardFor${response.Value[i].RegistrationId}">
+                                                    ${response.Value[i].Name}<span class="spnRegistration d-none">${response.Value[i].RegistrationId}</span></button>`;
                 }
-            } else {
+
+                $("#btnIcardFor").html(listItem);
+                $("#icardrequestfor").html("");
+
+                $('.applyforoffs').on("click", function () {
+                    $("#spnNext").addClass("d-none");
+                    clearArmyNoFields();
+                    hideArmyNoSection();
+                    hideOldArmyNo();
+                    setNewArmyNoPlaceholder("Enter Army No");
+
+                    $('.applyforoffs').removeClass("btn-primary").addClass("btn-outline-primary");
+                    $(this).removeClass("btn-outline-primary").addClass("btn-primary");
+
+                    RegistrationApplyFor = $(this).closest("button").find(".spnRegistration").html();
+                    AddAllCardType();
+                });
+            }
+            else {
                 $("#btnIcardFor").html("");
                 $("#icardrequestfor").html("");
             }
@@ -397,20 +383,21 @@ function GetAllRegistrationApplyFor(Id) {
         }
     });
 }
+
 function AddAllCardType() {
     lCardType = 0;
 
     var list = '';
-    list += '<div class="seven mt-4"><h1>Reason For Applying</h1></div>';
-    list += '<button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">First time Smart card <span class="spnApplyForcard d-none">1</span></button>';
-    list += '<button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Fair wear and tear / Damaged <span class="spnApplyForcard d-none">2</span></button>';
-    list += '<button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Change of Rank <span class="spnApplyForcard d-none">3</span></button>';
-    list += '<button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Change of Army No <span class="spnApplyForcard d-none">4</span></button>';
-    list += '<button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Lost Card <span class="spnApplyForcard d-none">5</span></button>';
+    list = `<div class="seven mt-4"><h1>Reason For Applying</h1></div>
+            <button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">First time Smart card <span class="spnApplyForcard d-none">${MICardType_First_time}</span></button>
+            <button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Fair wear and tear / Damaged <span class="spnApplyForcard d-none">${MICardType_Damaged}</span></button>
+            <button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Change of Rank <span class="spnApplyForcard d-none">${MICardType_Change_Rank}</span></button>
+            <button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Change of Army No <span class="spnApplyForcard d-none">${MICardType_Change_ArmyNo}</span></button>
+            <button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Lost Card <span class="spnApplyForcard d-none">${MICardType_LostCard}</span></button>`;
 
     $("#icardrequestfor").html(list);
 
-    $('.applyforicard').on("click", function () {
+    $('.applyforicard').on("click", async function () {
         $('.applyforicard').removeClass("btn-primary").addClass("btn-outline-primary");
         $(this).removeClass("btn-outline-primary").addClass("btn-primary");
 
@@ -422,7 +409,7 @@ function AddAllCardType() {
         showNewArmyNo();
         clearArmyNoFields();
 
-        if (lCardType == 4) {
+        if (lCardType == MICardType_Change_ArmyNo) {
             setNewArmyNoPlaceholder("Enter New Army No");
             showOldArmyNo();
         } else {
@@ -430,15 +417,15 @@ function AddAllCardType() {
             hideOldArmyNo();
         }
 
-        if (OffType == 1) {
-            GetByArmyNoIsToken($("#aspntokenarmyno").html());
-        } else if (OffType == 2) {
+        if (OffType == MApplyFor_Offrs) {
+            await GetByArmyNoIsToken();
+        } else if (OffType == MApplyFor_JCO_ORs) {
             showArmyNoSection();
             showNewArmyNo();
             $("#btntokenrefresh").addClass("d-none");
             $('#txtApplyForArmyNo').attr('readonly', false);
 
-            if (lCardType == 4) {
+            if (lCardType == MICardType_Change_ArmyNo) {
                 showOldArmyNo();
             } else {
                 hideOldArmyNo();
@@ -448,128 +435,126 @@ function AddAllCardType() {
         toggleNextButton();
     });
 }
-function GetByArmyNoIsToken(ArmyNo) {
-    let ArmyNoNew = encryptPayloadData(ArmyNo);
 
-    var userdata = {
-        "ArmyNo": ArmyNoNew
-    };
+async function GetByArmyNoIsToken() {
+    try {
+        const response = await $.ajax({
+            url: '/UserProfile/GetTokenStatus',
+            contentType: 'application/x-www-form-urlencoded',
+            type: 'POST',
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken }
+        });
+        if (Boolean(response.Result)) {
+            IsToken = response.Value.IsToken;
+            IsWithTokenApply = response.Value.IsWithTokenApply
 
-    $.ajax({
-        url: '/UserProfile/GetByArmyNoIsWithoutTokenApply',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({ text: errormsg });
-                } else if (response == 4) {
-                    Swal.fire({ text: "Invalid Army No." });
-                } else {
-                    IsWithTokenApply = response.IsWithTokenApply;
-                    IsToken = response.IsToken;
+            if (parseInt(OffType) == MApplyFor_Offrs) {
+                if ((parseInt(RegistrationApplyFor) == MReg_Offrs_SameUnit || parseInt(RegistrationApplyFor) == MReg_Offrs_OtherUnit || parseInt(RegistrationApplyFor) == MReg_GCs_LCs_Cadets || parseInt(RegistrationApplyFor) == MReg_AMC_ADC_Offrs)) {
+                    if (IsWithTokenApply == true) {
 
-                    if (parseInt(OffType) == 1) {
-                        if ((parseInt(RegistrationApplyFor) == 2 || parseInt(RegistrationApplyFor) == 3 || parseInt(RegistrationApplyFor) == 4 || parseInt(RegistrationApplyFor) == 10)) {
-                            if (IsWithTokenApply == true && lCardType != 4) {
-                                $("#btntokenrefresh").removeClass("d-none");
-                                showArmyNoSection();
-                                hideNewArmyNo();
-                                hideOldArmyNo();
-                                $('#btnNext').addClass("disabled");
-                            } else if (IsWithTokenApply == true && lCardType == 4) {
-                                $("#btntokenrefresh").removeClass("d-none");
-                                showArmyNoSection();
-                                hideNewArmyNo();
-                                showOldArmyNo();
-                                $('#btnNext').addClass("disabled");
-                            } else {
-                                $("#btntokenrefresh").addClass("d-none");
-                                showArmyNoSection();
-                                showNewArmyNo();
-                                clearNewArmyNoFields();
-                                $('#txtApplyForArmyNo').attr('readonly', false);
+                        $("#btntokenrefresh").removeClass("d-none");
+                        $('#btnNext').addClass("disabled");
+                        showArmyNoSection();
+                        hideNewArmyNo();
 
-                                if (lCardType != 4) {
-                                    hideOldArmyNo();
-                                } else {
-                                    showOldArmyNo();
-                                }
-
-                                $('#btnNext').removeClass("disabled");
-                            }
-                        } else {
-                            if (IsToken == true && parseInt(RegistrationApplyFor) == 1 && lCardType != 4) {
-                                $("#btntokenrefresh").removeClass("d-none");
-                                showArmyNoSection();
-                                hideNewArmyNo();
-                                hideOldArmyNo();
-                                $('#btnNext').addClass("disabled");
-                            } else if (IsToken == true && parseInt(RegistrationApplyFor) == 1 && lCardType == 4) {
-                                $("#btntokenrefresh").removeClass("d-none");
-                                showArmyNoSection();
-                                hideNewArmyNo();
-                                showOldArmyNo();
-                                $('#btnNext').addClass("disabled");
-                            } else {
-                                $("#btntokenrefresh").addClass("d-none");
-                                showArmyNoSection();
-                                showNewArmyNo();
-
-                                var tokenArmyNo = $("#aspntokenarmyno").html();
-
-                                getArmyPrefixRules(OffType, function () {
-                                    if (lCardType == 4) {
-                                        showOldArmyNo();
-                                        applyArmyNoToControl(tokenArmyNo, "#ddlForOldArmyNoRulePrefix", "#txtApplyForOldArmyNo", true, true);
-
-                                        $("#ddlForArmyNoRulePrefix")
-                                            .val("")
-                                            .prop("disabled", false);
-
-                                        $("#txtApplyForArmyNo")
-                                            .val("")
-                                            .prop("readonly", false);
-                                    }
-                                    else {
-                                        hideOldArmyNo();
-                                        applyArmyNoToControl(tokenArmyNo, "#ddlForArmyNoRulePrefix", "#txtApplyForArmyNo", true, true);
-                                    }
-                                    $('#btnNext').removeClass("disabled");
-                                    toggleNextButton();
-                                });
-                            }
+                        if (lCardType == MICardType_Change_ArmyNo) {
+                            showOldArmyNo();
+                            await getAllArmyPrefixRules();
                         }
-                    } else {
+                        else {
+                            hideOldArmyNo();
+                        }
+                    }
+                    else {
                         $("#btntokenrefresh").addClass("d-none");
                         showArmyNoSection();
                         showNewArmyNo();
+                        clearNewArmyNoFields();
                         $('#txtApplyForArmyNo').attr('readonly', false);
 
-                        if (lCardType != 4) {
-                            hideOldArmyNo();
+                        if (lCardType == MICardType_Change_ArmyNo) {
+                            showOldArmyNo();
+                            await getAllArmyPrefixRules();
                         } else {
+                            hideOldArmyNo();
+                        }
+                        $('#btnNext').removeClass("disabled");
+                    }
+                }
+                else //For MReg_Self
+                {
+                    if (IsToken == true) {
+                        $("#btntokenrefresh").removeClass("d-none");
+                        showArmyNoSection();
+                        hideNewArmyNo();
+                        $('#btnNext').addClass("disabled");
+
+                        if (lCardType == MICardType_Change_ArmyNo) {
                             showOldArmyNo();
                         }
+                        else {
+                            hideOldArmyNo();
+                        }
+
+                    }
+                    else {
+                        $("#btntokenrefresh").addClass("d-none");
+                        showArmyNoSection();
+                        showNewArmyNo();
+
+                        var tokenArmyNo = $("#aspntokenarmyno").html();
+
+                        if (lCardType == MICardType_Change_ArmyNo) {
+                            showOldArmyNo();
+                            await getAllArmyPrefixRules();
+                            applyArmyNoToControl(tokenArmyNo, "#ddlForOldArmyNoRulePrefix", "#txtApplyForOldArmyNo", true, true);
+
+                            $("#ddlForArmyNoRulePrefix").val("").prop("disabled", false);
+                            $("#txtApplyForArmyNo").val("").prop("readonly", false);
+
+                        }
+                        else {
+                            hideOldArmyNo();
+                            applyArmyNoToControl(tokenArmyNo, "#ddlForArmyNoRulePrefix", "#txtApplyForArmyNo", true, true);
+                        }
+
+                        $('#btnNext').removeClass("disabled");
+                        toggleNextButton();
                     }
                 }
             }
-        },
-        error: function () {
-            Swal.fire({ text: errormsg002 });
+            else {
+                $("#btntokenrefresh").addClass("d-none");
+                showArmyNoSection();
+                showNewArmyNo();
+                $('#txtApplyForArmyNo').attr('readonly', false);
+
+                if (lCardType != MICardType_Change_ArmyNo) {
+                    hideOldArmyNo();
+                } else {
+                    showOldArmyNo();
+                }
+            }
+            return true;
         }
-    });
+        else {
+            toastr.error(`${response.Message}`);
+            return false;
+        }
+    }
+    catch (error) {
+        console.error("GetByArmyNoIsToken Error:", error);
+        Swal.fire({ text: errormsg002 });
+        return false;
+    }
 }
-function CheckArmyNOExist() {
-    let OldServiceNo = getFullOldArmyNumber();
-    let NewServiceNo = getFullArmyNumber();
+
+function CheckArmyNOExist(NewServiceNo, OldServiceNo) {
     $.ajax({
         url: "/BasicDetail/GetData",
         type: "POST",
         data: {
-            "ICNumber": lCardType == 4 ? encryptPayloadData(OldServiceNo) : encryptPayloadData(NewServiceNo),
+            "ICNumber": lCardType == MICardType_Change_ArmyNo ? encryptPayloadData(OldServiceNo) : encryptPayloadData(NewServiceNo),
             "lCardType": lCardType
         },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
@@ -619,21 +604,10 @@ async function CheckArmyNo(ArmyNo) {
             },
             body: param
         });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
         const result = await response.json();
-
-        if (result != null) {
-            return result;
-        } else {
-            toastr.error('Invalid Input.');
-            window.location.href = '/BasicDetail/Request';
-        }
+        return result;
     } catch (error) {
-        alert("Error: " + error.message);
+        return false;
     }
 }
 
@@ -746,6 +720,46 @@ function getArmyPrefixRules(ApplyForId, onSuccess) {
         }
     });
 }
+
+// Function to get all (Officer and JCOs/OR)Army Prefix rules
+async function getAllArmyPrefixRules() {
+    try {
+        const response = await $.ajax({
+            url: '/Home/GetAllArmyPrefixRules',
+            method: 'POST',
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken }
+        });
+
+        if (response && Array.isArray(response)) {
+
+            var selectedOld = $("#ddlForOldArmyNoRulePrefix").val();
+
+            $('#ddlForOldArmyNoRulePrefix').empty();
+            $('#ddlForOldArmyNoRulePrefix').prop("disabled", false);
+
+            $('#ddlForOldArmyNoRulePrefix').append('<option value="">Select Prefix</option>');
+
+            response.forEach(function (item) {
+                var optionText = item.Prefix === 'NO' ? 'NO (OR)' : item.Prefix;
+                $('#ddlForOldArmyNoRulePrefix').append('<option value="' + item.Prefix + '">' + optionText + '</option>');
+            });
+
+            if (selectedOld && $('#ddlForOldArmyNoRulePrefix option[value="' + selectedOld + '"]').length > 0) {
+                $('#ddlForOldArmyNoRulePrefix').val(selectedOld);
+            }
+            return true;
+        }
+        else {
+            console.error("Error: Invalid data received.");
+            return false;
+        }
+    }
+    catch (error) {
+        console.error("AJAX Error:", error.statusText || error);
+        console.error("Response:", error.responseText);
+        return false;
+    }
+}
 /* =========================
    UI Helper Functions
 ========================= */
@@ -809,7 +823,7 @@ function toggleNextButton() {
     var oldPrefix = $("#ddlForOldArmyNoRulePrefix").val();
     var oldArmyNo = $("#txtApplyForOldArmyNo").val().trim();
 
-    var isChangeArmyNo = parseInt(lCardType) === 4;
+    var isChangeArmyNo = parseInt(lCardType) === MICardType_Change_ArmyNo;
 
     var validNew = newPrefix !== "" && newArmyNo.length > 0;
     var validOld = oldPrefix !== "" && oldArmyNo.length > 0;
@@ -915,6 +929,7 @@ function GetHistoryForPopup(Request) {
         }
     });
 }
+
 function BindHistoryPopup(data) {
 
     $("#UnderProgressHistoryBody").empty();
@@ -1036,6 +1051,7 @@ function BindHistoryPopup(data) {
         );
     }
 }
+
 function CreateEmptyRow(message) {
 
     return `
@@ -1046,6 +1062,7 @@ function CreateEmptyRow(message) {
         </tr>
     `;
 }
+
 function FormatHistoryDate(dateValue) {
 
     if (!dateValue) {

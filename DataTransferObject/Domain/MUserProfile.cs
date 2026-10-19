@@ -15,9 +15,9 @@ namespace DataTransferObject.Domain
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [MinLength(8, ErrorMessage = "Minimum length of Offr Army No is eight character.")]
-        [MaxLength(10,ErrorMessage = "Maximum length of Offr Army No is ten character.")]
-        [RegularExpression(@"^[A-Z]{2}\d{5,6}[A-Z]$", ErrorMessage = "Offr Army No must be like IC12345X or SC123456L.")]
+        [MinLength(7, ErrorMessage = "Minimum length of Offr Army No is seven alphanumeric.")]
+        [MaxLength(9,ErrorMessage = "Maximum length of Offr Army No is nine alphanumeric.")]
+        [RegularExpression(@"^(?:[A-Z]{1,2}[0-9]{5,6}|[A-Z]{3}[0-9]{5})[A-Z]$",ErrorMessage = "Please enter a valid Offr Army No. Examples: V12345X, IC123456L, NTR12345X.")]
         public string ArmyNo { get; set; } = string.Empty;
         
         [Required]

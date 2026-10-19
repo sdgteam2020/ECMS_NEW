@@ -929,9 +929,6 @@ namespace Web.Controllers
                                     bool OldArmyNoFound = await basicDetailBL.CheckArmyNO(OldServiceNo);
                                     bool NewArmyNoFound = await basicDetailBL.CheckArmyNO(NewServiceNo);
 
-                                    // Extract prefixes (IC, SL, SS, etc.)
-                                    string OldFirstTwo = service.CheckFirstTwoChars(OldServiceNo);
-                                    string NewFirstTwo = service.CheckFirstTwoChars(NewServiceNo);
 
                                     // Validate Army No conditions and rank-based rules
                                     if (OldArmyNoFound == false)
@@ -943,60 +940,6 @@ namespace Web.Controllers
                                     {
                                         TempData["error"] = "New Army No is alredy used.";
                                         goto end;
-                                    }
-                                    else if (string.IsNullOrEmpty(OldFirstTwo))
-                                    {
-                                        // Handle OR rank cases
-                                        if (string.IsNullOrEmpty(NewFirstTwo))
-                                        {
-                                            TempData["error"] = "Both Old and New Army No is OR rank.";
-                                            goto end;
-                                        }
-                                        else if (model.ApplyForId == 2 && (NewFirstTwo == "IC" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "SS" || NewFirstTwo == "TA"))
-                                        {
-                                            TempData["error"] = "Please Select Offrs tab.";
-                                            goto end;
-                                        }
-                                        else if (model.ApplyForId == 1 && NewFirstTwo == "JC")
-                                        {
-                                            TempData["error"] = "Please Select JCOs/OR tab.";
-                                            goto end;
-                                        }
-                                    }
-                                    else if (!string.IsNullOrEmpty(OldFirstTwo))
-                                    {
-                                        // Validation rules for IC, SL, SS, WC, TA, JC
-                                        if (OldFirstTwo == "IC" && string.IsNullOrEmpty(NewFirstTwo))
-                                        {
-                                            TempData["error"] = "Permanent Commissioned Officers are not downgraded.";
-                                            goto end;
-                                        }
-                                        else if (OldFirstTwo == "IC" && NewFirstTwo == "IC")
-                                        {
-                                            TempData["error"] = "Both Old and New Army No is permanent commissioned officers.";
-                                            goto end;
-                                        }
-                                        else if (OldFirstTwo == "IC" && (NewFirstTwo == "SS" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "TA" || NewFirstTwo == "JC"))
-                                        {
-                                            TempData["error"] = "Permanent Commissioned Officers are not downgraded.";
-                                            goto end;
-                                        }
-                                        else if ((OldFirstTwo == "SL" || OldFirstTwo == "TA") &&
-                                                 (NewFirstTwo == "IC" || NewFirstTwo == "SS" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "TA" || NewFirstTwo == "JC"))
-                                        {
-                                            TempData["error"] = "SL / TA are not changed Army No.";
-                                            goto end;
-                                        }
-                                        else if ((OldFirstTwo == "SS" || OldFirstTwo == "WC") && model.ApplyForId == 2 && !string.IsNullOrEmpty(NewFirstTwo) && NewFirstTwo == "IC")
-                                        {
-                                            TempData["error"] = "Please Select Offrs tab.";
-                                            goto end;
-                                        }
-                                        else if (OldFirstTwo == "JC" && model.ApplyForId == 2 && !string.IsNullOrEmpty(NewFirstTwo) && (NewFirstTwo == "SS" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "TA"))
-                                        {
-                                            TempData["error"] = "Please Select  Offrs tab.";
-                                            goto end;
-                                        }
                                     }
                                 }
                             }

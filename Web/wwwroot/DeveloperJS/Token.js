@@ -1,4 +1,4 @@
-﻿let TokenExpired = true;
+﻿let TokenExpired = false;
 $(function () {
     $("#loadingToken").hide();
     $("#btnfetchtoken").on("click", async function () {
@@ -83,14 +83,12 @@ async function GetTokenvalidatepersid2fa(IcNo, msgid, txticno, thumbprint) {
             if (validationResult === true) { //validationResult === false
                 $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected </span></div>');
 
-                if (CSPStatus === true)
-                {
+                if (CSPStatus === true) {
                     if (txticno !== "") {
                         await GetTokenDetails('FetchUniqueTokenDetails', txticno, thumbprint);
                     }
                 }
-                else
-                {
+                else {
                     $("#" + msgid).html(`<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">${data2[0].OCSPMsg}</span></div>`);
                     $("#" + txticno).val("");
                     $("#txtspnIsToken").val("");
@@ -141,7 +139,7 @@ async function GetTokenValidate(ApiId, IcNo, msgid) {
     }
 }
 
-async function GetTokenDetails(ApiId, txt, thumbprint, msgid,ddl='') {
+async function GetTokenDetails(ApiId, txt, thumbprint, msgid, ddl = '') {
     $("#loadingToken").show();
 
     try {
@@ -173,16 +171,15 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid,ddl='') {
                 const validToDate = parseApiDate(data[0].ValidTo);
 
                 if (validToDate === null) {
-                    console.log("Invalid ValidTo date:", data[0].ValidTo);
+                    $("#" + msgid).html("Invalid ValidTo date:", data[0]);
+                    return 0;
                 }
                 else {
                     validTo = validToDate;
                 }
 
-                if (TokenExpired)
-                {
-                    if (CurrentDate <= validTo)
-                    {
+                if (TokenExpired) {
+                    if (CurrentDate <= validTo) {
                         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Token Expired</span>.</div>');
                         $("#" + txt).val("");
                         if (thumbprint !== "") $("#" + thumbprint).val("");
@@ -213,10 +210,8 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid,ddl='') {
                         }
                     }
                 }
-                else
-                {
-                    if (CurrentDate >= validTo)
-                    {
+                else {
+                    if (CurrentDate >= validTo) {
                         $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">Token Expired</span>.</div>');
                         $("#" + txt).val("");
                         if (thumbprint !== "") $("#" + thumbprint).val("");

@@ -111,10 +111,6 @@ namespace BusinessLogicsLayer.Master
             return await _iUserProfileDB.FindByArmyNo(ArmyNo);
         }
 
-        public async Task<MUserProfile> GetByIsWithoutTokenApply(int UserId)
-        {
-            return await _iUserProfileDB.GetByIsWithoutTokenApply(UserId);
-        }
         public async Task<DTOCheckedBeforeUpdateProfileResponse> CheckedBeforeUpdateProfile(DTOUpdateProfileWithMappingRequest dTO)
         {
             return await _iUserProfileDB.CheckedBeforeUpdateProfile(dTO);
