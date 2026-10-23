@@ -177,7 +177,7 @@ $(function () {
                     }
                 }
                 else {
-                    toastr.error("Minimum eight and Maximum nine length of Old Army No.");
+                    toastr.error("Minimum seven and Maximum nine length of Old Army No.");
                 }
 
             }
@@ -270,7 +270,7 @@ $(function () {
 
         }
         else {
-            toastr.error("Minimum eight and Maximum nine length of Army No.");
+            toastr.error("Minimum seven and Maximum nine length of Army No.");
         }
     });
 

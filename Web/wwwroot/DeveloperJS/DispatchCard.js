@@ -189,7 +189,7 @@ $(function () {
 
         if (selectedField === 'regimentalname' || selectedField === 'recordofficename') {
             // Replace input with a select dropdown
-            let newSelect = $('<select id="searchText" class="form-control form-control-sm"></select>')
+            let newSelect = $('<select id="searchText" class="form-control form-control-sm form-select ecms-input"></select>')
                 .append('<option value="">Select...</option>');
 
             $container.html(newSelect); // Replace input with dropdown

@@ -40,7 +40,11 @@ async function SubmitsEncry1() {
     let skey = $('#spnhdns').html();
 
     if ($('#ICNo').val() == "") {
-        alert('Please enter Army No.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please enter Army No.'
+        });
         return false;
     }
 
@@ -60,7 +64,11 @@ async function ChkSfx() {
 
     // Validate Army No length (7 to 9 characters)
     if (ArmyNo.length < 7 || ArmyNo.length > 9) {
-        toastr.error("Army No must be between 7 and 9 characters.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Army No must be between 7 and 9 characters.'
+        });
         return false;
     }
 
@@ -77,7 +85,11 @@ async function ChkSfx() {
     const match = ArmyNo.match(/^([A-Z]{1,3})([0-9]{5,6})([A-Z])$/);
 
     if (!match) {
-        toastr.error("Please enter a valid Army No. Examples: V12345X, IC123456L, NTR12345X.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please enter a valid Army No. Examples: V12345X, IC123456L, NTR12345X.'
+        });
         return false;
     }
 
@@ -87,13 +99,21 @@ async function ChkSfx() {
 
     // Validate prefix
     if (!allowedPrefixes.includes(prefix)) {
-        toastr.error("Invalid Army No Prefix.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Invalid Army No Prefix.'
+        });
         return false;
     }
 
     // Three-letter prefix must contain exactly 5 digits
     if (prefix.length === 3 && numericPart.length !== 5) {
-        toastr.error("Three-letter Army No Prefix requires exactly 5 digits.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Three-letter Army No Prefix requires exactly 5 digits.'
+        });
         return false;
     }
 
@@ -131,7 +151,11 @@ async function ChkSfx() {
 
     // Validate suffix
     if (actualSuffix !== expectedSuffix) {
-        toastr.error("Invalid Army No Suffix.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Invalid Army No Suffix.'
+        });
         return false;
     }
 
