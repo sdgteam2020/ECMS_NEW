@@ -469,6 +469,7 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
         /// <summary>
         /// This method handles the saving of application close data.
         /// It checks whether the application close record already exists and saves or updates it accordingly.
@@ -624,10 +625,10 @@ namespace Web.Controllers
                 {
                     if (string.IsNullOrEmpty(jcoor))
                     {
-                        ViewBag.applyFor = 1;                    }
+                        ViewBag.applyFor = ApplyForEnum.Officers;                    }
                     else
                     {
-                        ViewBag.applyFor = 2;
+                        ViewBag.applyFor = ApplyForEnum.JCO_ORs;
                     }
                     return View();
                 }

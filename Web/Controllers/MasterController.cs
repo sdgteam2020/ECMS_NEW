@@ -2250,23 +2250,23 @@ namespace Web.Controllers
                                     dTOMap.PSOName,
                                     dTOMap.SubDteName
                                 });
-                                if (dTO.UnitType == 1)
+                                if (dTO.UnitType == (byte) UnitTypeEnum.Unit)
                                 {
-                                    dTO.FmnBranchID = 1;
-                                    dTO.PsoId = 1;
-                                    dTO.SubDteId = 1;
+                                    dTO.FmnBranchID = (byte)UnitIdEnum.NoFmnBranchId;
+                                    dTO.PsoId = (byte)UnitIdEnum.NoPsoId;
+                                    dTO.SubDteId = (byte)UnitIdEnum.NoSubDetId;
                                 }
-                                else if (dTO.UnitType == 2)
+                                else if (dTO.UnitType == (byte)UnitTypeEnum.FmnHQ)
                                 {
-                                    dTO.PsoId = 1;
-                                    dTO.SubDteId = 1;
+                                    dTO.PsoId = (byte)UnitIdEnum.NoPsoId;
+                                    dTO.SubDteId = (byte)UnitIdEnum.NoSubDetId;
                                 }
-                                else if (dTO.UnitType == 3)
+                                else if (dTO.UnitType == (byte)UnitTypeEnum.Dte_Sub_Branch)
                                 {
-                                    dTO.ComdId = 1;
-                                    dTO.CorpsId=1;
-                                    dTO.DivId = 1;
-                                    dTO.BdeId = 1;
+                                    dTO.ComdId = (byte) UnitIdEnum.NoComdId;
+                                    dTO.CorpsId= (byte)UnitIdEnum.NoCorpsId;
+                                    dTO.DivId = (byte)UnitIdEnum.NoDivId;
+                                    dTO.BdeId = (byte)UnitIdEnum.NoBdeId;
                                 }
                                 string RequestCh = string.Join("#", new[]
                                 {

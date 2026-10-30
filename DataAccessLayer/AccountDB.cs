@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
@@ -1573,7 +1574,7 @@ namespace DataAccessLayer
         /// </remarks>
         public async Task<DTOTempSession?> ProfileAndMappingSaving(DTOProfileAndMappingRequest model, DTOTempSession dTOTempSession)
         {
-            if (dTOTempSession.Status == 2)//New Regn
+            if (dTOTempSession.Status == (int)DIDStatusEnum.NewDID)//New Regn
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
@@ -1680,7 +1681,7 @@ namespace DataAccessLayer
                         dTOTempSessionResult.TDMId = trnDomainMapping.Id;
                         dTOTempSessionResult.TDMUnitMapId = trnDomainMapping.UnitId;
                         dTOTempSessionResult.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
-                        dTOTempSessionResult.Status = 1;
+                        dTOTempSessionResult.Status = (int)DIDStatusEnum.AdminFlagFalse;
                         return dTOTempSessionResult;
                     }
                     catch (Exception ex)
@@ -1692,7 +1693,7 @@ namespace DataAccessLayer
 
                 }
             }   
-            else if (dTOTempSession.Status == 3)//Mapping only
+            else if (dTOTempSession.Status == (int)DIDStatusEnum.MappingIdEmpty)//Mapping only
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
@@ -1778,7 +1779,7 @@ namespace DataAccessLayer
                             dTOTempSessionResult.TDMId = trnDomainMapping.Id;
                             dTOTempSessionResult.TDMUnitMapId = trnDomainMapping.UnitId;
                             dTOTempSessionResult.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
-                            dTOTempSessionResult.Status = 1;
+                            dTOTempSessionResult.Status = (int)DIDStatusEnum.AdminFlagFalse;
                             return dTOTempSessionResult;
                         }
                         else
@@ -1795,7 +1796,7 @@ namespace DataAccessLayer
 
                 }
             }
-            else if (dTOTempSession.Status == 4)//Profile Update with Mapping
+            else if (dTOTempSession.Status == (int)DIDStatusEnum.ProfileNotMapped)//Profile Update with Mapping
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
@@ -1872,7 +1873,7 @@ namespace DataAccessLayer
 
 
                                 DTOTempSession dTOTempSessionResult = new DTOTempSession();
-                                dTOTempSessionResult.Status = 5;
+                                dTOTempSessionResult.Status = (int)DIDStatusEnum.ValidUser;
                                 dTOTempSessionResult.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
                                 return dTOTempSessionResult;
                             }

@@ -82,7 +82,7 @@ namespace Web.Controllers
                 DTOAPILoginRequest data = new DTOAPILoginRequest();
 
                 // Check if the user is an officer (Type 1) and process accordingly
-                if (FromApiOffr == true && Type == 1)
+                if (FromApiOffr == true && Type == (int)ApplyForEnum.Officers)
                 {
                     // Configure API URLs and access key for officers
                     data.LoginUrl = Environment.GetEnvironmentVariable("ApiCall__ApioffsLoginUrl") ?? string.Empty;
@@ -101,7 +101,7 @@ namespace Web.Controllers
                         retdat.Pers_Army_No = ICNumber;
                         retdat.jwt = ret.token;
                         retdat.ApplyForId = Type;
-                        retdat.PubKey = "1843387C03CB35252A69796A02FACB535C0A6FE4";//apiHelpers.GetHashValue("EISAC_OFFR");
+                        retdat.PubKey = Environment.GetEnvironmentVariable("ApiCall__PubKeyOffr") ?? string.Empty; //"1843387C03CB35252A69796A02FACB535C0A6FE4";//apiHelpers.GetHashValue("EISAC_OFFR");
 
                         // Get the last 4 digits of the IC number for decryption purposes
                         string PubKeyForDesc = retdat.Pers_Army_No.Substring(retdat.Pers_Army_No.Length - 4, 4);
@@ -160,7 +160,7 @@ namespace Web.Controllers
                     return Json(res1);
                 }
                 // Check if the user is a JCO (Type 2) and process accordingly
-                else if (FromApiJCO == true && Type == 2)
+                else if (FromApiJCO == true && Type == (int)ApplyForEnum.JCO_ORs)
                 {
                     // Configure API URLs and access key for JCOs
                     data.LoginUrl = Environment.GetEnvironmentVariable("ApiCall__ApiJcoLoginUrl") ?? string.Empty;
@@ -178,7 +178,7 @@ namespace Web.Controllers
                         retdat.Pers_Army_No = ICNumber;
                         retdat.jwt = ret.token;
                         retdat.ApplyForId = Type;
-                        retdat.PubKey = "9F8AF0E4A5E7A23353672C93A22DD5AA6B130F8D";// apiHelpers.GetHashValue("EISAC"); //9F8AF0E4A5E7A23353672C93A22DD5AA6B130F8D EISAC
+                        retdat.PubKey = Environment.GetEnvironmentVariable("ApiCall__PubKeyJCO") ?? string.Empty;// apiHelpers.GetHashValue("EISAC"); //9F8AF0E4A5E7A23353672C93A22DD5AA6B130F8D EISAC
 
                         // Get the last 4 digits of the IC number for decryption purposes
                         string PubKeyForDesc = retdat.Pers_Army_No.Substring(retdat.Pers_Army_No.Length - 4, 4);

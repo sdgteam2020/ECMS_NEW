@@ -777,7 +777,7 @@ namespace Web.Controllers
 
         #endregion
 
-        #region Registration/BasicDetail/GetApiData/GetUserData
+        #region Registration/BasicDetail
 
         /// <summary>
         /// Handles GET requests for the Registration view.
@@ -908,7 +908,7 @@ namespace Web.Controllers
                     if (model.SubmitType == 1)
                     {
                         // Special logic for TypeId == 4 (change of Army No)
-                        if (model.TypeId == 4)
+                        if (model.TypeId == (byte) MICardTypeEnum.Change_ArmyNo)
                         {
                             string? OldServiceNo = model.OldServiceNo;
                             string? NewServiceNo = model.ServiceNo;
@@ -978,7 +978,7 @@ namespace Web.Controllers
                         // Retrieve application forward condition settings from configuration
                         var dTOApplFwdCondition = new DTOApplFwdConditionRequest();
 
-                        if (model.ApplyForId == 1)
+                        if (model.ApplyForId == (byte) ApplyForEnum.Officers)
                         {
                             // Retrieve the encryption key record from the database
                             var keyRecord = await encryptionSettingBL.Get(1);
@@ -1226,8 +1226,7 @@ namespace Web.Controllers
 
                             PinCode = model.PinCode ?? 0,
 
-                            PermanentAddress =
-        $"Village - {model.Village}, Post Office - {model.PO}, Tehsil - {model.Tehsil}, District - {model.District}, State - {model.State}, Pin Code - {(model.PinCode ?? 0)}"
+                            PermanentAddress = $"Village - {model.Village}, Post Office - {model.PO}, Tehsil - {model.Tehsil}, District - {model.District}, State - {model.State}, Pin Code - {(model.PinCode ?? 0)}"
                         };
 
                         ViewBag.OptionsRankId = model.RankId;
@@ -1362,9 +1361,7 @@ namespace Web.Controllers
                                                                     ", Tehsil- " + modelex.Tehsil + ", District- " + modelex.District +
                                                                     ", State- " + modelex.State +
                                                                     ", Pin Code- " + (modelex.PinCode == 0 ? "" : modelex.PinCode);
-
-
-                               
+                              
                             }
 
                             if (role == "user")
@@ -1614,7 +1611,7 @@ namespace Web.Controllers
                 {
                     ModelState.AddModelError("UnitId", "Please Enter Unit Name");
                 }
-                if (model.ApplyForId != 1 && (model.RegimentalId == 0 || model.RegimentalId == null))
+                if (model.ApplyForId != (byte) ApplyForEnum.Officers && (model.RegimentalId == 0 || model.RegimentalId == null))
                 {
                     ModelState.AddModelError("RegimentalId", "Please Select Regimental ");
                 }
@@ -1847,7 +1844,7 @@ namespace Web.Controllers
 
                                         TempData["success"] = "Updated Successfully.";
                                         //return RedirectToAction("Index");
-                                        if (newBasicDetail.ApplyForId == 1)
+                                        if (newBasicDetail.ApplyForId == (byte)ApplyForEnum.Officers)
                                             return RedirectToAction("Index", new { Id = "MQ==" });
                                         else
                                             return RedirectToAction("Index", new { Id = "MQ==", jcoor = "SmNvL09ycw ==" });
@@ -1921,7 +1918,7 @@ namespace Web.Controllers
                             newBasicDetail.Updatedby = model.Updatedby;
                             newBasicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
-                            if (model.TypeId == 4)
+                            if (model.TypeId == (byte) MICardTypeEnum.Change_ArmyNo)
                             {
                                 if (model.OldServiceNo != null)
                                 {
@@ -2061,7 +2058,7 @@ namespace Web.Controllers
                             }
 
                             MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
-                            mTrnICardRequest.StatusId = 1;
+                            mTrnICardRequest.StatusId = (byte) RequestStatusEnum.Running;
                             mTrnICardRequest.IsActive = true;
                             mTrnICardRequest.TypeId = model.TypeId;
                             mTrnICardRequest.RegistrationId = model.RegistrationId;
@@ -2093,7 +2090,7 @@ namespace Web.Controllers
                             }
 
                             MStepCounter mStepCounter = new MStepCounter();
-                            mStepCounter.StepId = Convert.ToByte(1);
+                            mStepCounter.StepId = (byte) ApplicationStepEnum.DraftedSavedApplication;
                             // mStepCounter.RequestId = mTrnICardRequest.RequestId;
                             mStepCounter.UpdatedOn = DateTime.Now;
                             mStepCounter.Updatedby = Convert.ToInt32(userId);
@@ -2166,78 +2163,6 @@ namespace Web.Controllers
             return View(model);
 
         }
-
-        /// <summary>
-        /// Calls an external API endpoint to fetch data by ICNumber.
-        /// </summary>
-        /// <param name="ICNumber">
-        /// Identifier used to fetch data from the API.
-        /// </param>
-        /// <returns>
-        /// A task that represents the asynchronous operation.  
-        /// The task result contains a <see cref="DTOApiDataResponse"/> object with the API response data.
-        /// </returns>
-        public async Task<DTOApiDataResponse> GetApiData(string ICNumber)
-        {
-            using (var client = new HttpClient())
-            {
-                // API base address (local test URL used here, can be swapped with production URL)
-                client.BaseAddress = new Uri("localhost:7002/api/Fetch/GetData/");
-
-                // Perform GET request by appending ICNumber to the base URL
-                using (HttpResponseMessage response = await client.GetAsync(ICNumber))
-                {
-                    // Read response content synchronously as string
-                    var responseContent = response.Content.ReadAsStringAsync().Result;
-
-                    // Throw exception if status code is not successful (ensures 2xx)
-                    response.EnsureSuccessStatusCode();
-
-                    // Deserialize JSON response into DTOApiDataResponse
-                    DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
-
-                    return responseData;
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// Makes an HTTP POST request to fetch user data from an external API using ICNumber.
-        /// </summary>
-        /// <param name="ICNumber">
-        /// The identifier (ICNumber) used to request user data from the API.
-        /// </param>
-        /// <returns>
-        /// Returns an <see cref="IActionResult"/> containing the deserialized API response data if successful,
-        /// otherwise it throws an exception when the API call fails.
-        /// </returns>
-        [HttpPost]
-        public async Task<IActionResult> GetUserData(string ICNumber)
-        {
-            using (var client = new HttpClient())
-            {
-                // API base address (currently set to localhost; can be changed to production URL)
-                client.BaseAddress = new Uri("localhost:7002/api/Fetch/Get/");
-
-                // Perform GET request by appending ICNumber to the base URL
-                using (HttpResponseMessage response = await client.GetAsync(ICNumber))
-                {
-                    // Read response content synchronously as string
-                    var responseContent = response.Content.ReadAsStringAsync().Result;
-
-                    // Ensure status code indicates success (throws otherwise)
-                    response.EnsureSuccessStatusCode();
-
-                    // Deserialize response content into a dynamic object (no type specified)
-                    var responseData = JsonConvert.DeserializeObject(responseContent);
-
-                    // Return successful result with API response
-                    return Ok(responseData);
-                }
-            }
-        }
-
 
         #endregion
 
@@ -2653,8 +2578,8 @@ namespace Web.Controllers
                 data.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
-                data.FwdStatusId = 4;  // Set the forward status to 4 (indicating internal forward)
-                data.TypeId = 3; //"RO / ORO Forward" type
+                data.FwdStatusId = (byte) ForwardStatusEnum.Forward;  // Set the forward status to 4 (indicating internal forward)
+                data.TypeId = (byte) MFwdTypeEnum.RO_OR_ORO;
 
                 // Call the business logic layer to save the internal forward data
                 DTOGenericResponse<string> response = await iTrnFwnBL.SaveInternalFwd(data, validateResult);
@@ -2695,7 +2620,7 @@ namespace Web.Controllers
                 {
                     MTrnICardRequest? mTrnICard = await iTrnICardRequestBL.Get(dTOActionOn.RequestId);
 
-                    if (mTrnICard != null && mTrnICard.StatusId == 1)
+                    if (mTrnICard != null && mTrnICard.StatusId == (byte)RequestStatusEnum.Running)
                     {
                         // Retrieve session data for unit ID
                         DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
@@ -2712,14 +2637,14 @@ namespace Web.Controllers
                                 dTOAction.BeforeAction_StepId = rejectDetailResponse.StepId;
                                 dTOAction.ApplyForId = rejectDetailResponse.ApplyForId;
 
-                                if (rejectDetailResponse.StepId == 1)
+                                if (rejectDetailResponse.StepId == (byte) ApplicationStepEnum.DraftedSavedApplication)
                                 {
                                     response.Message = "At this stage, the application has not been rejected.";
                                     response.Value = dTOAction;
                                     response.Result = false;
                                     return Ok(response);
                                 }
-                                else if (rejectDetailResponse.StepId == 2 || rejectDetailResponse.StepId == 3 || rejectDetailResponse.StepId == 4)
+                                else if (rejectDetailResponse.StepId == (byte)ApplicationStepEnum.PendingApplicationApproverLevel || rejectDetailResponse.StepId == (byte)ApplicationStepEnum.PendingApplicationVerifierLevel || rejectDetailResponse.StepId == (byte)ApplicationStepEnum.ApplicationStatusAtADC)
                                 {
                                     if ((rejectDetailResponse.FromAspNetUsersId != CurrentAspNetUsersId) || (rejectDetailResponse.FromUserId != dtoSession.UserId))
                                     {
@@ -2746,12 +2671,12 @@ namespace Web.Controllers
                                     return Ok(response);
                                 }
 
-                                if (rejectDetailResponse.StepId == 2)
-                                    dTOActionOn.StepId = 7;
-                                else if (rejectDetailResponse.StepId == 3)
-                                    dTOActionOn.StepId = 8;
-                                else if (rejectDetailResponse.StepId == 4)
-                                    dTOActionOn.StepId = 9;
+                                if (rejectDetailResponse.StepId == (byte)ApplicationStepEnum.PendingApplicationApproverLevel)
+                                    dTOActionOn.StepId = (byte)ApplicationStepEnum.ApplicationRejectedApproverLevel;
+                                else if (rejectDetailResponse.StepId == (byte)ApplicationStepEnum.PendingApplicationVerifierLevel)
+                                    dTOActionOn.StepId = (byte)ApplicationStepEnum.ApplicationRejectedVerifierLevel;
+                                else if (rejectDetailResponse.StepId == (byte)ApplicationStepEnum.ApplicationStatusAtADC)
+                                    dTOActionOn.StepId = (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel;
 
                                 dTOAction.AfterAction_StepId = dTOActionOn.StepId;
 
@@ -2764,8 +2689,8 @@ namespace Web.Controllers
                                 dTOActionOn.UpdatedOn = DateTime.Now;
                                 dTOActionOn.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                                 dTOActionOn.IsActive = true;
-                                dTOActionOn.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
-                                dTOActionOn.FwdStatusId = 3; // Set the status to 3 for rejection
+                                dTOActionOn.TypeId = (byte) MFwdTypeEnum.User;
+                                dTOActionOn.FwdStatusId = (byte) ForwardStatusEnum.Rejected;
                                 dTOActionOn.IsComplete = false;
                                 dTOActionOn.IsLock= false;
 
@@ -2794,7 +2719,9 @@ namespace Web.Controllers
                                 dTOAction.BeforeAction_StepId = dTORequestFwdDetail.StepId;
                                 dTOAction.ApplyForId = dTORequestFwdDetail.ApplyForId;
 
-                                if (dTORequestFwdDetail.StepId ==1 || dTORequestFwdDetail.StepId == 2 || dTORequestFwdDetail.StepId == 3 || dTORequestFwdDetail.StepId == 7 || dTORequestFwdDetail.StepId == 8 || dTORequestFwdDetail.StepId == 9)
+                                if (dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.DraftedSavedApplication || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.PendingApplicationApproverLevel 
+                                    || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.PendingApplicationVerifierLevel || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.ApplicationRejectedApproverLevel 
+                                    || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.ApplicationRejectedVerifierLevel || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel)
                                 {
                                     if ((dTORequestFwdDetail.FromAspNetUsersId != CurrentAspNetUsersId) || (dTORequestFwdDetail.FromUserId != dtoSession.UserId))
                                     {
@@ -2803,7 +2730,8 @@ namespace Web.Controllers
                                         response.Result = false;
                                         return Ok(response);
                                     }
-                                    if (dTORequestFwdDetail.StepId == 1 || dTORequestFwdDetail.StepId == 7 || dTORequestFwdDetail.StepId == 8 || dTORequestFwdDetail.StepId == 9)
+                                    if (dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.DraftedSavedApplication || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.ApplicationRejectedApproverLevel 
+                                        || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.ApplicationRejectedVerifierLevel || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel)
                                     {
                                         if ((dTOActionOn.ToAspNetUsersId == CurrentAspNetUsersId) || (dTOActionOn.ToUserId == dtoSession.UserId))
                                         {
@@ -2817,7 +2745,7 @@ namespace Web.Controllers
 
                                         dTOAction.AspNetUsersId = dTOActionOn.ToAspNetUsersId;
                                     }
-                                    else if (dTORequestFwdDetail.StepId == 2 || dTORequestFwdDetail.StepId == 3)
+                                    else if (dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.PendingApplicationApproverLevel || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.PendingApplicationVerifierLevel)
                                     {
                                         if ((dTORequestFwdDetail.ToAspNetUsersId != dTOActionOn.ToAspNetUsersId) || (dTORequestFwdDetail.ToUserId != dTOActionOn.ToUserId))
                                         {
@@ -2848,9 +2776,11 @@ namespace Web.Controllers
                                 }
                                 else
                                 {
-                                    if (dTORequestFwdDetail.StepId == 1 || dTORequestFwdDetail.StepId == 7 || dTORequestFwdDetail.StepId == 8 || dTORequestFwdDetail.StepId == 9 || dTORequestFwdDetail.StepId == 10)
+                                    if (dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.DraftedSavedApplication || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.ApplicationRejectedApproverLevel 
+                                        || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.ApplicationRejectedVerifierLevel || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel 
+                                        || dTORequestFwdDetail.StepId == (byte)ApplicationStepEnum.PrintReject)
                                     {
-                                        dTOActionOn.StepId = 2;
+                                        dTOActionOn.StepId = (byte)ApplicationStepEnum.PendingApplicationApproverLevel;
                                     }
                                     else
                                     {
@@ -2870,7 +2800,7 @@ namespace Web.Controllers
                                     dTOActionOn.IsActive = true;
                                     dTOActionOn.TypeId = dTOActionOn.StepId;
                                     dTOActionOn.StepId = dTOActionOn.StepId;
-                                    dTOActionOn.FwdStatusId = 2; // Set the status to 2 for Approved
+                                    dTOActionOn.FwdStatusId = (byte)ForwardStatusEnum.Approved;
                                     dTOActionOn.IsComplete = false;
                                     dTOActionOn.IsLock = true;
 
@@ -2912,7 +2842,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            if (mTrnICard.StatusId == 2)
+                            if (mTrnICard.StatusId == (byte) RequestStatusEnum.Complete)
                             {
                                 //Request is completed, cannot be rejected
                                 response.Message = "Request is completed, cannot be rejected";
@@ -3834,9 +3764,9 @@ namespace Web.Controllers
                             mTrnFwd.FromUserId = dTO.UserId;
                             mTrnFwd.UnitId = dTO.UnitId;
                             mTrnFwd.Remark = dTO.ToRemark;
-                            mTrnFwd.FwdStatusId = Convert.ToByte(3); // Reject status
-                            mTrnFwd.TypeId = Convert.ToByte(1);
-                            mTrnFwd.StepId = Convert.ToByte(9);
+                            mTrnFwd.FwdStatusId = (byte) ForwardStatusEnum.Rejected;
+                            mTrnFwd.TypeId = (byte)MFwdTypeEnum.User;
+                            mTrnFwd.StepId = (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel;
                             mTrnFwd.IsComplete = false;
                             mTrnFwd.RemarksIds = dTO.RemarksIds != null && dTO.RemarksIds.Any() ? string.Join(",", dTO.RemarksIds) : string.Empty;
                             mTrnFwd.FromAspNetUsersId = AspNetUsersId;
@@ -4922,13 +4852,13 @@ namespace Web.Controllers
                     else
                     {
                         // Handle first-time smart card request
-                        if (lCardType == 1)
+                        if (lCardType == (byte) MICardTypeEnum.First_time)
                         {
                             dTOApiDataResponse.Message = "You didn't Select First time Smart card";
                             dTOApiDataResponse.Status = false;
                         }
                         // Handle lost card scenario
-                        else if (lCardType == 5)
+                        else if (lCardType == (byte)MICardTypeEnum.LostCard)
                         {
                             bool check = await _lostCardBL.CheckServiceNoRequestInLost(ICNumber);
                             if (check)
@@ -4955,7 +4885,7 @@ namespace Web.Controllers
                 else
                 {
                     // No BasicDetailId found
-                    if (lCardType == 1 || lCardType == 4)
+                    if (lCardType == (byte)MICardTypeEnum.First_time || lCardType == (byte)MICardTypeEnum.Change_ArmyNo)
                     {
                         // First-time or reissue card request allowed
                         dTOApiDataResponse.Status = true;
@@ -5119,17 +5049,17 @@ namespace Web.Controllers
             // Check the current status of the card for the given request
             var cardStatus = await basicDetailBL.CheckCardStatus(RequestId);
 
-            if (cardStatus.GetValueOrDefault() == 1)
+            if (cardStatus.GetValueOrDefault() == (byte)RequestStatusEnum.Running)
             {
                 // If card is pending, fetch pending card history
                 cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
             }
-            else if (cardStatus.GetValueOrDefault() == 2 )
+            else if (cardStatus.GetValueOrDefault() == (byte)RequestStatusEnum.Complete)
             {
                 // If card is completed, fetch completed card history
                 cardHistoryResponses = await basicDetailBL.ICardHistoryCompleted(RequestId);
             }
-            else if (cardStatus.GetValueOrDefault() == 3)
+            else if (cardStatus.GetValueOrDefault() == (byte)RequestStatusEnum.Closed)
             {
                 // If card is closed, fetch closed card history
                 cardHistoryResponses = await basicDetailBL.ICardHistoryClosed(RequestId);
@@ -6397,22 +6327,22 @@ namespace Web.Controllers
                         {
                             if (UserClaims.Any(i => i.Value == "ICard Export Data"))
                             {
-                                dTO.RecordOfficeId = dTO.ApplyForId == 1 ? dTO.RecordOfficeId : null;
-                                dTO.RegId = dTO.ApplyForId == 2 ? dTO.RegId : null;
-                                dTO.Step = 1;
+                                dTO.RecordOfficeId = dTO.ApplyForId == (byte)ApplyForEnum.Officers ? dTO.RecordOfficeId : null;
+                                dTO.RegId = dTO.ApplyForId == (byte)ApplyForEnum.JCO_ORs ? dTO.RegId : null;
+                                dTO.Step = (byte) DispatchByEnum.AFSAC;
                                 ClaimValue = 1;
                             }
                             else if (UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
                             {
-                                dTO.ApplyForId = 1;
-                                dTO.Step = 2;
-                                dTO.RegId=null;
+                                dTO.ApplyForId = (byte)ApplyForEnum.Officers;
+                                dTO.Step = (byte)DispatchByEnum.ORO_RegCenter;
+                                dTO.RegId = null;
                                 ClaimValue = 2;
                             }
                             else if (UserClaims.Any(i => i.Value == "Dispatch Card"))
                             {
-                                dTO.ApplyForId = 2;
-                                dTO.Step = 2;
+                                dTO.ApplyForId = (byte) ApplyForEnum.JCO_ORs;
+                                dTO.Step = (byte)DispatchByEnum.ORO_RegCenter; ;
                                 dTO.RecordOfficeId = null;
                                 ClaimValue = 3;
                             }
@@ -6433,7 +6363,7 @@ namespace Web.Controllers
                         {
                             DTOGenericResponse<DTODispatchToResponse?> dTOGeneric = new DTOGenericResponse<DTODispatchToResponse?>();
 
-                            if (dTO.ApplyForId == 1) //Officer
+                            if (dTO.ApplyForId == (byte)ApplyForEnum.Officers) 
                             {
                                 if (dTO.RecordOfficeId == null)
                                 {
@@ -6881,14 +6811,14 @@ namespace Web.Controllers
                     dTO.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
                     dTO.TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
 
-                    dTO.StepId = 2;
+                    dTO.StepId = (byte)DispatchByEnum.ORO_RegCenter;
                     dTO.ClaimValue = 0; // User has no relevant claims
                     
                     if (UserClaims.Count > 0)
                     {
                         if (UserClaims.Any(i => i.Value == "ICard Export Data"))
                         {
-                            dTO.StepId = 1;
+                            dTO.StepId = (byte) DispatchByEnum.AFSAC;
                             dTO.ClaimValue = 1; // User can export ICard data
                         }
                         else if (UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
@@ -6967,27 +6897,27 @@ namespace Web.Controllers
                     dTO.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
                     dTO.TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
 
-                    dTO.StepId = 2;
+                    dTO.StepId = (byte)DispatchByEnum.ORO_RegCenter;
                     dTO.ClaimValue = 0;
 
                     if (UserClaims.Count > 0)
                     {
                         if (UserClaims.Any(i => i.Value == "ICard Export Data"))
                         {
-                            dTO.StepId = 1;
+                            dTO.StepId = (byte)DispatchByEnum.AFSAC;
                             dTO.ClaimValue = 1; // User can export ICard data
                         }
                         else if (UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
                         {
                             dTO.ClaimValue = 2; // User is Dispatch Card and Application Approver
-                            dTO.StepId = 1;
+                            dTO.StepId = (byte)DispatchByEnum.AFSAC;
                             var recordRegiment = await basicDetailBL.GetRecordRegimentId(dTO.ClaimValue, dTO.TDMId, dTO.UnitId);
                             dTO.RecordOfficeId = recordRegiment?.Id ?? 0;
                         }
                         else if (UserClaims.Any(i => i.Value == "Dispatch Card"))
                         {
                             dTO.ClaimValue = 3; // User is only Dispatch Card role
-                            dTO.StepId = 1;
+                            dTO.StepId = (byte)DispatchByEnum.AFSAC;
                             var recordRegiment = await basicDetailBL.GetRecordRegimentId(dTO.ClaimValue, dTO.TDMId, dTO.UnitId);
                             dTO.RegId = recordRegiment?.Id ?? 0;
                         }
@@ -7457,7 +7387,7 @@ namespace Web.Controllers
 
             // Assign computed values to ViewBag for the view
             ViewBag.UserType = UserType;
-            ViewBag.ApplyForId = string.IsNullOrEmpty(jcoor) ? 1 : 2;
+            ViewBag.ApplyForId = string.IsNullOrEmpty(jcoor) ? (byte) ApplyForEnum.Officers : (byte)ApplyForEnum.JCO_ORs;
             ViewBag.Title = "I-Card Completed History";
 
             if (role == "user")
@@ -7814,7 +7744,7 @@ namespace Web.Controllers
             // Assign computed values to ViewBag for the view
             ViewBag.UserType = userType;
            
-            ViewBag.ApplyForId = string.IsNullOrEmpty(jcoor) ? 1 : 2;
+            ViewBag.ApplyForId = string.IsNullOrEmpty(jcoor) ? (byte)ApplyForEnum.Officers : (byte)ApplyForEnum.JCO_ORs;
             ViewBag.Title = "I-Card Closed History";
             if (role == "user")
             {

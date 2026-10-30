@@ -199,7 +199,7 @@ namespace Web.Controllers
                     int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     Data.SentAspNetUsersId = userId;
 
-                    if (Data.StepId == 5) //Export
+                    if (Data.StepId == (byte) ApplicationStepEnum.Exported)
                     {
                         // Update the previous notification data
                         await _INotificationBL.UpdatePrevious(Data);
@@ -1002,16 +1002,16 @@ namespace Web.Controllers
                     dTORecord.UnitType = dTOMap.UnitType;
 
                     // Modify the request data based on unit type
-                    if (dTOMap.UnitType == 1)
+                    if (dTOMap.UnitType == (byte) UnitTypeEnum.Unit)
                     {
                         dTORecord.ComdId = (byte?)dTOMap.ComdId;
                     }
-                    else if (dTOMap.UnitType == 2)
+                    else if (dTOMap.UnitType == (byte)UnitTypeEnum.FmnHQ)
                     {
                         dTORecord.ComdId = (byte?)dTOMap.ComdId;
                         dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
                     }
-                    else if (dTOMap.UnitType == 3)
+                    else if (dTOMap.UnitType == (byte)UnitTypeEnum.Dte_Sub_Branch)
                     {
                         dTORecord.PsoId = (byte?)dTOMap.PsoId;
                         dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
@@ -1111,16 +1111,16 @@ namespace Web.Controllers
                         dTORecord.Data.UnitType = dTOMap.UnitType;
 
                         // Modify the request data based on unit type
-                        if (dTOMap.UnitType == 1)
+                        if (dTOMap.UnitType == (byte)UnitTypeEnum.Unit)
                         {
                             dTORecord.Data.ComdId = (byte?)dTOMap.ComdId;
                         }
-                        else if (dTOMap.UnitType == 2)
+                        else if (dTOMap.UnitType == (byte)UnitTypeEnum.FmnHQ)
                         {
                             dTORecord.Data.ComdId = (byte?)dTOMap.ComdId;
                             dTORecord.Data.FmnBranchID = (byte?)dTOMap.FmnBranchID;
                         }
-                        else if (dTOMap.UnitType == 3)
+                        else if (dTOMap.UnitType == (byte)UnitTypeEnum.Dte_Sub_Branch)
                         {
                             dTORecord.Data.PsoId = (byte?)dTOMap.PsoId;
                             dTORecord.Data.SubDteId = (byte?)dTOMap.SubDteId;
@@ -1262,16 +1262,16 @@ namespace Web.Controllers
                         dTORecord.UnitType = dTOMap.UnitType;
 
                         // Modify the request data based on unit type
-                        if (dTOMap.UnitType == 1)
+                        if (dTOMap.UnitType == (byte)UnitTypeEnum.Unit)
                         {
                             dTORecord.ComdId = (byte?)dTOMap.ComdId;
                         }
-                        else if (dTOMap.UnitType == 2)
+                        else if (dTOMap.UnitType == (byte)UnitTypeEnum.FmnHQ)
                         {
                             dTORecord.ComdId = (byte?)dTOMap.ComdId;
                             dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
                         }
-                        else if (dTOMap.UnitType == 3)
+                        else if (dTOMap.UnitType == (byte)UnitTypeEnum.Dte_Sub_Branch)
                         {
                             dTORecord.PsoId = (byte?)dTOMap.PsoId;
                             dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
@@ -1378,16 +1378,16 @@ namespace Web.Controllers
                         dTORecord.UnitType = dTOMap.UnitType;
 
                         // Modify the request data based on unit type
-                        if (dTOMap.UnitType == 1)
+                        if (dTOMap.UnitType == (byte)UnitTypeEnum.Unit)
                         {
                             dTORecord.ComdId = (byte?)dTOMap.ComdId;
                         }
-                        else if (dTOMap.UnitType == 2)
+                        else if (dTOMap.UnitType == (byte)UnitTypeEnum.FmnHQ)
                         {
                             dTORecord.ComdId = (byte?)dTOMap.ComdId;
                             dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
                         }
-                        else if (dTOMap.UnitType == 3)
+                        else if (dTOMap.UnitType == (byte)UnitTypeEnum.Dte_Sub_Branch)
                         {
                             dTORecord.PsoId = (byte?)dTOMap.PsoId;
                             dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
@@ -1898,16 +1898,16 @@ namespace Web.Controllers
                         dTORecord.UnitType = dTOMap.UnitType;
 
                         // Modify the request data based on unit type
-                        if (dTOMap.UnitType == 1)
+                        if (dTOMap.UnitType == (byte)UnitTypeEnum.Unit)
                         {
                             dTORecord.ComdId = (byte?)dTOMap.ComdId;
                         }
-                        else if (dTOMap.UnitType == 2)
+                        else if (dTOMap.UnitType == (byte)UnitTypeEnum.FmnHQ)
                         {
                             dTORecord.ComdId = (byte?)dTOMap.ComdId;
                             dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
                         }
-                        else if (dTOMap.UnitType == 3)
+                        else if (dTOMap.UnitType == (byte)UnitTypeEnum.Dte_Sub_Branch)
                         {
                             dTORecord.PsoId = (byte?)dTOMap.PsoId;
                             dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
@@ -2008,16 +2008,16 @@ namespace Web.Controllers
                         dTORecord.UnitType = dTOMap.UnitType;
 
                         // Modify the request data based on unit type
-                        if (dTOMap.UnitType == 1)
+                        if (dTOMap.UnitType == (byte)UnitTypeEnum.Unit)
                         {
                             dTORecord.ComdId = (byte?)dTOMap.ComdId;
                         }
-                        else if (dTOMap.UnitType == 2)
+                        else if (dTOMap.UnitType == (byte)UnitTypeEnum.FmnHQ)
                         {
                             dTORecord.ComdId = (byte?)dTOMap.ComdId;
                             dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
                         }
-                        else if (dTOMap.UnitType == 3)
+                        else if (dTOMap.UnitType == (byte)UnitTypeEnum.Dte_Sub_Branch)
                         {
                             dTORecord.PsoId = (byte?)dTOMap.PsoId;
                             dTORecord.SubDteId = (byte?)dTOMap.SubDteId;

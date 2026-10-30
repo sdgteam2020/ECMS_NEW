@@ -41,18 +41,19 @@ namespace DataAccessLayer
         /// </returns>
         public async Task<DTOApiPersDataResponse> GetByIC(DTOAPIDataRequest Data)
         {
+            string Enckey = Environment.GetEnvironmentVariable("Enckey__JCO_OR") ?? string.Empty;
             // SQL query to select personal data from the MApiData table for the given Army number.
             string query = @"SELECT [ApplyForId], [Pers_Army_No], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_name])) [Pers_name], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_birth_dt])) [Pers_birth_dt], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_name])) [Pers_name], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_birth_dt])) [Pers_birth_dt], 
                             [Pers_enrol_dt], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_District])) [Pers_District], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_State])) [Pers_State], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_House_no])) [Pers_House_no], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_District])) [Pers_District], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_State])) [Pers_State], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_House_no])) [Pers_House_no], 
                             [Pers_Moh_st], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Village])) [Pers_Village], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Tehsil])) [Pers_Tehsil], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Post_office])) [Pers_Post_office], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_Village])) [Pers_Village], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_Tehsil])) [Pers_Tehsil], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_Post_office])) [Pers_Post_office], 
                             [Pers_Police_stn], [Pers_Pin_code]
                             FROM [dbo].[MApiData] WHERE [Pers_Army_No] = @ArmyNo";
 
@@ -60,7 +61,7 @@ namespace DataAccessLayer
             using (var connection = _contextDP.CreateConnection())
             {
                 // Execute the query asynchronously and retrieve the first matching record (if any).
-                MApiData? ret = (await connection.QueryAsync<MApiData>(query, new { Data.ArmyNo })).FirstOrDefault();
+                MApiData? ret = (await connection.QueryAsync<MApiData>(query, new { Data.ArmyNo, Enckey })).FirstOrDefault();
 
                 // Create a response object to store the result.
                 DTOApiPersDataResponse response = new DTOApiPersDataResponse();
@@ -112,18 +113,19 @@ namespace DataAccessLayer
         /// </returns>
         public async Task<DTOApiPersDataResponse> GetByoffrsIC(DTOAPIDataRequest Data)
         {
+            string Enckey = Environment.GetEnvironmentVariable("Enckey__Offr") ?? string.Empty;
             // SQL query to select personal data from the MApiDataOffrs table for the given Army number.
             string query = @"SELECT [ApplyForId], [Pers_Army_No], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_name])) [Pers_name], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_birth_dt])) [Pers_birth_dt], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_name])) [Pers_name], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_birth_dt])) [Pers_birth_dt], 
                             [Pers_enrol_dt], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_District])) [Pers_District], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_State])) [Pers_State], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_House_no])) [Pers_House_no], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_District])) [Pers_District], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_State])) [Pers_State], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_House_no])) [Pers_House_no], 
                             [Pers_Moh_st], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Village])) [Pers_Village], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Tehsil])) [Pers_Tehsil], 
-                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Post_office])) [Pers_Post_office], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_Village])) [Pers_Village], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_Tehsil])) [Pers_Tehsil], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase(@Enckey, [Pers_Post_office])) [Pers_Post_office], 
                             [Pers_Police_stn], [Pers_Pin_code]
                             FROM [dbo].[MApiDataOffrs] WHERE [Pers_Army_No] = @ArmyNo";
 
@@ -131,7 +133,7 @@ namespace DataAccessLayer
             using (var connection = _contextDP.CreateConnection())
             {
                 // Execute the query asynchronously and retrieve the first matching record (if any).
-                MApiDataOffrs? ret = (await connection.QueryAsync<MApiDataOffrs>(query, new { Data.ArmyNo })).FirstOrDefault();
+                MApiDataOffrs? ret = (await connection.QueryAsync<MApiDataOffrs>(query, new { Data.ArmyNo, Enckey })).FirstOrDefault();
 
                 // Create a response object to store the result.
                 DTOApiPersDataResponse response = new DTOApiPersDataResponse();

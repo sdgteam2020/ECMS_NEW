@@ -2,6 +2,7 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Healpers;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
@@ -260,14 +261,15 @@ namespace DataAccessLayer
 
                     await db2.ExecuteAsync(query4, parameters4, transaction: transaction2);
                 }
-                if (StepId == 3)
+                if (StepId == (byte)ApplicationStepEnum.PendingApplicationVerifierLevel)
                 {
                     query2 = @"Update BasicDetails set DateOfIssue=GETDATE() where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
                     var parameters2 = new DynamicParameters();
                     parameters2.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
                     await db.ExecuteAsync(query2, parameters2, transaction: transaction);
                 }
-                if ((StepId == 1 || StepId == 7 || StepId == 8 || StepId == 9 || StepId == 10) || data.Flag == "R")
+                if ((StepId == (byte)ApplicationStepEnum.DraftedSavedApplication || StepId == (byte)ApplicationStepEnum.ApplicationRejectedApproverLevel || StepId == (byte)ApplicationStepEnum.ApplicationRejectedVerifierLevel 
+                    || StepId == (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel || StepId == (byte)ApplicationStepEnum.PrintReject) || data.Flag == "R")
                 {
                     query2 = @"Update BasicDetails set IsLock=@IsLock where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
                     var parameters5 = new DynamicParameters();

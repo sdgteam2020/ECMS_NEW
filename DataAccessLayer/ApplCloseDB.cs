@@ -2,6 +2,7 @@
 using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -50,7 +51,7 @@ namespace DataAccessLayer
 
                 if (closeResponse != null)
                 {
-                    if (closeResponse.StatusId == 1 && closeResponse.UnitId == DTo.UnitId && closeResponse.ApplCloseId == null)
+                    if (closeResponse.StatusId == (byte)RequestStatusEnum.Running && closeResponse.UnitId == DTo.UnitId && closeResponse.ApplCloseId == null)
                     {
                         closeResponse.Result = true;
                         closeResponse.Message = "Ok";
@@ -58,7 +59,7 @@ namespace DataAccessLayer
                     }
                     else
                     {
-                        if (closeResponse.StatusId != 1)
+                        if (closeResponse.StatusId != (byte) RequestStatusEnum.Running)
                         {
                             closeResponse.Message = "Appl Allready Complete / Closed!";
                         }
@@ -108,7 +109,7 @@ namespace DataAccessLayer
                 {
                     foreach (var item in cardHistoryResponses.ICardHistory)
                     {
-                        if (item.StepId == 2)
+                        if (item.StepId == (byte)ApplicationStepEnum.PendingApplicationApproverLevel)
                         {
                             AspnetuserId.Add(item.ToAspNetUsersId);
                         }
