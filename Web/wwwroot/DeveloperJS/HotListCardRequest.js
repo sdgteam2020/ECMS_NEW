@@ -93,8 +93,15 @@ function Proceed() {
     $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
-        let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
-        let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
+        let ApplicantName = [
+            getValidText("#lblpvFName"),
+            getValidText("#lblpvLName")
+        ].filter(Boolean).join(" ");
+
+        let ApplicantNameWithRank = [
+            getValidText("#lblpvRank"),
+            ApplicantName
+        ].filter(Boolean).join(" ");
         let Remarks = $("#txtHotlistRemark").val();
         let UserName = $(".dropdown-user-details-name").html();
         Swal.fire({

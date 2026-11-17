@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -64,8 +65,8 @@ namespace DataAccessLayer
             var Corps = await (from c in _context.MCorps
                                  join d in _context.MComd
                                  on c.ComdId equals d.ComdId
-                                 where c.CorpsId!=1
-                                 select new DTOCorpsResponse
+                                 where c.CorpsId!= (byte)UnitIdEnum.NoCorpsId
+                                 select new DTOCorpsResponse  
                                  {
                                      CorpsId = c.CorpsId,
                                      CorpsName = c.CorpsName,
@@ -160,7 +161,7 @@ namespace DataAccessLayer
             fromJoinClause = @"from MComd com
                                 INNER JOIN MCorps cor on cor.ComdId=com.ComdId";
             whereClause = @"WHERE
-                                cor.CorpsId <> 1
+                                cor.CorpsId <> @NoCorpsId
                                 AND (
                                     cor.CorpsName LIKE '%' + @SearchTerm + '%' OR
                                     com.ComdName LIKE '%' + @SearchTerm + '%'
@@ -183,6 +184,7 @@ namespace DataAccessLayer
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@NoCorpsId", (byte)UnitIdEnum.NoCorpsId, DbType.Byte);
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTOCorpsResponse>()).ToList();

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -96,8 +97,8 @@ namespace DataAccessLayer
                          join Com in _context.MComd
                          on bde.ComdId equals Com.ComdId
                          
-                         where  bde.BdeId!=1
-                         select new DTOBdeResponse
+                         where  bde.BdeId!= (byte)UnitIdEnum.NoBdeId
+                               select new DTOBdeResponse
                          {
                              BdeId=bde.BdeId,
                              BdeName=bde.BdeName,
@@ -139,8 +140,8 @@ namespace DataAccessLayer
                          join Com in _context.MComd
                          on bde.ComdId equals Com.ComdId
 
-                         where bde.ComdId==Data.ComdId && bde.CorpsId==Data.CorpsId && bde.DivId==Data.DivId &&  bde.BdeId != 1
-                         select new DTOBdeResponse
+                         where bde.ComdId==Data.ComdId && bde.CorpsId==Data.CorpsId && bde.DivId==Data.DivId &&  bde.BdeId != (byte)UnitIdEnum.NoBdeId
+                             select new DTOBdeResponse
                          {
                              BdeId = bde.BdeId,
                              BdeName = bde.BdeName,
@@ -216,7 +217,7 @@ namespace DataAccessLayer
                                 INNER JOIN MCorps cor on cor.CorpsId=bde.CorpsId
                                 INNER JOIN MComd com ON com.ComdId =bde.ComdId";
             whereClause = @"WHERE
-                                bde.BdeId <> 1
+                                bde.BdeId <> @NoBdeId
                                 AND (
                                     div.DivName LIKE '%' + @SearchTerm + '%' OR
                                     cor.CorpsName LIKE '%' + @SearchTerm + '%' OR
@@ -240,6 +241,7 @@ namespace DataAccessLayer
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@NoBdeId", (byte)UnitIdEnum.NoBdeId, DbType.Byte);
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTOBdeResponse>()).ToList();

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -61,7 +62,7 @@ namespace DataAccessLayer
             var Div = await (from div in _context.MDiv
                                join cor in _context.MCorps on div.CorpsId equals cor.CorpsId
                                join Com in _context.MComd on div.ComdId equals Com.ComdId
-                               where div.DivId!=1
+                               where div.DivId!= (byte)UnitIdEnum.NoDivId
                                select new DTODivResponse
                                {
                                    DivId = div.DivId,
@@ -93,7 +94,7 @@ namespace DataAccessLayer
                              join cor in _context.MCorps on div.CorpsId equals cor.CorpsId
                              join d in _context.MComd
                              on cor.ComdId equals d.ComdId
-                             where div.CorpsId == Data.CorpsId && div.ComdId==Data.ComdId && div.DivId!=1
+                             where div.CorpsId == Data.CorpsId && div.ComdId==Data.ComdId && div.DivId!= (byte)UnitIdEnum.NoDivId
                              select new DTODivResponse
                              {
                                  DivId = div.DivId,
@@ -165,7 +166,7 @@ namespace DataAccessLayer
                                 INNER JOIN MCorps cor on cor.CorpsId=div.CorpsId
                                 INNER JOIN MComd com ON com.ComdId =div.ComdId";
             whereClause = @"WHERE
-                                div.DivId <> 1
+                                div.DivId <> @NoDivId
                                 AND (
                                     div.DivName LIKE '%' + @SearchTerm + '%' OR
                                     cor.CorpsName LIKE '%' + @SearchTerm + '%' OR
@@ -189,6 +190,7 @@ namespace DataAccessLayer
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@NoDivId", (byte)UnitIdEnum.NoDivId);
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTODivResponse>()).ToList();

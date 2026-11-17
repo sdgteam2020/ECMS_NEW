@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -183,7 +184,7 @@ namespace DataAccessLayer
                                 ,muni.UnitName,muni.Suffix,muni.Sus_no,mapunit.UnitMapId FromUnitID,users.Id FromAspNetUsersId,pro.userId FromUserID,
                                 COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId
                                 from BasicDetails basi
-                                inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId AND trnicardr.StatusId=1
+                                inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId AND trnicardr.StatusId=@RunningStatusId
                                 inner join TrnDomainMapping trndom on trndom.id=trnicardr.TrnDomainMappingId
                                 inner join MRank ranks on ranks.RankId=basi.RankId
                                 inner join MApplyFor appl on appl.ApplyForId=basi.ApplyForId
@@ -221,7 +222,10 @@ namespace DataAccessLayer
                                 ";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOPostingInResponse>(query, new { ArmyNo });
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ArmyNo", ArmyNo, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+                    var ret = await connection.QueryAsync<DTOPostingInResponse>(query, parameters);
 
                     return ret.FirstOrDefault() ?? new DTOPostingInResponse();
 
@@ -277,7 +281,7 @@ namespace DataAccessLayer
                                 
                                 UPDATE TrnICardRequest SET TrnDomainMappingId = @TrnDomainMappingId WHERE RequestId = @RequestId;
                                 UPDATE BasicDetails SET UnitId = @ToUnitID,PlaceOfIssue = @PlaceOfIssue WHERE BasicDetailId = @BasicDetailId;
-                                UPDATE TrnFwds SET ToAspNetUsersId = @ToAspNetUsersId WHERE FwdStatusId = 3 AND IsComplete = 0 AND RequestId = @RequestId AND @TrnFwdId IS NOT NULL;
+                                UPDATE TrnFwds SET ToAspNetUsersId = @ToAspNetUsersId WHERE FwdStatusId = @Rejected AND IsComplete = 0 AND RequestId = @RequestId AND @TrnFwdId IS NOT NULL;
 
                                 SELECT Id
                                 FROM @NewId;
@@ -302,6 +306,7 @@ namespace DataAccessLayer
                 parameters.Add("@PlaceOfIssue", closeResponse.PlaceOfIssue, DbType.AnsiString, ParameterDirection.Input,50);
                 parameters.Add("@DispatchedOn", Data.DispatchedOn, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@RefNo", Data.RefNo, DbType.String, ParameterDirection.Input);
+                parameters.Add("@Rejected", (byte)ForwardStatusEnum.Rejected, DbType.Byte);
 
                 // Insert the new posting record and get its ID
                 var Id = await db.QuerySingleAsync<int>(sql, parameters, transaction:transaction);
@@ -465,7 +470,7 @@ namespace DataAccessLayer
 
                 if (dTOBeforePostingOut != null)
                 {
-                    if (dTOBeforePostingOut.StatusId == 1 && dTOBeforePostingOut.UnitId == trnPostingOut.FromUnitID && dTOBeforePostingOut.UnitId != trnPostingOut.ToUnitID && dTOBeforePostingOut.ToAspNetUsersId != null && dTOBeforePostingOut.ToUserID != null)
+                    if (dTOBeforePostingOut.StatusId == (byte)RequestStatusEnum.Running && dTOBeforePostingOut.UnitId == trnPostingOut.FromUnitID && dTOBeforePostingOut.UnitId != trnPostingOut.ToUnitID && dTOBeforePostingOut.ToAspNetUsersId != null && dTOBeforePostingOut.ToUserID != null)
                     {
                         dTOBeforePostingOut.Result = true;
                         dTOBeforePostingOut.Message = "Ok";
@@ -473,7 +478,7 @@ namespace DataAccessLayer
                     }
                     else
                     {
-                        if (dTOBeforePostingOut.StatusId != 1)
+                        if (dTOBeforePostingOut.StatusId != (byte)RequestStatusEnum.Running)
                         {
                             dTOBeforePostingOut.Message = "Appl Allready Complete / Closed!";
                         }

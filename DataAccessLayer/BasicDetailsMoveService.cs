@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Hosting;
@@ -28,33 +29,33 @@ namespace DataAccessLayer
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            //while (!stoppingToken.IsCancellationRequested)
-            //{
-            //    DateTime now = DateTime.Now;
-
-            //    DateTime nextRun = DateTime.Today
-            //        .AddHours(23)
-            //        .AddMinutes(55); // 11:55 PM
-
-            //    if (now > nextRun)
-            //    {
-            //        nextRun = nextRun.AddDays(1);
-            //    }
-
-            //    TimeSpan delay = nextRun - now;
-
-            //    _logger.LogInformation("BasicDetailsMoveService next run at: {NextRun}", nextRun);
-
-            //    await Task.Delay(delay, stoppingToken);
-
-            //    await MoveDataAsync(stoppingToken);
-            //}
-            //For testing purposes, you can use the below code to run the data move every minute instead of once a day at 11:55 PM. Just remember to comment out the above code block and uncomment the below block.
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromMinutes(30), stoppingToken);
+                DateTime now = DateTime.Now;
+
+                DateTime nextRun = DateTime.Today
+                    .AddHours(23)
+                    .AddMinutes(55); // 11:55 PM
+
+                if (now > nextRun)
+                {
+                    nextRun = nextRun.AddDays(1);
+                }
+
+                TimeSpan delay = nextRun - now;
+
+                _logger.LogInformation("BasicDetailsMoveService next run at: {NextRun}", nextRun);
+
+                await Task.Delay(delay, stoppingToken);
+
                 await MoveDataAsync(stoppingToken);
             }
+            //For testing purposes, you can use the below code to run the data move every minute instead of once a day at 11:55 PM. Just remember to comment out the above code block and uncomment the below block.
+            //while (!stoppingToken.IsCancellationRequested)
+            //{
+            //    await Task.Delay(TimeSpan.FromMinutes(30), stoppingToken);
+            //    await MoveDataAsync(stoppingToken);
+            //}
         }
         private async Task MoveDataAsync(CancellationToken cancellationToken)
         {
@@ -78,9 +79,17 @@ namespace DataAccessLayer
             // Initialize transaction for multiple database operations
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
             var (db2, transaction2) = _contextDP2.CreateConnectionWithTransaction();
-
+            var parameters = new DynamicParameters();
             try
             {
+                var StatusIds = new List<byte>
+                {
+                    (byte)RequestStatusEnum.Complete,
+                    (byte)RequestStatusEnum.Closed,
+                };
+                parameters.Add("@StatusIds", StatusIds);
+                parameters.Add("@BatchSize", batchSize, DbType.Int32, ParameterDirection.Input);
+
                 var records = (await db.QueryAsync<BasicDetail>(
                     new CommandDefinition(@"
                     SELECT TOP (@BatchSize)
@@ -91,12 +100,12 @@ namespace DataAccessLayer
                         bs.NameAsPerRecord, bs.RegimentalId, bs.FName, bs.LName,
                         bs.PreviousBasicDetailId, bs.IsLock
                     FROM dbo.BasicDetails bs
-                    INNER JOIN TrnICardRequest req on req.BasicDetailId = bs.BasicDetailId and req.StatusId IN (2,3)
+                    INNER JOIN TrnICardRequest req on req.BasicDetailId = bs.BasicDetailId and req.StatusId IN @StatusIds
                     LEFT JOIN TrnDistributeCards dist on dist.RequestId = req.RequestId
                     LEFT JOIN TrnApplClose appcl on appcl.RequestId = req.RequestId
                     ORDER BY bs.BasicDetailId;
                 ",
-                    new { BatchSize = batchSize },
+                    parameters,
                     transaction,
                     cancellationToken: cancellationToken)
                 )).ToList();

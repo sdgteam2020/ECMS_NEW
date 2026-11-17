@@ -2486,7 +2486,7 @@ namespace DataAccessLayer
             {
                 int applyfor = 0;
                 if (dTO.applyForId == 0) applyfor = 0; else applyfor = dTO.applyForId;
-                var rejectedSteps = new byte[]
+                var rejectedSteps = new List<byte>
                 {
                     (byte)ApplicationStepEnum.ApplicationRejectedApproverLevel,
                     (byte)ApplicationStepEnum.ApplicationRejectedVerifierLevel,
@@ -5338,11 +5338,11 @@ namespace DataAccessLayer
                                 CASE
                                     WHEN tdm.UnitId != @MapUnitId THEN 0
                                     WHEN dist.RequestId = @RequestId THEN 0
-                                    WHEN currentReq.StatusId IN (2, 3) THEN 0
+                                    WHEN currentReq.StatusId IN @StatusIds THEN 0
                                     WHEN stepcount.StepId != @CardInUnit THEN 0
-                                    WHEN currentReq.TypeId = @UserFwdTypeId THEN 1
+                                    WHEN currentReq.TypeId = @First_timeICardTypeId THEN 1
 
-                                    WHEN currentReq.TypeId = @ExportFwdTypeId AND EXISTS
+                                    WHEN currentReq.TypeId = @LostCardICardTypeId AND EXISTS
                                     (
                                         SELECT 1
                                         FROM TrnLostCards lc
@@ -5358,7 +5358,7 @@ namespace DataAccessLayer
                                         AND lc.IsActive = 1
                                     ) THEN 1
 
-                                    WHEN currentReq.TypeId IN (2, 3, 4) AND EXISTS
+                                    WHEN currentReq.TypeId IN @ICardTypeIds AND EXISTS
                                     (
                                         SELECT 1
                                         FROM TrnDestructionCards dc
@@ -5380,11 +5380,11 @@ namespace DataAccessLayer
                                 CASE
                                     WHEN tdm.UnitId != @MapUnitId THEN 'You are not an authorized user.'
                                     WHEN dist.RequestId = @RequestId THEN 'This card has already been distributed.'
-                                    WHEN currentReq.StatusId IN (2, 3) THEN 'The application is not running.'
+                                    WHEN currentReq.StatusId IN @StatusIds THEN 'The application is not running.'
                                     WHEN stepcount.StepId != @CardInUnit THEN 'The application is currently being processed.'
-                                    WHEN currentReq.TypeId = 1 THEN 'Valid'
-                                    WHEN currentReq.TypeId = 5 THEN 'Please create a lost entry for previous card!'
-                                    WHEN currentReq.TypeId IN (2, 3, 4) THEN 'Please create a destruction entry for previous card!'
+                                    WHEN currentReq.TypeId = @First_timeICardTypeId THEN 'Valid'
+                                    WHEN currentReq.TypeId = @LostCardICardTypeId THEN 'Please create a lost entry for previous card!'
+                                    WHEN currentReq.TypeId IN @ICardTypeIds THEN 'Please create a destruction entry for previous card!'
                                     ELSE ''
                                 END AS Message
 
@@ -5399,12 +5399,25 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var StatusIds = new List<byte>
+                    {
+                        (byte)RequestStatusEnum.Complete,
+                        (byte)RequestStatusEnum.Closed,
+                    };
+                    var ICardTypeIds = new List<byte>
+                    {
+                        (byte)MICardTypeEnum.Damaged,
+                        (byte)MICardTypeEnum.Change_Rank,
+                        (byte)MICardTypeEnum.Change_ArmyNo,
+                    };
                     var parameters = new DynamicParameters();
                     parameters.Add("@RequestId", requestId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@MapUnitId", UnitId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@CardInUnit", (byte)ApplicationStepEnum.CardInUnit, DbType.Byte);
-                    parameters.Add("@UserFwdTypeId", (byte)MFwdTypeEnum.User, DbType.Byte);
-                    parameters.Add("@ExportFwdTypeId", (byte)MFwdTypeEnum.Export, DbType.Byte);
+                    parameters.Add("@First_timeICardTypeId", (byte)MICardTypeEnum.First_time, DbType.Byte);
+                    parameters.Add("@LostCardICardTypeId", (byte)MICardTypeEnum.LostCard, DbType.Byte);
+                    parameters.Add("@StatusIds", StatusIds);
+                    parameters.Add("@ICardTypeIds", ICardTypeIds);
 
                     var ret = await connection.QueryAsync<DTOGenericResponse<string>>(query, parameters);
                     response = ret.FirstOrDefault() ?? new DTOGenericResponse<string>();
@@ -5429,7 +5442,7 @@ namespace DataAccessLayer
             try
             {
                 // Validate Apply For Id
-                if (basicDetail.ApplyForId != 1 && basicDetail.ApplyForId != 2)
+                if (basicDetail.ApplyForId != (byte)ApplyForEnum.Officers && basicDetail.ApplyForId != (byte)ApplyForEnum.JCO_ORs)
                 {
                     response.Message = "Invalid Apply For Select .";
                     return response;
@@ -5449,9 +5462,9 @@ namespace DataAccessLayer
                     }
                 }
                 // Validate Registration Type based on  Apply For Id
-                if (basicDetail.ApplyForId == 1)
+                if (basicDetail.ApplyForId == (byte)ApplyForEnum.Officers)
                 {
-                    var registrationsApplyForId = registrations.Where(r => r.ApplyForId == 1).Select(r => r.RegistrationId).ToList();
+                    var registrationsApplyForId = registrations.Where(r => r.ApplyForId == (byte)ApplyForEnum.Officers).Select(r => r.RegistrationId).ToList();
                     if (registrations.Count > 0 && !registrationsApplyForId.Contains(basicDetail.RegistrationId))
                     {
                         response.Message = "Invalid RegistrationId Select.";
@@ -5460,7 +5473,7 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    var registrationsApplyForId = registrations.Where(r => r.ApplyForId == 2).Select(r => r.RegistrationId).ToList();
+                    var registrationsApplyForId = registrations.Where(r => r.ApplyForId == (byte)ApplyForEnum.JCO_ORs).Select(r => r.RegistrationId).ToList();
                     if (registrations.Count > 0 && !registrationsApplyForId.Contains(basicDetail.RegistrationId))
                     {
                         response.Message = "Invalid RegistrationId Select.";
@@ -5684,6 +5697,7 @@ namespace DataAccessLayer
             string fromJoinClause = string.Empty;
             string fromJoinCount = string.Empty;
             string searchFilter = string.Empty;
+            List<byte>? stepIds = null;
             List<DTOClosedHistoryResponse> dTOCompleteds = new List<DTOClosedHistoryResponse>();
             var responseData = new DTODataTablesResponse<DTOClosedHistoryResponse>
             {
@@ -5723,21 +5737,54 @@ namespace DataAccessLayer
                     fromJoinClause = @"from TrnApplClose appcl
                                       INNER JOIN MPostingReason mpr on mpr.Id= appcl.ReasonId
                                       INNER JOIN MRank RK ON RK.RankId = appcl.RankId
-                                      INNER JOIN TrnStepCounter tsc ON tsc.RequestId = appcl.RequestId AND tsc.StepId IN (2,4,5,6,9,10,11,12,13,14,15)";  
+                                      INNER JOIN TrnStepCounter tsc ON tsc.RequestId = appcl.RequestId AND tsc.StepId IN @stepIds";  
                     fromJoinCount = @"from TrnApplClose appcl";
                     searchFilter = @"WHERE appcl.ApplyForId =@ApplyForId AND ( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR appcl.RequestId LIKE @SearchTerm))";
+
+                    stepIds = new List<byte>
+                    {
+                        (byte)ApplicationStepEnum.PendingApplicationApproverLevel,
+                        (byte)ApplicationStepEnum.ApplicationStatusAtADC,
+                        (byte)ApplicationStepEnum.Exported,
+                        (byte)ApplicationStepEnum.ICardPrint,
+                        (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel,
+                        (byte)ApplicationStepEnum.PrintReject,
+                        (byte)ApplicationStepEnum.CardDispatchToRegimentOrOfficerRecordOffice,
+                        (byte)ApplicationStepEnum.CardInRegimentOrOfficerRecordOffice,
+                        (byte)ApplicationStepEnum.CardDispatchToUnit,
+                        (byte)ApplicationStepEnum.CardInUnit,
+                        (byte)ApplicationStepEnum.ICardDistributed
+                    };
+
                     break;              
                 case "Closed_ORO":
                 case "Closed_RO":
                     selectFields = @"appcl.RequestId,appcl.ServiceNo,RK.RankAbbreviation AS RankName,appcl.Name,appcl.UpdatedOn AS ClosedOn,mpr.Reason,appcl.Authority,appcl.Remarks";
                     fromJoinClause = @"from TrnApplClose appcl
                                   INNER JOIN TrnICardRequest req ON req.RequestId = appcl.RequestId AND req.RecordOfficeId=@RecordOfficeId
-                                  INNER JOIN TrnStepCounter tsc ON tsc.RequestId = appcl.RequestId AND tsc.StepId IN (3,4,5,6,8,9,10,11,12,13,14,15)
+                                  INNER JOIN TrnStepCounter tsc ON tsc.RequestId = appcl.RequestId AND tsc.StepId IN @stepIds
                                   INNER JOIN MRank RK ON RK.RankId = appcl.RankId
                                   INNER JOIN MPostingReason mpr on mpr.Id= appcl.ReasonId";
                     fromJoinCount = @"from TrnApplClose appcl
                                   INNER JOIN TrnICardRequest req ON req.RequestId = appcl.RequestId AND req.RecordOfficeId=@RecordOfficeId";
                     searchFilter = @"WHERE appcl.ApplyForId =@ApplyForId AND ( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR appcl.RequestId LIKE @SearchTerm))";
+
+                    stepIds = new List<byte>
+                    {
+                        (byte)ApplicationStepEnum.PendingApplicationVerifierLevel,
+                        (byte)ApplicationStepEnum.ApplicationStatusAtADC,
+                        (byte)ApplicationStepEnum.Exported,
+                        (byte)ApplicationStepEnum.ICardPrint,
+                        (byte)ApplicationStepEnum.ApplicationRejectedVerifierLevel,
+                        (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel,
+                        (byte)ApplicationStepEnum.PrintReject,
+                        (byte)ApplicationStepEnum.CardDispatchToRegimentOrOfficerRecordOffice,
+                        (byte)ApplicationStepEnum.CardInRegimentOrOfficerRecordOffice,
+                        (byte)ApplicationStepEnum.CardDispatchToUnit,
+                        (byte)ApplicationStepEnum.CardInUnit,
+                        (byte)ApplicationStepEnum.ICardDistributed
+                    };
+
                     break;
                 default:
                     responseData.Message = "Invalid Selection.";
@@ -5775,6 +5822,9 @@ namespace DataAccessLayer
                     parameters.Add("@RecordOfficeId", dTO.RecordOfficeId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@ApplyForId", dTO.ApplyForId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
+
+                    if (stepIds is not null)
+                        parameters.Add("@stepIds", stepIds);
 
                     using var multi = await connection.QueryMultipleAsync(sql, parameters);
 
@@ -5917,7 +5967,7 @@ namespace DataAccessLayer
             string query = @"SELECT TOP 1 
                             icardreq.RequestId,bd.UpdatedOn as ActionDate from BasicDetails bd
                             INNER JOIN TrnICardRequest icardreq on icardreq.BasicDetailId = bd.BasicDetailId
-                            where bd.ServiceNo = @ServiceNo  AND icardreq.StatusId = 1 
+                            where bd.ServiceNo = @ServiceNo  AND icardreq.StatusId = @RunningStatusId 
                             ORDER BY bd.UpdatedOn DESC;
 
                             Select compl.RequestId, compl.UpdatedOn as ActionDate from CompletedICardRequests compl
@@ -5927,10 +5977,12 @@ namespace DataAccessLayer
                             WHERE applClose.ServiceNo = @ServiceNo";
             try
             {
-
+                var parameters = new DynamicParameters();
+                parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+                parameters.Add("@ServiceNo", ServiceNo, DbType.String, ParameterDirection.Input);
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    using (var multi = await connection.QueryMultipleAsync(query, new { ServiceNo }))
+                    using (var multi = await connection.QueryMultipleAsync(query, parameters))
                     {
                         var UnderProcess = (await multi.ReadFirstOrDefaultAsync<DTOGetHistoryCommanResponse>());
                         var CardComplete = (await multi.ReadAsync<DTOGetHistoryCommanResponse>()).ToList();

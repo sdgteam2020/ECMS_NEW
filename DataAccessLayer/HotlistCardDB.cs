@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -224,14 +225,14 @@ namespace DataAccessLayer
             {
                 string query = @"SELECT CASE
                                             WHEN hot.RequestId = @RequestId THEN 0
-                                            WHEN currentReq.StatusId IN (1,3)  THEN 0
-                                            WHEN stepcount.StepId != 15 THEN 0
+                                            WHEN currentReq.StatusId IN @StatusIds  THEN 0
+                                            WHEN stepcount.StepId != @ICardDistributed THEN 0
                                             ELSE 1
                                         END AS Result,
 		                                case
                                             WHEN hot.RequestId = @RequestId THEN 'This card has already been reported as hot list.'
-                                            WHEN currentReq.StatusId IN (1,3) THEN 'The application is no longer active.'
-                                            WHEN stepcount.StepId != 15 THEN 'The application is currently being processed.'
+                                            WHEN currentReq.StatusId IN @StatusIds THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId != @ICardDistributed THEN 'The application is currently being processed.'
 		                                    ELSE 'Valid'
 		                                END as Message
                                 FROM TrnICardRequest currentReq
@@ -241,8 +242,17 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var StatusIds = new List<byte>
+                    {
+                        (byte)RequestStatusEnum.Running,
+                        (byte)RequestStatusEnum.Closed,
+                    };
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ICardDistributed", (byte)ApplicationStepEnum.ICardDistributed, DbType.Byte);
+                    parameters.Add("@StatusIds", StatusIds);
+
                     var result = await connection.QueryFirstOrDefaultAsync<DTOGenericResponse<string>>(query, parameters);
                     return result ?? new DTOGenericResponse<string>
                     {

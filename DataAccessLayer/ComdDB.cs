@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -216,7 +217,7 @@ namespace DataAccessLayer
             selectFields = @"com.ComdId,com.ComdName,com.ComdAbbreviation,com.Orderby,com.IsActive";
             fromJoinClause = @"from MComd com";
             whereClause = @"WHERE
-                                com.ComdId <> 1
+                                com.ComdId <> @NoComdId
                                 AND (
                                     com.ComdName LIKE '%' + @SearchTerm + '%' OR
                                     com.ComdAbbreviation LIKE '%' + @SearchTerm + '%'
@@ -239,6 +240,7 @@ namespace DataAccessLayer
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@NoComdId", (byte)UnitIdEnum.NoComdId, DbType.Byte);
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTOAllCommand_PaginationResponse>()).ToList();

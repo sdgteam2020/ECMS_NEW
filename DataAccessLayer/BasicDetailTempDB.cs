@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -38,6 +39,7 @@ namespace DataAccessLayer
         /// <returns>A list of DTOBasicDetailTempRequest containing the basic details of the user.</returns>
         public async Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId, bool claim, short ArmedIdForORO, int typeId)
         {
+            var parameters = new DynamicParameters();
             try
             {
                 if (typeId == 1)
@@ -49,7 +51,8 @@ namespace DataAccessLayer
                                 WHERE Temps.Updatedby=@UserId AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
                     using (var connection = _contextDP.CreateConnection())
                     {
-                        var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(query, new { UserId });
+                        parameters.Add("@UserId", UserId, DbType.Int32, ParameterDirection.Input);
+                        var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(query, parameters);
                         int sno = 1;
                         var allrecord = (from e in BasicDetailTempList
                                          select new DTOBasicDetailTempRequest()
@@ -103,7 +106,8 @@ namespace DataAccessLayer
                                     WHERE TDM.AspNetUsersId = @UserId";
                         using (var connection = _contextDP.CreateConnection())
                         {
-                            var result = await connection.QueryAsync<DTOBasicDetailTempObsRequest>(query, new { UserId });
+                            parameters.Add("@UserId", UserId, DbType.Int32, ParameterDirection.Input);
+                            var result = await connection.QueryAsync<DTOBasicDetailTempObsRequest>(query, parameters);
                             DTOBasicDetailTempObsRequest? dTOBasicDetailTempObsRequest = result.FirstOrDefault();
                             if (dTOBasicDetailTempObsRequest == null)
                             {
@@ -116,9 +120,12 @@ namespace DataAccessLayer
                                                 ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2
                                                 ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps Temps
                                                 inner join MRank ranks1 on ranks1.RankId = Temps.RankId
-                                                WHERE Temps.RecordOfficeId =@RecordOfficeId AND Temps.ApplyForId = 2 AND Temps.IsActive = 1 ORDER BY Temps.UpdatedOn DESC";
+                                                WHERE Temps.RecordOfficeId =@RecordOfficeId AND Temps.ApplyForId = @ApplyForId AND Temps.IsActive = 1 ORDER BY Temps.UpdatedOn DESC";
 
-                                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, new { dTOBasicDetailTempObsRequest.RecordOfficeId });
+                                parameters.Add("@RecordOfficeId", dTOBasicDetailTempObsRequest.RecordOfficeId, DbType.Int32, ParameterDirection.Input);
+                                parameters.Add("@ApplyForId", (byte)ApplyForEnum.JCO_ORs, DbType.Int32, ParameterDirection.Input);
+
+                                var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, parameters);
                                 int sno = 1;
                                 var allrecord = (from e in BasicDetailTempList
                                                  select new DTOBasicDetailTempRequest()
@@ -154,10 +161,10 @@ namespace DataAccessLayer
                                                 ,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(Temps.RemarksIds,','))) Remarks2
                                                 ,Temps.UpdatedOn,Temps.RegistrationId,Temps.TypeId,Temps.ApplyForId FROM BasicDetailTemps Temps
                                                 INNER JOIN MRank ranks1 on ranks1.RankId = Temps.RankId
-                                                WHERE Temps.RecordOfficeId=@RecordOfficeId AND Temps.ApplyForId=1 AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
+                                                WHERE Temps.RecordOfficeId=@RecordOfficeId AND Temps.ApplyForId=@ApplyForId AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
 
-                                var parameters = new DynamicParameters();
                                 parameters.Add("@RecordOfficeId", dTOBasicDetailTempObsRequest.RecordOfficeId);
+                                parameters.Add("@ApplyForId", (byte)ApplyForEnum.Officers, DbType.Int32, ParameterDirection.Input);
 
                                 var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(QueryFinal, parameters);
                                 int sno = 1;
@@ -201,7 +208,8 @@ namespace DataAccessLayer
                                 WHERE Temps.Updatedby=@UserId AND Temps.IsActive=1 ORDER BY Temps.UpdatedOn DESC";
                         using (var connection = _contextDP.CreateConnection())
                         {
-                            var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(query, new { UserId });
+                            parameters.Add("@UserId", UserId, DbType.Int32, ParameterDirection.Input);
+                            var BasicDetailTempList = await connection.QueryAsync<DTOBasicDetailTempRequest>(query, parameters);
                             int sno = 1;
                             var allrecord = (from e in BasicDetailTempList
                                              select new DTOBasicDetailTempRequest()

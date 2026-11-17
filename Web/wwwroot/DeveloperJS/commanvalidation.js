@@ -960,6 +960,16 @@ function convertToISOWithoutTime_dtp(inputVal) {
     // return ISO string (YYYY-MM-DDTHH:mm:ss)
     return m.format("YYYY-MM-DDTHH:mm:ss");
 }
+
+function getValidText(selector) {
+    let value = $(selector).text().trim();
+
+    if (!value || ["nan", "null", "undefined"].includes(value.toLowerCase())) {
+        return "";
+    }
+
+    return value;
+}
 function WaterMarkOnPdf(doc) {
     //Remove the title created by datatTables
     doc.content.splice(0, 1);

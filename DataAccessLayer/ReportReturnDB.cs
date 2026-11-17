@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using Azure.Core;
+using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Constants;
@@ -47,19 +48,19 @@ namespace DataAccessLayer
                         INSERT INTO #tempTrnFwds (StepId, IsComplete, TrnFwdId)
                         SELECT fwd.StepId,fwd.IsComplete,fwd.TrnFwdId  FROM TrnFwds fwd
                         INNER JOIN TrnStepCounter step ON fwd.RequestId = step.RequestId AND fwd.StepId = step.StepId AND step.ApplyForId = @ApplyForId
-                        LEFT JOIN TrnICardRequest req ON step.RequestId = req.RequestId AND req.StatusId = 1  
+                        LEFT JOIN TrnICardRequest req ON step.RequestId = req.RequestId AND req.StatusId = @RunningStatusId  
                         LEFT JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId  
                         LEFT JOIN MapUnit unit ON basi.UnitId = unit.UnitMapId 
                         WHERE 
                             (
-                                (@UnitType = 1 AND
+                                (@UnitType = @Unit AND
                                     unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                     AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                     AND unit.DivId = ISNULL(@DivId, unit.DivId)
                                     AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                                 )
                                 OR
-                                (@UnitType = 2 AND
+                                (@UnitType = @FmnHQ AND
                                     unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                     AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                     AND unit.DivId = ISNULL(@DivId, unit.DivId)
@@ -67,7 +68,7 @@ namespace DataAccessLayer
                                     AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
                                 )
                                 OR
-                                (@UnitType = 3 AND
+                                (@UnitType = @Dte_Sub_Branch AND
                                     unit.PsoId = ISNULL(@PsoId, unit.PsoId)
                                     AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                 )
@@ -104,23 +105,23 @@ namespace DataAccessLayer
 
                             SELECT TOP 1 @StepId = StepId FROM #tempStep;
 
-                            IF EXISTS (SELECT 1 FROM #tempStep WHERE StepId = @StepId AND @StepId = 1)
+                            IF EXISTS (SELECT 1 FROM #tempStep WHERE StepId = @StepId AND @StepId = @DraftedSavedApplication)
                             BEGIN
                                 SELECT @Total = COUNT(*) 
                                 FROM TrnStepCounter step
-                                LEFT JOIN TrnICardRequest req ON step.RequestId = req.RequestId AND req.StatusId = 1  
+                                LEFT JOIN TrnICardRequest req ON step.RequestId = req.RequestId AND req.StatusId = @RunningStatusId
                                 LEFT JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId  
 								LEFT JOIN MapUnit unit ON basi.UnitId = unit.UnitMapId 
                                 WHERE 
                                     (
-                                        (@UnitType = 1 AND
+                                        (@UnitType = @Unit AND
                                             unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                             AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                             AND unit.DivId = ISNULL(@DivId, unit.DivId)
                                             AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                                         )
                                         OR
-                                        (@UnitType = 2 AND
+                                        (@UnitType = @FmnHQ AND
                                             unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                             AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                             AND unit.DivId = ISNULL(@DivId, unit.DivId)
@@ -128,7 +129,7 @@ namespace DataAccessLayer
                                             AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
                                         )
                                         OR
-                                        (@UnitType = 3 AND
+                                        (@UnitType = @Dte_Sub_Branch AND
                                             unit.PsoId = ISNULL(@PsoId, unit.PsoId)
                                             AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                         )
@@ -141,7 +142,7 @@ namespace DataAccessLayer
                                 INSERT INTO #Temp (StepId, IsApprove, Total)
                                 VALUES (@StepId, @IsApprove, @Total);
                             END
-                            ELSE IF EXISTS (SELECT 1 FROM #tempStep WHERE StepId = @StepId AND @StepId IN (2,3,4))
+                            ELSE IF EXISTS (SELECT 1 FROM #tempStep WHERE StepId = @StepId AND @StepId IN @stepIds)
                             BEGIN
                                 SELECT @Total = COUNT(*) 
                                 FROM #tempTrnFwds 
@@ -191,6 +192,14 @@ namespace DataAccessLayer
 
                         THROW;
                     END CATCH";
+
+                var stepIds = new List<byte>
+                {
+                    (byte)ApplicationStepEnum.PendingApplicationApproverLevel,
+                    (byte)ApplicationStepEnum.PendingApplicationVerifierLevel,
+                    (byte)ApplicationStepEnum.ApplicationStatusAtADC,
+                };
+
                 var parameters = new DynamicParameters();
                 parameters.Add("@ApplyForId", ApplyForId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@ComdId", Data.ComdId, DbType.Byte, ParameterDirection.Input);
@@ -202,6 +211,12 @@ namespace DataAccessLayer
                 parameters.Add("@SubDteId", Data.SubDteId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@UnitMapId", Data.UnitMapId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@UnitType", Data.UnitType, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+                parameters.Add("@Unit", (byte)UnitTypeEnum.Unit, DbType.Byte);
+                parameters.Add("@FmnHQ", (byte)UnitTypeEnum.FmnHQ, DbType.Byte);
+                parameters.Add("@Dte_Sub_Branch", (byte)UnitTypeEnum.Dte_Sub_Branch, DbType.Byte);
+                parameters.Add("@DraftedSavedApplication", (byte)ApplicationStepEnum.DraftedSavedApplication, DbType.Byte);
+                parameters.Add("@stepIds", stepIds);
 
                 var ret = await db.QueryAsync<DTOReportReturnCount>(query, parameters, transaction: transaction);
                 // Commit the transaction if all operations succeed
@@ -256,21 +271,21 @@ namespace DataAccessLayer
         {
 
             string query = @"select COUNT(req.RequestId) Total, fwdsts.Name,fwdsts.FwdStatusId,mrec.RecordOfficeId, 3 GroupId from MTrnFwdStatus fwdsts
-                            inner join TrnFwds fwd on fwdsts.FwdStatusId=fwd.FwdStatusId and fwd.StepId in (3,8)
+                            inner join TrnFwds fwd on fwdsts.FwdStatusId=fwd.FwdStatusId and fwd.StepId IN @StatusIds
                             inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=@RunningStatusId 
                             inner join OROMapping mrec on req.RecordOfficeId=mrec.RecordOfficeId 
-                            inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId and basi.ApplyForId=1
+                            inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId and basi.ApplyForId=@Officers
                             left join MapUnit unit on basi.UnitId=unit.UnitMapId 
                             where 
                             (
-                                (@UnitType = 1 AND
+                                (@UnitType = @Unit AND
                                     unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                     AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                     AND unit.DivId = ISNULL(@DivId, unit.DivId)
                                     AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                                 )
                                 OR
-                                (@UnitType = 2 AND
+                                (@UnitType = @FmnHQ AND
                                     unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                     AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                     AND unit.DivId = ISNULL(@DivId, unit.DivId)
@@ -278,7 +293,7 @@ namespace DataAccessLayer
                                     AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
                                 )
                                 OR
-                                (@UnitType = 3 AND
+                                (@UnitType = @Dte_Sub_Branch AND
                                     unit.PsoId = ISNULL(@PsoId, unit.PsoId)
                                     AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                 )
@@ -290,6 +305,12 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var StatusIds = new List<byte>
+                    {
+                        (byte) ApplicationStepEnum.PendingApplicationVerifierLevel,
+                        (byte) ApplicationStepEnum.ApplicationRejectedVerifierLevel,
+                    };
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@UnitType", Data.UnitType, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@UnitMapId", Data.UnitMapId, DbType.Int32, ParameterDirection.Input);
@@ -301,6 +322,12 @@ namespace DataAccessLayer
                     parameters.Add("@PsoId", Data.PsoId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@SubDteId", Data.SubDteId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running);
+                    parameters.Add("@Unit", (byte)UnitTypeEnum.Unit, DbType.Byte);
+                    parameters.Add("@FmnHQ", (byte)UnitTypeEnum.FmnHQ, DbType.Byte);
+                    parameters.Add("@Dte_Sub_Branch", (byte)UnitTypeEnum.Dte_Sub_Branch, DbType.Byte);
+                    parameters.Add("@Officers", (byte)ApplyForEnum.Officers);
+                    parameters.Add("@StatusIds", StatusIds);
+
                     var ret = await connection.QueryAsync<DTOReportReturnCount>(query, parameters);
                     return ret.ToList();
                 }
@@ -348,20 +375,20 @@ namespace DataAccessLayer
         {
             string query = @"select count(req.RequestId) Total ,recf.RecordOfficeId,recf.Name,step.StepId from MRecordOffice recf
                             inner join TrnICardRequest req on recf.RecordOfficeId=req.RecordOfficeId and req.StatusId=@RunningStatusId  
-                            inner join TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=@IsComplete and fwd.StepId=3
+                            inner join TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=@IsComplete and fwd.StepId=@PendingApplicationVerifierLevel
                             inner join TrnStepCounter step on req.RequestId=step.RequestId 
-                            inner join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId and basi.ApplyForId=2
+                            inner join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId and basi.ApplyForId=@JCO_ORs
                             left join MapUnit unit on basi.UnitId=unit.UnitMapId
                             where 
                             (
-                                (@UnitType = 1 AND
+                                (@UnitType = @Unit AND
                                     unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                     AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                     AND unit.DivId = ISNULL(@DivId, unit.DivId)
                                     AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                                 )
                                 OR
-                                (@UnitType = 2 AND
+                                (@UnitType = @FmnHQ AND
                                     unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                     AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                     AND unit.DivId = ISNULL(@DivId, unit.DivId)
@@ -369,7 +396,7 @@ namespace DataAccessLayer
                                     AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
                                 )
                                 OR
-                                (@UnitType = 3 AND
+                                (@UnitType = @Dte_Sub_Branch AND
                                     unit.PsoId = ISNULL(@PsoId, unit.PsoId)
                                     AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                 )
@@ -394,6 +421,11 @@ namespace DataAccessLayer
                     parameters.Add("@PsoId", Data.PsoId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@SubDteId", Data.SubDteId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running);
+                    parameters.Add("@Unit", (byte)UnitTypeEnum.Unit, DbType.Byte);
+                    parameters.Add("@FmnHQ", (byte)UnitTypeEnum.FmnHQ, DbType.Byte);
+                    parameters.Add("@Dte_Sub_Branch", (byte)UnitTypeEnum.Dte_Sub_Branch, DbType.Byte);
+                    parameters.Add("@JCO_ORs", (byte)ApplyForEnum.JCO_ORs);
+                    parameters.Add("@PendingApplicationVerifierLevel", (byte)ApplicationStepEnum.PendingApplicationVerifierLevel);
 
                     var ret = await connection.QueryAsync<DTOReportReturnCount>(query, parameters);
                     return ret.ToList();
@@ -450,14 +482,14 @@ namespace DataAccessLayer
 
                 switch (dTORecord.Data.UnitType)
                 {
-                    case 1:
+                    case (byte)UnitTypeEnum.Unit:
                         unitFilter = @"
                             unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                             AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                             AND unit.DivId = ISNULL(@DivId, unit.DivId)
                             AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)";
                     break;
-                    case 2:
+                    case (byte)UnitTypeEnum.FmnHQ:
                         unitFilter = @"
                             unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                             AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
@@ -465,7 +497,7 @@ namespace DataAccessLayer
                             AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                             AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)";
                     break;
-                    case 3:
+                    case (byte)UnitTypeEnum.Dte_Sub_Branch:
                         unitFilter = @"
                             unit.PsoId = ISNULL(@PsoId, unit.PsoId)
                             AND unit.SubDteId = ISNULL(@SubDteId,unit.SubDteId)";
@@ -505,9 +537,9 @@ namespace DataAccessLayer
                                     ,fwd.UpdatedOn,fwdsts.Name StatusName";
                         fromJoinClause = @"from MStepCounterStep Mstep   
                                 INNER JOIN TrnStepCounter step on Mstep.StepId=step.StepId  
-                                INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  
-                                INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.ApplyForId=2
-                                INNER JOIN TrnFwds fwd on req.RequestId=fwd.RequestId AND fwd.IsComplete=0 AND fwd.StepId=3
+                                INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=@RunningStatusId  
+                                INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.ApplyForId=@JCO_ORs
+                                INNER JOIN TrnFwds fwd on req.RequestId=fwd.RequestId AND fwd.IsComplete=0 AND fwd.StepId=@PendingApplicationVerifierLevel
                                 INNER JOIN MRecordOffice mrec on req.RecordOfficeId=mrec.RecordOfficeId AND mrec.RecordOfficeId=@ApplyForId
                                 INNER JOIN MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId 
                                 INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
@@ -522,9 +554,9 @@ namespace DataAccessLayer
                                 LEFT JOIN MRank ranks on ranks.RankId=basi.RankId";
                         fromJoinCount = @"from MStepCounterStep Mstep   
                                     INNER JOIN TrnStepCounter step on Mstep.StepId=step.StepId  
-                                    INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  
-                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.ApplyForId=2 
-                                    INNER JOIN TrnFwds fwd on req.RequestId=fwd.RequestId AND fwd.IsComplete=0 AND fwd.StepId=3
+                                    INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=@RunningStatusId 
+                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.ApplyForId=@JCO_ORs
+                                    INNER JOIN TrnFwds fwd on req.RequestId=fwd.RequestId AND fwd.IsComplete=0 AND fwd.StepId=@PendingApplicationVerifierLevel
                                     INNER JOIN MRecordOffice mrec on req.RecordOfficeId=mrec.RecordOfficeId AND mrec.RecordOfficeId=@ApplyForId
                                     INNER JOIN MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId 
                                     INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId";
@@ -540,7 +572,7 @@ namespace DataAccessLayer
 
                         fromJoinClause = @" from MStepCounterStep Mstep  
                                 INNER JOIN TrnStepCounter step on Mstep.StepId=step.StepId AND step.StepId=@StepId
-                                INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 
+                                INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=@RunningStatusId
                                 INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.ApplyForId=@ApplyForId
                                 INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
                                 LEFT JOIN TrnFwds fwd on req.RequestId=fwd.RequestId 
@@ -556,7 +588,7 @@ namespace DataAccessLayer
                                 LEFT JOIN MRank ranks on ranks.RankId=basi.RankId";
                         fromJoinCount = @"from MStepCounterStep Mstep  
                                 INNER JOIN TrnStepCounter step on Mstep.StepId=step.StepId AND step.StepId=@StepId
-                                INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 
+                                INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=@RunningStatusId
                                 INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.ApplyForId=@ApplyForId
                                 INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
                                 LEFT JOIN TrnFwds fwd on req.RequestId=fwd.RequestId 
@@ -578,7 +610,7 @@ namespace DataAccessLayer
 
                             fromJoinClause = @"from MStepCounterStep Mstep  
                                     INNER join TrnStepCounter step on Mstep.StepId=step.StepId 
-                                    INNER join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 
+                                    INNER join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=@RunningStatusId
                                     INNER join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.ApplyForId=@ApplyForId 
                                     INNER join MapUnit unit on basi.UnitId=unit.UnitMapId
                                     LEFT join TrnFwds fwd on req.RequestId=fwd.RequestId AND fwd.IsComplete=0
@@ -594,7 +626,7 @@ namespace DataAccessLayer
                                     LEFT join MRank ranks on ranks.RankId=basi.RankId";
                             fromJoinCount = @"from MStepCounterStep Mstep  
                                     INNER join TrnStepCounter step on Mstep.StepId=step.StepId 
-                                    INNER join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 
+                                    INNER join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=@RunningStatusId
                                     INNER join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.ApplyForId=@ApplyForId 
                                     INNER join MapUnit unit on basi.UnitId=unit.UnitMapId
                                     LEFT join TrnFwds fwd on req.RequestId=fwd.RequestId AND fwd.IsComplete=0
@@ -613,7 +645,7 @@ namespace DataAccessLayer
                                         ,fwd.UpdatedOn,fwdsts.Name StatusName ";
                             fromJoinClause = @"from MStepCounterStep Mstep  
                                     INNER JOIN TrnStepCounter step on Mstep.StepId=step.StepId 
-                                    INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1
+                                    INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=@RunningStatusId
                                     INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.ApplyForId=@ApplyForId
                                     INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
                                     LEFT JOIN TrnFwds fwd on req.RequestId=fwd.RequestId AND fwd.IsComplete=0 
@@ -629,7 +661,7 @@ namespace DataAccessLayer
                                     LEFT JOIN MRank ranks on ranks.RankId=basi.RankId";
                             fromJoinCount = @"from MStepCounterStep Mstep  
                                     INNER JOIN TrnStepCounter step on Mstep.StepId=step.StepId 
-                                    INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1
+                                    INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=@RunningStatusId
                                     INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.ApplyForId=@ApplyForId
                                     INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
                                     LEFT JOIN TrnFwds fwd on req.RequestId=fwd.RequestId AND fwd.IsComplete=0
@@ -650,11 +682,11 @@ namespace DataAccessLayer
                                 ,fwd.UpdatedOn,fwdsts.Name StatusName";
                     fromJoinClause = @"from MStepCounterStep Mstep   
                         INNER JOIN TrnStepCounter step on Mstep.StepId=step.StepId  
-                        INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  
-                        INNER JOIN TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.StepId in (3,8)
+                        INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=@RunningStatusId
+                        INNER JOIN TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.StepId IN @StatusIds
                         INNER JOIN TrnDomainMapping map on fwd.ToAspNetUsersId=map.AspNetUsersId  
                         INNER JOIN OROMapping mrec on req.RecordOfficeId=mrec.RecordOfficeId AND mrec.RecordOfficeId=@ApplyForId
-                        INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId and basi.ApplyForId=1
+                        INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId and basi.ApplyForId=@Officers
                         INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
                         INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                         LEFT JOIN MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId 
@@ -668,11 +700,11 @@ namespace DataAccessLayer
                         LEFT JOIN MRank ranksfrom on ranksfrom.RankId=userfrom.RankId";
                     fromJoinCount = @"from MStepCounterStep Mstep   
                         INNER JOIN TrnStepCounter step on Mstep.StepId=step.StepId  
-                        INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  
-                        INNER JOIN TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.StepId in (3,8)
+                        INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=@RunningStatusId 
+                        INNER JOIN TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.StepId IN @StatusIds
                         INNER JOIN TrnDomainMapping map on fwd.ToAspNetUsersId=map.AspNetUsersId  
                         INNER JOIN OROMapping mrec on req.RecordOfficeId=mrec.RecordOfficeId AND mrec.RecordOfficeId=@ApplyForId
-                        INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId and basi.ApplyForId=1
+                        INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId and basi.ApplyForId=@Officers
                         INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
                         LEFT JOIN MTrnFwdStatus fwdsts on fwd.FwdStatusId=fwdsts.FwdStatusId";
 
@@ -704,6 +736,12 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var StatusIds = new List<byte>
+                    {
+                        (byte) ApplicationStepEnum.PendingApplicationVerifierLevel,
+                        (byte) ApplicationStepEnum.ApplicationRejectedVerifierLevel,
+                    };
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@ApplyForId", dTORecord.ApplyForId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@StepId", dTORecord.StepId, DbType.Int32, ParameterDirection.Input);
@@ -719,6 +757,11 @@ namespace DataAccessLayer
                     parameters.Add("@Start", dTORecord.Start, DbType.Int32);
                     parameters.Add("@Length", dTORecord.Length, DbType.Int32);
                     parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+                    parameters.Add("@Officers", (byte)ApplyForEnum.Officers);
+                    parameters.Add("@JCO_ORs", (byte)ApplyForEnum.JCO_ORs);
+                    parameters.Add("@PendingApplicationVerifierLevel", (byte)ApplicationStepEnum.PendingApplicationVerifierLevel);
+                    parameters.Add("@StatusIds", StatusIds);
 
                     using var multi = await connection.QueryMultipleAsync(sql, parameters);
 
@@ -782,14 +825,14 @@ namespace DataAccessLayer
 
                 switch (dTO.UnitType)
                 {
-                    case 1:
+                    case (byte)UnitTypeEnum.Unit:
                         unitFilter = @"
                             unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                             AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                             AND unit.DivId = ISNULL(@DivId, unit.DivId)
                             AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)";
                         break;
-                    case 2:
+                    case (byte)UnitTypeEnum.FmnHQ:
                         unitFilter = @"
                             unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                             AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
@@ -797,7 +840,7 @@ namespace DataAccessLayer
                             AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                             AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)";
                         break;
-                    case 3:
+                    case (byte)UnitTypeEnum.Dte_Sub_Branch:
                         unitFilter = @"
                             unit.PsoId = ISNULL(@PsoId, unit.PsoId)
                             AND unit.SubDteId = ISNULL(@SubDteId,unit.SubDteId)";
@@ -1065,20 +1108,20 @@ namespace DataAccessLayer
                                   AND (@UnitMapId IS NULL OR unit.UnitMapId = @UnitMapId)
                                   AND
                                   (
-                                        (@UnitType = 1
+                                        (@UnitType = @Unit
                                             AND (@ComdId IS NULL OR unit.ComdId = @ComdId)
                                             AND (@CorpsId IS NULL OR unit.CorpsId = @CorpsId)
                                             AND (@DivId IS NULL OR unit.DivId = @DivId)
                                             AND (@BdeId IS NULL OR unit.BdeId = @BdeId)
                                         )
-                                     OR (@UnitType = 2
+                                     OR (@UnitType = @FmnHQ
                                             AND (@ComdId IS NULL OR unit.ComdId = @ComdId)
                                             AND (@CorpsId IS NULL OR unit.CorpsId = @CorpsId)
                                             AND (@DivId IS NULL OR unit.DivId = @DivId)
                                             AND (@BdeId IS NULL OR unit.BdeId = @BdeId)
                                             AND (@FmnBranchID IS NULL OR unit.FmnBranchID = @FmnBranchID)
                                         )
-                                     OR (@UnitType = 3
+                                     OR (@UnitType = @Dte_Sub_Branch
                                             AND (@PsoId IS NULL OR unit.PsoId = @PsoId)
                                             AND (@SubDteId IS NULL OR unit.SubDteId = @SubDteId)
                                         )
@@ -1141,6 +1184,9 @@ namespace DataAccessLayer
                     parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running);
+                    parameters.Add("@Unit", (byte)UnitTypeEnum.Unit, DbType.Byte);
+                    parameters.Add("@FmnHQ", (byte)UnitTypeEnum.FmnHQ, DbType.Byte);
+                    parameters.Add("@Dte_Sub_Branch", (byte)UnitTypeEnum.Dte_Sub_Branch, DbType.Byte);
 
                     responseData.Value = await connection.QueryFirstOrDefaultAsync<DTOReportDashboardCountResponse>(query, parameters) ?? new DTOReportDashboardCountResponse();
                     responseData.Result = true;
@@ -1172,7 +1218,7 @@ namespace DataAccessLayer
                             from 
                               MStepCounterStep Mstep 
                               inner join TrnStepCounter step on Mstep.StepId = step.StepId 
-                              inner join TrnICardRequest req on step.RequestId = req.RequestId   and req.StatusId = 1 
+                              inner join TrnICardRequest req on step.RequestId = req.RequestId   and req.StatusId = @RunningStatusId
                               inner join BasicDetails basi on req.BasicDetailId = basi.BasicDetailId 
                               left join TrnFwds fwd on req.RequestId = fwd.RequestId 
                               left join MTrnFwdStatus fwdsts on fwd.FwdStatusId = fwdsts.FwdStatusId 
@@ -1187,7 +1233,18 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOReportReturnListResponse>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ComdId", Data.ComdId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@CorpsId", Data.CorpsId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@DivId", Data.DivId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@BdeId", Data.BdeId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@FmnBranchID", Data.FmnBranchID, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@PsoId", Data.PsoId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@SubDteId", Data.SubDteId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@UnitMapId", Data.UnitMapId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+
+                    var ret = await connection.QueryAsync<DTOReportReturnListResponse>(query, parameters);
                     return ret.ToList();
                 }
             }
@@ -1249,27 +1306,27 @@ namespace DataAccessLayer
                                     req.StatusId,
                                     unit.UnitMapId
                                 FROM TrnStepCounter stcount
-                                INNER JOIN TrnICardRequest req ON stcount.RequestId = req.RequestId AND req.StatusId = 1  AND stcount.StepId IN (5,6,11,12,13,14)
+                                INNER JOIN TrnICardRequest req ON stcount.RequestId = req.RequestId AND req.StatusId = @RunningStatusId  AND stcount.StepId IN @StatusIds
                                 INNER JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId
                                 INNER JOIN MapUnit unit ON basi.UnitId = unit.UnitMapId
                                 WHERE unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                                   AND unit.UnitType = @UnitType
                                   AND
                                   (
-                                        (@UnitType = 1
+                                        (@UnitType = @Unit
                                             AND unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                             AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                             AND unit.DivId = ISNULL(@DivId, unit.DivId)
                                             AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                                         )
-                                     OR (@UnitType = 2
+                                     OR (@UnitType = @FmnHQ
                                             AND unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                             AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                             AND unit.DivId = ISNULL(@DivId, unit.DivId)
                                             AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                                             AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
                                         )
-                                     OR (@UnitType = 3
+                                     OR (@UnitType = @Dte_Sub_Branch
                                             AND unit.PsoId = ISNULL(@PsoId, unit.PsoId)
                                             AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                         )
@@ -1285,54 +1342,54 @@ namespace DataAccessLayer
                                     req.StatusId,
                                     unit.UnitMapId
                                 FROM TrnStepCounter stcount
-                                INNER JOIN TrnICardRequest req ON stcount.RequestId = req.RequestId AND req.StatusId = 2
+                                INNER JOIN TrnICardRequest req ON stcount.RequestId = req.RequestId AND req.StatusId = @CompleteStatusId
                                 INNER JOIN AFSAC2.dbo.BasicDetails basi2 ON req.BasicDetailId = basi2.BasicDetailId
                                 INNER JOIN MapUnit unit ON basi2.UnitId = unit.UnitMapId
-                                WHERE stcount.StepId = 15
+                                WHERE stcount.StepId = @ICardDistributed
                                   AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                                   AND unit.UnitType = @UnitType
                                   AND
                                   (
-                                        (@UnitType = 1
+                                        (@UnitType = @Unit
                                             AND unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                             AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                             AND unit.DivId = ISNULL(@DivId, unit.DivId)
                                             AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                                         )
-                                     OR (@UnitType = 2
+                                     OR (@UnitType = @FmnHQ
                                             AND unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                             AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                             AND unit.DivId = ISNULL(@DivId, unit.DivId)
                                             AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                                             AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
                                         )
-                                     OR (@UnitType = 3
+                                     OR (@UnitType = @Dte_Sub_Branch
                                             AND unit.PsoId = ISNULL(@PsoId, unit.PsoId)
                                             AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                         )
                                   )
                             )
                             SELECT 
-                                ISNULL(SUM(CASE WHEN ApplyForId = 1 AND StepId = 5  AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotExported_Officer,
-                                ISNULL(SUM(CASE WHEN ApplyForId = 2 AND StepId = 5  AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotExported_OR,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @Officers AND StepId = @Exported  AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotExported_Officer,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @JCO_ORs AND StepId = @Exported  AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotExported_OR,
 
-                                ISNULL(SUM(CASE WHEN ApplyForId = 1 AND StepId = 6  AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotPrinted_Officer,
-                                ISNULL(SUM(CASE WHEN ApplyForId = 2 AND StepId = 6  AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotPrinted_OR,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @Officers AND StepId = @ICardPrint  AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotPrinted_Officer,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @JCO_ORs AND StepId = @ICardPrint  AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotPrinted_OR,
 
-                                ISNULL(SUM(CASE WHEN ApplyForId = 1 AND StepId = 11 AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotDispatchToORO,
-                                ISNULL(SUM(CASE WHEN ApplyForId = 2 AND StepId = 11 AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotDispatchToRegt,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @Officers AND StepId = @CardDispatchToRegimentOrOfficerRecordOffice AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotDispatchToORO,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @JCO_ORs AND StepId = @CardDispatchToRegimentOrOfficerRecordOffice AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotDispatchToRegt,
 
-                                ISNULL(SUM(CASE WHEN ApplyForId = 1 AND StepId = 12 AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotCardInORO,
-                                ISNULL(SUM(CASE WHEN ApplyForId = 2 AND StepId = 12 AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotCardInRegt,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @Officers AND StepId = @CardInRegimentOrOfficerRecordOffice AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotCardInORO,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @JCO_ORs AND StepId = @CardInRegimentOrOfficerRecordOffice AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotCardInRegt,
 
-                                ISNULL(SUM(CASE WHEN ApplyForId = 1 AND StepId = 13 AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotDispatchToUnit_Officer,
-                                ISNULL(SUM(CASE WHEN ApplyForId = 2 AND StepId = 13 AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotDispatchToUnit_OR,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @Officers AND StepId = @CardDispatchToUnit AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotDispatchToUnit_Officer,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @JCO_ORs AND StepId = @CardDispatchToUnit AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotDispatchToUnit_OR,
 
-                                ISNULL(SUM(CASE WHEN ApplyForId = 1 AND StepId = 14 AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotCardInUnit_Officer,
-                                ISNULL(SUM(CASE WHEN ApplyForId = 2 AND StepId = 14 AND StatusId = 1 THEN 1 ELSE 0 END), 0) AS TotCardInUnit_OR,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @Officers AND StepId = @CardInUnit AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotCardInUnit_Officer,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @JCO_ORs AND StepId = @CardInUnit AND StatusId = @RunningStatusId THEN 1 ELSE 0 END), 0) AS TotCardInUnit_OR,
 
-                                ISNULL(SUM(CASE WHEN ApplyForId = 1 AND StepId = 15 AND StatusId = 2 THEN 1 ELSE 0 END), 0) AS TotDistributed_Officer,
-                                ISNULL(SUM(CASE WHEN ApplyForId = 2 AND StepId = 15 AND StatusId = 2 THEN 1 ELSE 0 END), 0) AS TotDistributed_OR
+                                ISNULL(SUM(CASE WHEN ApplyForId = @Officers AND StepId = @ICardDistributed AND StatusId = @CompleteStatusId THEN 1 ELSE 0 END), 0) AS TotDistributed_Officer,
+                                ISNULL(SUM(CASE WHEN ApplyForId = @JCO_ORs AND StepId = @ICardDistributed AND StatusId = @CompleteStatusId THEN 1 ELSE 0 END), 0) AS TotDistributed_OR
                             FROM CTE
                             OPTION (RECOMPILE);";
 
@@ -1340,6 +1397,16 @@ namespace DataAccessLayer
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var StatusIds = new List<byte>
+                    {
+                        (byte) ApplicationStepEnum.Exported,
+                        (byte) ApplicationStepEnum.ICardPrint,
+                        (byte) ApplicationStepEnum.CardDispatchToRegimentOrOfficerRecordOffice,
+                        (byte) ApplicationStepEnum.CardInRegimentOrOfficerRecordOffice,
+                        (byte) ApplicationStepEnum.CardDispatchToUnit,
+                        (byte) ApplicationStepEnum.CardInUnit,
+                    };
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@UnitType", dTO.UnitType, DbType.Int32, ParameterDirection.Input);
@@ -1350,6 +1417,21 @@ namespace DataAccessLayer
                     parameters.Add("@FmnBranchID", dTO.FmnBranchID, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+                    parameters.Add("@CompleteStatusId", (byte)RequestStatusEnum.Complete, DbType.Byte);
+                    parameters.Add("@Unit", (byte)UnitTypeEnum.Unit, DbType.Byte);
+                    parameters.Add("@FmnHQ", (byte)UnitTypeEnum.FmnHQ, DbType.Byte);
+                    parameters.Add("@Dte_Sub_Branch", (byte)UnitTypeEnum.Dte_Sub_Branch, DbType.Byte);
+                    parameters.Add("@Officers", (byte)ApplyForEnum.Officers);
+                    parameters.Add("@JCO_ORs", (byte)ApplyForEnum.JCO_ORs);
+                    parameters.Add("@StatusIds", StatusIds);
+                    parameters.Add("@Exported", (byte)ApplicationStepEnum.Exported);
+                    parameters.Add("@ICardPrint", (byte)ApplicationStepEnum.ICardPrint);
+                    parameters.Add("@CardDispatchToRegimentOrOfficerRecordOffice", (byte)ApplicationStepEnum.CardDispatchToRegimentOrOfficerRecordOffice);
+                    parameters.Add("@CardInRegimentOrOfficerRecordOffice", (byte)ApplicationStepEnum.CardInRegimentOrOfficerRecordOffice);
+                    parameters.Add("@CardDispatchToUnit", (byte)ApplicationStepEnum.CardDispatchToUnit);
+                    parameters.Add("@CardInUnit", (byte)ApplicationStepEnum.CardInUnit);
+                    parameters.Add("@ICardDistributed", (byte)ApplicationStepEnum.ICardDistributed);
 
                     responseData.Value = await connection.QueryFirstOrDefaultAsync<DTOReportCardDashboardCountResponse>(query, parameters) ?? new DTOReportCardDashboardCountResponse();
                     responseData.Result = true;

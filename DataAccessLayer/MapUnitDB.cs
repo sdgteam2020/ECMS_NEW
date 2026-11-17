@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -631,14 +632,14 @@ namespace DataAccessLayer
 	                                unit.UnitType =@UnitType
 	                                AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                                 AND(
-                                    (@UnitType = 1 AND
+                                    (@UnitType = @Unit AND
                                         unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                         AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                         AND unit.DivId = ISNULL(@DivId, unit.DivId)
                                         AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
                                     )
                                     OR
-                                    (@UnitType = 2 AND
+                                    (@UnitType = @FmnHQ AND
                                         unit.ComdId = ISNULL(@ComdId, unit.ComdId)
                                         AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
                                         AND unit.DivId = ISNULL(@DivId, unit.DivId)
@@ -646,7 +647,7 @@ namespace DataAccessLayer
                                         AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
                                     )
                                     OR
-                                    (@UnitType = 3 AND
+                                    (@UnitType = @Dte_Sub_Branch AND
                                         unit.PsoId = ISNULL(@PsoId, unit.PsoId)
                                         AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
                                     )
@@ -664,6 +665,9 @@ namespace DataAccessLayer
                     parameters.Add("@FmnBranchID", dTO.FmnBranchID, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@Unit", (byte)UnitTypeEnum.Unit, DbType.Byte);
+                    parameters.Add("@FmnHQ", (byte)UnitTypeEnum.FmnHQ, DbType.Byte);
+                    parameters.Add("@Dte_Sub_Branch", (byte)UnitTypeEnum.Dte_Sub_Branch, DbType.Byte);
 
                     var ret = await connection.QueryAsync<DTOUnitResponse>(query, parameters);
                     return ret.ToList();

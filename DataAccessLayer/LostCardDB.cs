@@ -292,15 +292,15 @@ namespace DataAccessLayer
                                        CASE
                                             WHEN lost.RequestId = @RequestId THEN 0
                                             WHEN dest.RequestId = @RequestId THEN 0
-                                            WHEN currentReq.StatusId = 3 THEN 0
-                                            WHEN stepcount.StepId NOT IN (6, 11, 12 ,13, 14, 15) THEN 0
+                                            WHEN currentReq.StatusId = @ClosedStatusId THEN 0
+                                            WHEN stepcount.StepId NOT IN @StepIds THEN 0
                                             ELSE 1
                                         END AS Result,
 		                                case
                                             WHEN lost.RequestId = @RequestId THEN 'This card has already been reported as lost.'
                                             WHEN dest.RequestId = @RequestId THEN 'This card has already been destroyed.'
-                                            WHEN currentReq.StatusId = 3 THEN 'The application is no longer active.'
-                                            WHEN stepcount.StepId NOT IN (6, 11, 12 ,13, 14, 15) THEN 'The application is currently being processed.'
+                                            WHEN currentReq.StatusId = @ClosedStatusId THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId NOT IN @StepIds THEN 'The application is currently being processed.'
 		                                    ELSE 'Valid'
 		                                END as Message
                                 FROM TrnICardRequest currentReq
@@ -314,9 +314,21 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var stepIds = new List<byte>
+                    {
+                        (byte)ApplicationStepEnum.ICardPrint,
+                        (byte)ApplicationStepEnum.CardDispatchToRegimentOrOfficerRecordOffice,
+                        (byte)ApplicationStepEnum.CardInRegimentOrOfficerRecordOffice,
+                        (byte)ApplicationStepEnum.CardDispatchToUnit,
+                        (byte)ApplicationStepEnum.CardInUnit,
+                        (byte)ApplicationStepEnum.ICardDistributed
+                    };
                     var parameters = new DynamicParameters();
                     parameters.Add("@RequestId", requestId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@TDMId", TDMId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ClosedStatusId", (byte)RequestStatusEnum.Closed, DbType.Byte);
+                    parameters.Add("@StepIds", stepIds);
+
                     var result = await connection.QueryFirstOrDefaultAsync<DTOCheckBeforeLostReportResponse>(query, parameters);
                     return result ?? new DTOCheckBeforeLostReportResponse
                     {
@@ -338,9 +350,9 @@ namespace DataAccessLayer
         public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data, DTOCardMovementHistoryResponse LostReportBy)
         {
             var dTOResponse = new DTOGenericResponse<DTOCommonResponse?>();
-            string LostRemarksId = "65";
-            byte StatusId = 3;
-            byte ReasonId = 8;
+            string LostRemarksId = MRemarksEnum.CardLost.ToString();
+            byte StatusId = (byte)RequestStatusEnum.Closed;
+            byte ReasonId = (byte)MPostingReasonEnum.LostCard;
             string remarkIds = Data.RemarksIds != null && Data.RemarksIds.Any() ? string.Join(",", Data.RemarksIds) : string.Empty;
             // Initialize transaction for multiple database operations
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
@@ -399,7 +411,7 @@ namespace DataAccessLayer
                     {
                         foreach (var item in cardHistoryResponses.ICardHistory)
                         {
-                            if (item.StepId == 2)
+                            if (item.StepId == (byte)ApplicationStepEnum.PendingApplicationApproverLevel)
                             {
                                 AspnetuserId.Add(item.ToAspNetUsersId);
                             }

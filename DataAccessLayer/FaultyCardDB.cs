@@ -2,6 +2,7 @@
 using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
+using System.Reflection.Metadata;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -226,7 +228,7 @@ namespace DataAccessLayer
                 string query = @"SELECT mcat.CategoryId,req.RequestId,bd.ServiceNo,faulty.RemarksIds,faulty.FromRemark
                                 from TrnFaultyCard faulty
                                 inner join MCategory mcat on mcat.CategoryId = faulty.CategoryId
-                                inner join TrnICardRequest req on req.RequestId = faulty.RequestId AND req.StatusId =1
+                                inner join TrnICardRequest req on req.RequestId = faulty.RequestId AND req.StatusId =@RunningStatusId
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 inner join BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
                                 WHERE faulty.TrnFaultyCardId = @TrnFaultyCardId";
@@ -234,8 +236,12 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@TrnFaultyCardId", TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+
                     // Execute the query and return the first matching record
-                    var allrecord = await connection.QueryFirstOrDefaultAsync<DTOFaultyCardListResponse>(query, new { TrnFaultyCardId });
+                    var allrecord = await connection.QueryFirstOrDefaultAsync<DTOFaultyCardListResponse>(query, parameters);
 
                     if (allrecord == null)
                     {
@@ -275,6 +281,7 @@ namespace DataAccessLayer
         {
             DTOCommonSaveResponse saveResponse = new DTOCommonSaveResponse();
             string XmlFiles = string.Empty;
+            var parameters = new DynamicParameters();
 
             string RemarksIds = dTO.RemarksIds != null && dTO.RemarksIds.Any() ? string.Join(",", dTO.RemarksIds) : string.Empty;
             // Open a database connection and start a transaction
@@ -297,7 +304,6 @@ namespace DataAccessLayer
                     update = @"UPDATE TrnFaultyCard set ToRemark = @ToRemark,IsEditAction = @IsEditAction,IsComplete = @IsComplete WHERE TrnFaultyCardId=@TrnFaultyCardId";
 
                     // Set parameters for the update query
-                    var parameters = new DynamicParameters();
                     parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@ToRemark", dTO.ToRemark, DbType.String, ParameterDirection.Input, 100);
                     parameters.Add("@IsEditAction", dTO.IsEditAction, DbType.Boolean, ParameterDirection.Input);
@@ -318,7 +324,6 @@ namespace DataAccessLayer
                                 VALUES(@RemarksIds,@FromRemark,@ToRemark,@CategoryId,@RequestId,@IsActive,@UserId,@Updatedby,@UpdatedOn,@IsEditAction,@TrnFwdId,@IsComplete)";
 
                     // Set parameters for the insert query
-                    var parameters = new DynamicParameters();
                     parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Output);
                     parameters.Add("@RemarksIds", RemarksIds, DbType.String, ParameterDirection.Input, 100);
                     parameters.Add("@FromRemark", dTO.FromRemark, DbType.String, ParameterDirection.Input, 100);
@@ -345,10 +350,13 @@ namespace DataAccessLayer
                 if (dTO.Choice == 2)
                 {
                     // SQL query to update the step counter (StepId = 4 for acceptance)
-                    query2 = @" UPDATE TrnStepCounter set StepId = 4 where RequestId=@RequestId 
+                    query2 = @" UPDATE TrnStepCounter set StepId = @ApplicationStatusAtADC where RequestId=@RequestId 
                                 UPDATE TrnFwds set IsComplete = 0 where TrnFwdId=@TrnFwdId 
                                 UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardPrintedOn=null, CardExportedOn=null, CardExportedByAspNetUserId=null, CardExportedByUserId=null, CardPrintedByAspNetUserId=null, CardPrintedByUserId=null where RequestId=@RequestId ";
-                    await db.ExecuteAsync(query2, new { dTO.RequestId, dTO.TrnFwdId }, transaction: transaction);
+                    parameters.Add("@RequestId", dTO.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ApplicationStatusAtADC", (byte)ApplicationStepEnum.ApplicationStatusAtADC);
+
+                    await db.ExecuteAsync(query2, parameters, transaction: transaction);
 
                 }
                 /// Handle "Reject" action if Choice is 3
@@ -362,7 +370,6 @@ namespace DataAccessLayer
                                 VALUES(@RequestId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@UnitId,@Remark,@TypeId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@RemarksIds,@FwdStatusId,@StepId)";
 
                         // Set parameters for the insert query
-                        var parameters = new DynamicParameters();
                         parameters.Add("@TrnFwdId", mTrnFwd.TrnFwdId, DbType.Int32, ParameterDirection.Output);
                         parameters.Add("@RequestId", mTrnFwd.RequestId, DbType.Int32, ParameterDirection.Input);
                         parameters.Add("@ToUserId", mTrnFwd.ToUserId, DbType.Int32, ParameterDirection.Input);
@@ -388,7 +395,7 @@ namespace DataAccessLayer
 
                         int DisplayId = 0;
 
-                        if (dTO.ApplyForId == 1)
+                        if (dTO.ApplyForId == (byte)ApplyForEnum.Officers)
                         {
                             DisplayId = mTrnFwd.StepId;
                         }
@@ -411,10 +418,16 @@ namespace DataAccessLayer
                     }
                     // SQL queries to reset the XmlFiles and update the step counter for rejection
                     query3 = @" UPDATE AFSAC2.dbo.XmlFilesFwdLog SET XmlFiles=@XmlFiles WHERE RequestId=@RequestId
-                                UPDATE TrnStepCounter set StepId = 9 where RequestId=@RequestId
+                                UPDATE TrnStepCounter set StepId = @ApplicationRejectedAFSACLevel where RequestId=@RequestId
                                 UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardPrintedOn=null, CardExportedOn=null, CardExportedByAspNetUserId=null, CardExportedByUserId=null, CardPrintedByAspNetUserId=null, CardPrintedByUserId=null where RequestId=@RequestId
                                 Update BasicDetails set IsLock = 0 where BasicDetailId=@BasicDetailId";
-                    await db.ExecuteAsync(query3, new { dTO.RequestId, XmlFiles, dTO.BasicDetailId }, transaction: transaction);
+
+                    parameters.Add("@RequestId", dTO.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@XmlFiles", XmlFiles, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@BasicDetailId", dTO.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ApplicationRejectedAFSACLevel", (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel);
+
+                    await db.ExecuteAsync(query3, parameters, transaction: transaction);
                 }
 
 
@@ -460,15 +473,15 @@ namespace DataAccessLayer
                                        CASE
                                             WHEN ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) IS NULL THEN 0
                                             WHEN faul.IsEditAction = 1 THEN 0
-                                            WHEN currentReq.StatusId IN (2,3) THEN 0
-                                            WHEN stepcount.StepId != 14 THEN 0
+                                            WHEN currentReq.StatusId IN @StatusIds THEN 0
+                                            WHEN stepcount.StepId != @CardInUnit THEN 0
                                             ELSE 1
                                         END AS Result,
 		                                case
                                             WHEN ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) IS NULL THEN 'Invalid Id.'
                                             WHEN faul.IsEditAction = 1 THEN 'This action has already been completed by you.'
-                                            WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
-                                            WHEN stepcount.StepId != 14 THEN 'The application is currently being processed.'
+                                            WHEN currentReq.StatusId IN @StatusIds THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId != @CardInUnit THEN 'The application is currently being processed.'
 		                                    ELSE 'Valid'
 		                                END as Message
                                 FROM TrnFaultyCard faul
@@ -488,15 +501,15 @@ namespace DataAccessLayer
                                         CASE
                                             WHEN ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) IS NULL THEN 0
                                             WHEN faul.IsEditAction = 0 THEN 0
-                                            WHEN currentReq.StatusId IN (2,3) THEN 0
-                                            WHEN stepcount.StepId != 6 THEN 0
+                                            WHEN currentReq.StatusId IN @StatusIds THEN 0
+                                            WHEN stepcount.StepId != @ICardPrint THEN 0
                                             ELSE 1
                                         END AS Result,
 		                                case
                                             WHEN ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) IS NULL THEN 'Invalid Id.'
                                             WHEN faul.IsEditAction = 0 THEN 'The faulty request already exists, first take action!'
-                                            WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
-                                            WHEN stepcount.StepId != 6 THEN 'The application is currently being processed.'
+                                            WHEN currentReq.StatusId IN @StatusIds THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId != @ICardPrint THEN 'The application is currently being processed.'
 		                                    ELSE 'Valid'
 		                                END as Message
                                 FROM TrnICardRequest currentReq
@@ -505,7 +518,7 @@ namespace DataAccessLayer
                                 LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=currentReq.BasicDetailId
                                 LEFT JOIN TrnFaultyCard faul on faul.TrnFaultyCardId = (SELECT MAX(fal.TrnFaultyCardId) FROM TrnFaultyCard fal WHERE fal.RequestId =currentReq.RequestId)
                                 WHERE currentReq.RequestId = @RequestId;";
-                                                    }
+                    }
 
                 }
                 else
@@ -524,8 +537,8 @@ namespace DataAccessLayer
                                             WHERE faul.RequestId = currentReq.RequestId
                                                 AND faul.IsComplete = 0
                                         ) THEN 0
-                                        WHEN currentReq.StatusId IN (2,3) THEN 0
-                                        WHEN stepcount.StepId != 14 THEN 0
+                                        WHEN currentReq.StatusId IN @StatusIds THEN 0
+                                        WHEN stepcount.StepId != @CardInUnit THEN 0
                                         ELSE 1
                                     END AS Result,
 		                            case
@@ -537,8 +550,8 @@ namespace DataAccessLayer
                                             WHERE faul.RequestId = currentReq.RequestId
                                                 AND faul.IsComplete = 0
                                         ) THEN 'The faulty request already exists!'
-                                        WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
-                                        WHEN stepcount.StepId != 14 THEN 'The application is currently being processed.'
+                                        WHEN currentReq.StatusId IN @StatusIds THEN 'The application is no longer active.'
+                                        WHEN stepcount.StepId != @CardInUnit THEN 'The application is currently being processed.'
 		                                ELSE 'Valid'
 		                            END as Message
                             FROM TrnICardRequest currentReq
@@ -551,10 +564,19 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var StatusIds = new List<byte>
+                    {
+                        (byte)RequestStatusEnum.Complete,
+                        (byte)RequestStatusEnum.Closed,
+                    };
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@RequestId", dTOFaulty.RequestId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@UnitId", dTOFaulty.UnitId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@TrnFaultyCardId", dTOFaulty.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@StatusIds", StatusIds);
+                    parameters.Add("@CardInUnit", (byte)ApplicationStepEnum.CardInUnit);
+                    parameters.Add("@ICardPrint", (byte)ApplicationStepEnum.ICardPrint);
                     var result = await connection.QueryFirstOrDefaultAsync<DTOBeforeFaultyCardReportResponse>(query, parameters);
                     return result ?? new DTOBeforeFaultyCardReportResponse
                     {

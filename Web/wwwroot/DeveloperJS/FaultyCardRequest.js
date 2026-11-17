@@ -132,8 +132,16 @@ function Proceed(choice) {
     $.validator.unobtrusive.parse($(formId));
     
     if ($(formId).valid()) {
-        let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
-        let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
+        let ApplicantName = [
+            getValidText("#lblpvFName"),
+            getValidText("#lblpvLName")
+        ].filter(Boolean).join(" ");
+
+        let ApplicantNameWithRank = [
+            getValidText("#lblpvRank"),
+            ApplicantName
+        ].filter(Boolean).join(" ");
+
         let FromRemark = $("#txtFromRemark").val();
         let ToRemark = $("#txtToRemark").val();
         let UserName = $(".dropdown-user-details-name").html();

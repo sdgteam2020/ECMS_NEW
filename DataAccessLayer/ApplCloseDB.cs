@@ -148,10 +148,11 @@ namespace DataAccessLayer
                 Data.Id =  await db.ExecuteScalarAsync<int>(insertSql, parameters, transaction: transaction);
 
                 // SQL query to update the status of the RequestId in the TrnICardRequest table.
-                string query1 = "UPDATE TrnICardRequest SET StatusId = 3 WHERE RequestId = @RequestId";
+                string query1 = "UPDATE TrnICardRequest SET StatusId = @Closed WHERE RequestId = @RequestId";
                 
                 var query1_parameters = new DynamicParameters();
                 query1_parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                query1_parameters.Add("@Closed", (byte)RequestStatusEnum.Closed, DbType.Byte, ParameterDirection.Input);
 
                 // Execute the update query asynchronously with transaction.
                 await db.ExecuteAsync(query1, query1_parameters, transaction: transaction);

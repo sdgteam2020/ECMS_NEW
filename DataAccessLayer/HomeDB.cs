@@ -1,6 +1,8 @@
-﻿using Dapper;
+﻿using Azure.Core;
+using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
@@ -40,7 +42,7 @@ namespace DataAccessLayer
                             IF @Claim=1
                             BEGIN 
                             Select @TotDispatchCards=COUNT(disca.DispatchCardId) from TrnDispatchCard disca
-                            WHERE disca.Step=1
+                            WHERE disca.Step=@DispatchByAFSAC
                             END 
                             ELSE IF @Claim=2 
                             BEGIN 
@@ -56,7 +58,7 @@ namespace DataAccessLayer
                             ELSE 
                             BEGIN 
                             Select @TotDispatchCards=COUNT(disca.DispatchCardId) from TrnDispatchCard disca
-                            WHERE disca.ToUnitId=@MapUnitId and disca.Step=2
+                            WHERE disca.ToUnitId=@MapUnitId and disca.Step=@DispatchByORO_RegCenter
                             END 
                             END 
 
@@ -97,6 +99,8 @@ namespace DataAccessLayer
                     parameters.Add("@MapUnitId", MapUnitId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@TDM_Id", TDM_Id, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Claim", Claim, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@DispatchByAFSAC", (byte)DispatchByEnum.AFSAC, DbType.Byte);
+                    parameters.Add("@DispatchByORO_RegCenter", (byte)DispatchByEnum.ORO_RegCenter, DbType.Byte);
 
                     // Execute the query asynchronously and map the result to the response DTO
                     var ret = (await connection.QueryAsync<DTOTaskCountResponse>(query, parameters)).FirstOrDefault();
@@ -244,12 +248,12 @@ namespace DataAccessLayer
                     query = @"
                         SELECT
                             COUNT(DISTINCT CASE
-                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = 1
+                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = @Officers
                                 THEN pout.Id
                             END) AS ToPostingOutOffrs,
 
                             COUNT(DISTINCT CASE
-                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = 2
+                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = @JCO_ORs
                                 THEN pout.Id
                             END) AS ToPostingOutJCO
                         FROM TrnPostingOut pout
@@ -265,12 +269,12 @@ namespace DataAccessLayer
                     query = @"
                         SELECT
                             COUNT(DISTINCT CASE
-                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = 1
+                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = @Officers
                                 THEN pout.Id
                             END) AS ToPostingInOffrs,
 
                             COUNT(DISTINCT CASE
-                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = 2
+                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = @JCO_ORs
                                 THEN pout.Id
                             END) AS ToPostingInJCO
                         FROM TrnPostingOut pout
@@ -289,8 +293,15 @@ namespace DataAccessLayer
                 // Create a connection to the database and execute the query asynchronously
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserId", UserId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UnitMapId", UnitMapId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Officers", (byte)ApplyForEnum.Officers);
+                    parameters.Add("@JCO_ORs", (byte)ApplyForEnum.JCO_ORs);
+
+
                     // Execute the query and map the result to DTORequestDashboardCountResponse
-                    var ret = await connection.QueryAsync<DTORequestDashboardCountResponse>(query, new { UserId, UnitMapId });
+                    var ret = await connection.QueryAsync<DTORequestDashboardCountResponse>(query, parameters);
                     return ret.SingleOrDefault();
                 }
             }
@@ -325,60 +336,60 @@ namespace DataAccessLayer
                             --Drafted--
                             declare @ToDraftedOffrs int=0 declare @ToDraftedJCO int=0
                             select @ToDraftedOffrs=COUNT(req.RequestId) from TrnDomainMapping domain
-                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId AND req.StatusId=1
-                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId=1
-                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=1
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId AND req.StatusId=@RunningStatusId
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId=@DraftedSavedApplication
+                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=@Officers
                           
                             select @ToDraftedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain
-                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId AND req.StatusId=1
-                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId=1
-                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=2
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId AND req.StatusId=@RunningStatusId
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId=@DraftedSavedApplication
+                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=@JCO_ORs
 
                             --Submitted--
                             declare @ToSubmittedOffrs int=0 declare @ToSubmittedJCO int=0
                             select @ToSubmittedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId
-                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId > 1
-                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=1
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId > @DraftedSavedApplication
+                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=@Officers
                           
                             select @ToSubmittedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId
-                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId > 1
-                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=2
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId > @DraftedSavedApplication
+                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=@JCO_ORs
 
                             --Closed--
                             declare @ToClosedOffrs int=0 declare @ToClosedJCO int=0
                             select @ToClosedOffrs=COUNT(appcl.Id) from TrnApplClose appcl
                             inner join TrnICardRequest req on req.RequestId=appcl.RequestId
-                            inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId =@UnitMapId AND basic_2.ApplyForId=1
+                            inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId =@UnitMapId AND basic_2.ApplyForId=@Officers
 
                             select @ToClosedJCO=COUNT(appcl.Id) from TrnApplClose appcl
                             inner join TrnICardRequest req on req.RequestId=appcl.RequestId
-                            inner join  AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId =@UnitMapId AND basic_2.ApplyForId=2
+                            inner join  AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId =@UnitMapId AND basic_2.ApplyForId=@JCO_ORs
 
                             --Completed--
                             declare @ToCompletedOffrs int=0 declare @ToCompletedJCO int=0
                             select @ToCompletedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain
-                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId AND req.StatusId=2
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId AND req.StatusId=@CompleteStatusId
                             inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId 
-                            inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.ApplyForId=1
+                            inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.ApplyForId=@Officers
                           
                             select @ToCompletedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain
-                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId AND req.StatusId=2
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId AND req.StatusId=@CompleteStatusId
                             inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId 
-                            inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.ApplyForId=2
+                            inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.ApplyForId=@JCO_ORs
 
                             --Rejected--
                             declare @ToRejectedOffrs int=0 declare @ToRejectedJCO int=0
                             select @ToRejectedOffrs=COUNT(distinct fwd.RequestId) from TrnFwds fwd
-                            inner join TrnICardRequest req on req.RequestId=fwd.RequestId AND fwd.ToAspNetUsersId=@UserId AND fwd.FwdStatusId=3 AND req.StatusId=1
-                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId in(7,8,9,10)
-                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=1
+                            inner join TrnICardRequest req on req.RequestId=fwd.RequestId AND fwd.ToAspNetUsersId=@UserId AND fwd.FwdStatusId=3 AND req.StatusId=@RunningStatusId
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId IN @rejectedSteps
+                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=@Officers
 
                             select @ToRejectedJCO=COUNT(distinct fwd.RequestId) from TrnFwds fwd
-                            inner join TrnICardRequest req on req.RequestId=fwd.RequestId AND fwd.ToAspNetUsersId=@UserId AND fwd.FwdStatusId=3 AND req.StatusId=1
-                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId in(7,8,9,10)
-                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=2
+                            inner join TrnICardRequest req on req.RequestId=fwd.RequestId AND fwd.ToAspNetUsersId=@UserId AND fwd.FwdStatusId=3 AND req.StatusId=@RunningStatusId
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId AND trnstepcout.StepId IN @rejectedSteps
+                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=@JCO_ORs
 
                             select @ToDraftedOffrs ToDraftedOffrs,@ToDraftedJCO ToDraftedJCO ,@ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO,@ToClosedOffrs ToClosedOffrs,@ToClosedJCO ToClosedJCO ,@ToCompletedOffrs ToCompletedOffrs,@ToCompletedJCO ToCompletedJCO,@ToRejectedOffrs ToRejectedOffrs,@ToRejectedJCO ToRejectedJCO";
             try
@@ -386,8 +397,26 @@ namespace DataAccessLayer
                 // Create a connection to the database and execute the query asynchronously
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var rejectedSteps = new List<byte>
+                    {
+                        (byte)ApplicationStepEnum.ApplicationRejectedApproverLevel,
+                        (byte)ApplicationStepEnum.ApplicationRejectedVerifierLevel,
+                        (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel,
+                        (byte)ApplicationStepEnum.PrintReject
+                    };
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserId", UserId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UnitMapId", UnitMapId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Officers", (byte)ApplyForEnum.Officers);
+                    parameters.Add("@JCO_ORs", (byte)ApplyForEnum.JCO_ORs);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+                    parameters.Add("@CompleteStatusId", (byte)RequestStatusEnum.Complete, DbType.Byte);
+                    parameters.Add("@DraftedSavedApplication", (byte)ApplicationStepEnum.DraftedSavedApplication);
+                    parameters.Add("@rejectedSteps", rejectedSteps);
+
                     // Execute the query and map the result to DTORequestSubDashboardCountResponse
-                    var ret = await connection.QueryAsync<DTORequestSubDashboardCountResponse>(query, new { UserId, UnitMapId });
+                    var ret = await connection.QueryAsync<DTORequestSubDashboardCountResponse>(query, parameters);
                     return ret.SingleOrDefault();
                 }
             }

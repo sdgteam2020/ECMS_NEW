@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -72,12 +73,12 @@ namespace DataAccessLayer
                 {
                     query = @"SELECT currentReq.RequestId,
                                 CASE
-                                    WHEN currentReq.StatusId IN (2,3) THEN 0
+                                    WHEN currentReq.StatusId IN @StatusIds THEN 0
                                     WHEN hold.RequestId = @RequestId THEN 0
                                     ELSE 1
                                 END AS Result,
 		                        case
-                                    WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
+                                    WHEN currentReq.StatusId IN @StatusIds THEN 'The application is no longer active.'
                                     WHEN hold.RequestId = @RequestId THEN 'The application already exists in the ICardHold table.'
 		                            ELSE 'Valid'
 		                        END as Message
@@ -89,9 +90,17 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var StatusIds = new List<byte>
+                    {
+                        (byte)RequestStatusEnum.Complete,
+                        (byte)RequestStatusEnum.Closed,
+                    };
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@ICardHoldId", hold.ICardHoldId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@RequestId", hold.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@StatusIds", StatusIds);
+
 
                     var result = await connection.QueryFirstOrDefaultAsync<DTOBeforeSaveICardRequestHoldResponse>(query, parameters);
 

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -276,9 +277,9 @@ namespace DataAccessLayer
 
                                      DECLARE @DistributeCardId INT = SCOPE_IDENTITY();
                                      
-                                     update TrnICardRequest set StatusId = 2,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId;
+                                     update TrnICardRequest set StatusId = @CompleteStatusId,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId;
                                      
-                                     update TrnStepCounter set StepId = 15,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId;
+                                     update TrnStepCounter set StepId = @ICardDistributed,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId;
                                      {(cardRequestHistory?.FaultyCard?.Count > 0 ? "update TrnFaultyCard set TrnFwdId = null where RequestId = @RequestId;" : "")}
                                      {(cardRequestHistory?.PostingOut?.Count > 0 ? "update TrnPostingOut set TrnFwdId = null where RequestId = @RequestId;" : "")}
                                      
@@ -306,6 +307,8 @@ namespace DataAccessLayer
                 parameters.Add("@ServiceNo", ServiceNo, DbType.String, ParameterDirection.Input,10);
                 parameters.Add("@ApplyForId", ApplyForId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@DestructedCardId", DestructedCardId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@CompleteStatusId", (byte)RequestStatusEnum.Complete, DbType.Byte);
+                parameters.Add("@ICardDistributed", (byte)ApplicationStepEnum.ICardDistributed);
 
                 // Execute the query and get the DistributeCardId of the newly created record
                 DTOSaveDistributeCardResponse? dTOSave = await db.QuerySingleAsync<DTOSaveDistributeCardResponse>(insertQuery, parameters, transaction: transaction);

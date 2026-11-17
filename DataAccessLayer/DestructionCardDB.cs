@@ -240,14 +240,14 @@ namespace DataAccessLayer
                 string query = @"SELECT currentReq.StatusId,appclose.Id AS ApplCloseId,comp.CompletedId,
                                         CASE
                                             WHEN dest.RequestId = @RequestId THEN 0
-                                            WHEN currentReq.StatusId = 1  THEN 0
-                                            WHEN stepcount.StepId NOT IN (6,11,12,13,14,15) THEN 0
+                                            WHEN currentReq.StatusId = @RunningStatusId  THEN 0
+                                            WHEN stepcount.StepId NOT IN @stepIds THEN 0
                                             ELSE 1
                                         END AS Result,
 		                                case
                                             WHEN dest.RequestId = @RequestId THEN 'This card has already been reported as destroyed in the system.'
-                                            WHEN currentReq.StatusId = 1 THEN 'The application is no longer active.'
-                                            WHEN stepcount.StepId NOT IN (6,11,12,13,14,15) THEN 'The card has not been printed.'
+                                            WHEN currentReq.StatusId = @RunningStatusId THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId NOT IN @stepIds THEN 'The card has not been printed.'
 		                                    ELSE 'Valid'
 		                                END as Message
                                 FROM TrnICardRequest currentReq
@@ -259,8 +259,21 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var stepIds = new List<byte>
+                    {
+                        (byte)ApplicationStepEnum.ICardPrint,
+                        (byte)ApplicationStepEnum.CardDispatchToRegimentOrOfficerRecordOffice,
+                        (byte)ApplicationStepEnum.CardInRegimentOrOfficerRecordOffice,
+                        (byte)ApplicationStepEnum.CardDispatchToUnit,
+                        (byte)ApplicationStepEnum.CardInUnit,
+                        (byte)ApplicationStepEnum.ICardDistributed
+                    };
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+                    parameters.Add("@stepIds", stepIds);
+
                     var result = await connection.QueryFirstOrDefaultAsync<DTOCheckBeforeDestructionCardReportResponse>(query, parameters);
                     return result ?? new DTOCheckBeforeDestructionCardReportResponse
                     {

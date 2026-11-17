@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -128,7 +129,7 @@ namespace DataAccessLayer
                                 inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId
                                 inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId
                                 inner join TrnStepCounter stepc on stepc.RequestId=noti.RequestId 
-                                inner join TrnICardRequest tre on tre.RequestId = noti.RequestId AND tre.StatusId = 1
+                                inner join TrnICardRequest tre on tre.RequestId = noti.RequestId AND tre.StatusId = @RunningStatusId
                                 inner join BasicDetails bd on bd.BasicDetailId = tre.BasicDetailId
                                 inner join MRank ranks on ranks.RankId = bd.RankId
                                 inner join TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId";
@@ -162,6 +163,7 @@ namespace DataAccessLayer
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTONotificationResponse>()).ToList();
